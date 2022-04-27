@@ -21,7 +21,7 @@ public class MyUserServiceImp implements  MyUserService{
     }
 
     @Override
-    public String gh(){
-        return "111";
+    public MyUser findUserbyUsername(String uname){
+        return this.myUserMapper.findUserbyUsername(uname);
     }
 }

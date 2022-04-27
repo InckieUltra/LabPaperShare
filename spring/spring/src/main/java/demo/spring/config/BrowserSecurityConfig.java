@@ -1,25 +1,63 @@
 package demo.spring.config;
 
-import demo.spring.service.MyAuthenticationFailureHandler;
-import demo.spring.service.MyAuthenticationSuccessHandler;
+import demo.spring.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-                return new BCryptPasswordEncoder();
-        }
-
         @Autowired
         private MyAuthenticationSuccessHandler authenticationSuccessHandler;
 
+        @Autowired
+        private MyUserDetailsService myUserDetailsService;
+
+        @Autowired
+        private MySessionExpiredStrategy mySessionExpiredStrategy;
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+                http
+                        //禁用baisc和form认证，在LoginController中自己实现认证逻辑
+                        .httpBasic().disable()
+                        .formLogin().disable()
+                        .csrf().disable()
+                        .logout().disable()
+                        .authorizeRequests() // 授权配置
+                        .antMatchers("/authentication/require","/login","/test",
+                                "/login.html", "/code/image","/code/sms","/session/invalid","/user/login").permitAll()
+                        .anyRequest()  // 所有请求
+                        .authenticated() // 都需要认证
+                        .and()
+                        .sessionManagement() // 添加 Session管理器
+                        .invalidSessionUrl("/session/invalid") // Session失效后跳转到这个链接
+                        .maximumSessions(1)
+                        .maxSessionsPreventsLogin(true)
+                        .expiredSessionStrategy(mySessionExpiredStrategy)
+                ;
+        }
+
+        @Bean
+        @Override
+        public AuthenticationManager authenticationManagerBean() throws Exception {
+                return super.authenticationManagerBean();
+        }
+
+        @Override
+        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+                auth.userDetailsService(myUserDetailsService).passwordEncoder(new BCryptPasswordEncoder());
+        }
 
 }

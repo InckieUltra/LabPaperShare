@@ -11,5 +11,5 @@ public interface MyUserService{
 
     public String findPwdbyUsername(String uname);
 
-    public String gh();
+    public MyUser findUserbyUsername(String uname);
 }
