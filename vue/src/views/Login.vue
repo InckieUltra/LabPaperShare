@@ -3,7 +3,7 @@
     <div class="video-container">
       <div :style="fixStyle" class="filter">
         <div style="width: 400px; margin: 100px auto">
-          <div style="font-size: 30px; text-align: center; padding: 30px 0; color: #333">欢迎登录</div>
+          <div style="font-size: 40px; text-align: center; padding: 30px 0; color: #333">论文管理系统</div>
           <el-form ref="form" :model="form" size="normal" :rules="rules">
             <el-form-item prop="username">
               <el-input prefix-icon="el-icon-user-solid" v-model="form.username" placeholder="请输入账号"></el-input>
@@ -28,10 +28,11 @@
           </el-form>
         </div>
       </div>
-<!--      <video :style="fixStyle" autoplay loop muted class="fillWidth" v-on:canplay="canplay">-->
-<!--        <source src="../assets/sea.mp4" type="video/mp4"/>-->
-<!--        浏览器不支持 video 标签，建议升级浏览器。-->
-<!--      </video>-->
+      <div class="login-container"
+           v-bind:style="{backgroundImage:'url(' + bg + ')',
+        backgroundRepeat:'no-repeat',
+        backgroundSize:'100% 100%'}">
+      </div>
     </div>
   </div>
 
@@ -41,7 +42,7 @@
 import request from "@/utils/request";
 import ValidCode from "@/components/ValidCode";
 import {activeRouter} from "@/utils/permission";
-
+import md5 from "js-md5"
 export default {
   name: "Login",
   components: {
@@ -49,8 +50,9 @@ export default {
   },
   data() {
     return {
-      vedioCanPlay: false,
-      fixStyle: '',
+      data: {
+
+      },
       form: {
 
       },
@@ -62,54 +64,25 @@ export default {
           {required: true, message: '请输入密码', trigger: 'blur'},
         ],
       },
-      validCode: ''
-      // 加背景图片
-      // bg: {
-      //   backgroundImage: "url(" + require("@/assets/bg.jpg") + ")",
-      //   backgroundRepeat: "no-repeat",
-      //   backgroundSize: "100% 100%"
-      // }
+      validCode: '',
+      bg: {
+        backgroundImage: "url(" + require("@/assets/bcg.jpg") + ")",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "100% 100%"
+      }
     }
   },
   mounted() {
+
     sessionStorage.removeItem("user")
 
-    window.onresize = () => {
-      const windowWidth = document.body.clientWidth
-      const windowHeight = document.body.clientHeight
-      const windowAspectRatio = windowHeight / windowWidth
-      let videoWidth
-      let videoHeight
-      if (windowAspectRatio < 0.5625) {
-        videoWidth = windowWidth
-        videoHeight = videoWidth * 0.5625
-        this.fixStyle = {
-          height: windowWidth * 0.5625 + 'px',
-          width: windowWidth + 'px',
-          'margin-bottom': (windowHeight - videoHeight) / 2 + 'px',
-          'margin-left': 'initial'
-        }
-      } else {
-        videoHeight = windowHeight
-        videoWidth = videoHeight / 0.5625
-        this.fixStyle = {
-          height: windowHeight + 'px',
-          width: windowHeight / 0.5625 + 'px',
-          'margin-left': (windowWidth - videoWidth) / 2 + 'px',
-          'margin-bottom': 'initial'
-        }
-      }
-    }
-    window.onresize()
   },
   methods: {
-    canplay() {
-      this.vedioCanPlay = true
-    },
     // 接收验证码组件提交的 4位验证码
     createValidCode(data) {
       this.validCode = data
     },
+
     login () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
@@ -121,8 +94,12 @@ export default {
             this.$message.error("验证码错误")
             return
           }
-          request.post("/user/login", this.form).then(res => {
+
+
+          request.post("/api/login", this.form).then(res => {
+            console.log(res)
             if (res.code === '0') {
+              console.log(3333)
               this.$message({
                 type: "success",
                 message: "登录成功"
@@ -139,6 +116,8 @@ export default {
                 message: res.msg
               })
             }
+          }).catch(failRes=>{
+            console.log(11111)
           })
         }
       })
@@ -153,6 +132,7 @@ export default {
   position: relative;
   height: 100vh;
   overflow: hidden;
+  background: url("../assets/background2.svg");
 }
 
 .video-container .poster img{

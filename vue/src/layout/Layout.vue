@@ -8,7 +8,7 @@
       <!--      侧边栏-->
       <Aside />
       <!--      内容区域-->
-      <router-view style="flex: 1" @userInfo="refreshUser"/>
+      <router-view style="flex: 1"/>
     </div>
   </div>
 </template>
@@ -29,6 +29,22 @@ export default {
       user: {}
     }
   },
+  created() {
+    this.refreshUser()
+  },
+  methods: {
+    refreshUser() {
+      let userJson = sessionStorage.getItem("user");
+      if (!userJson) {
+        return
+      }
+      let userId = JSON.parse(userJson).id
+      // 从后台取出更新后的最新用户信息
+      request.get("/user/" + userId).then(res => {
+        this.user = res.data
+      })
+    }
+  }
 }
 </script>
 

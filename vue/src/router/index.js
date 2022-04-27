@@ -13,6 +13,31 @@ const routes = [
                 name: 'Home',
                 component: () => import("@/views/Home"),
             },
+            {
+                path: '/person',
+                name: 'Person',
+                component: () => import("@/views/Person")
+            },
+            {
+                path: '/upload',
+                name: 'Upload',
+                component: () => import("@/views/Upload")
+            },
+            {
+                path: '/permission',
+                name: 'Permission',
+                component: () => import("@/views/Permission")
+            },
+            {
+                path: '/role',
+                name: 'Role',
+                component: () => import("@/views/Role")
+            },
+            {
+                path: '/category',
+                name: 'Category',
+                component: () => import("@/views/Category")
+            },
         ]
     },
     {
@@ -25,10 +50,40 @@ const routes = [
         name: 'Register',
         component: () => import("@/views/Register")
     },
+
+
 ]
 
 const router = createRouter({
+    //base: process.env.BASE_URL,
     history: createWebHistory(process.env.BASE_URL),
     routes
 })
+
+activeRouter()
+
+function activeRouter() {
+    const userStr = sessionStorage.getItem("user")
+    if (userStr) {
+        const user = JSON.parse(userStr)
+        let root = {
+            path: '/',
+            name: 'Layout',
+            component: Layout,
+            redirect: "/home",
+            children: []
+        }
+        user.permissions.forEach(p => {
+            let obj = {
+                path: p.path,
+                name: p.name,
+                component: () => import("@/views/" + p.name)
+            };
+            root.children.push(obj)
+        })
+        if (router) {
+            router.addRoute(root)
+        }
+    }
+}
 export default router
