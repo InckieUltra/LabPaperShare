@@ -34,7 +34,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                         .httpBasic().disable()
                         .formLogin()
                         .loginPage("/login")
-                        .loginProcessingUrl("/api/login")
+                        .loginProcessingUrl("/user/login")
                         .and()
                         .csrf().disable()
                         .logout().disable()

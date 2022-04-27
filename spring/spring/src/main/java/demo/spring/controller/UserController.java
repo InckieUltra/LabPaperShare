@@ -22,9 +22,10 @@ public class UserController {
 
     private MyUser myUser;
 
-    @CrossOrigin
+   @CrossOrigin
     @PostMapping("/api/login")
     public Result login(@RequestBody LoginRequest loginRequest) {
+       System.out.println(loginRequest);
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
         Authentication authentication = authenticationManager.authenticate(token);
@@ -35,7 +36,7 @@ public class UserController {
         return Result.success(0,"success",myUser);
     }
 
-    /*@CrossOrigin
+   /* @CrossOrigin
     @RequestMapping("/api/login")
     public Result login(@RequestParam String username,@RequestParam String password) {
         UsernamePasswordAuthenticationToken token =
