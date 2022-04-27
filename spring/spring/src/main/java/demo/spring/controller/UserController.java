@@ -22,7 +22,8 @@ public class UserController {
 
     private MyUser myUser;
 
-    /*@PostMapping("/user/login")
+    @CrossOrigin
+    @PostMapping("/api/login")
     public Result login(@RequestBody LoginRequest loginRequest) {
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
@@ -32,9 +33,10 @@ public class UserController {
         myUser= myUserService.findUserbyUsername(loginRequest.getUsername());
 
         return Result.success(0,"success",myUser);
-    }*/
+    }
 
-    @RequestMapping("/user/login")
+    /*@CrossOrigin
+    @RequestMapping("/api/login")
     public Result login(@RequestParam String username,@RequestParam String password) {
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(username, password);
@@ -44,7 +46,7 @@ public class UserController {
         myUser= myUserService.findUserbyUsername(username);
 
         return Result.success(0,"success",myUser);
-    }
+    }*/
 
     @GetMapping("session/invalid")
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
