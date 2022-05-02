@@ -27,7 +27,7 @@ export default {
           id:1,
           path:'/home',
           name:'Home',
-          icon:'',
+          icon:'el-icon-house',
           comment:'首页'
         },
 
@@ -35,35 +35,35 @@ export default {
             id:2,
             path:'/upload',
             name:'Upload',
-            icon:'',
+            icon:'el-icon-upload',
             comment:'上传论文'
           },
           {
             id:3,
             path:'/person',
             name:'check',
-            icon:'',
+            icon:'el-icon-search',
             comment:'搜索论文'
           },
           {
             id:4,
             path:'/permission',
             name:'Permission',
-            icon:'',
+            icon:'el-icon-menu',
             comment:'权限管理'
           },
           {
             id:5,
             path:'/role',
             name:'Role',
-            icon:'',
+            icon:'el-icon-s-custom',
             comment:'角色管理'
           },
           {
             id:6,
             path:'/category',
             name:'Category',
-            icon:'',
+            icon:'el-icon-position',
             comment:'研究方向'
           },
         ]

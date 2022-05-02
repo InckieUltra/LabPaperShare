@@ -1,4 +1,5 @@
 <template>
+  <div id="app" class = "body"></div>
   <el-config-provider :locale="locale">
     <router-view />
   </el-config-provider>
@@ -22,4 +23,12 @@ export default {
     }
   },
 }
+//npm install sass-loader node-sass --save-dev
 </script>
+
+<style>
+@import "./assets/font/font.css";
+.body {
+  font-family: ziti;
+}
+</style>
