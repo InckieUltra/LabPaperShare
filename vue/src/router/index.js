@@ -38,6 +38,16 @@ const routes = [
                 name: 'Category',
                 component: () => import("@/views/Category")
             },
+            {
+                path: '/search',
+                name: 'Search',
+                component: () => import("@/views/Search")
+            },
+            {
+                path: '/note',
+                name: 'Note',
+                component: () => import("@/views/Note")
+            },
         ]
     },
     {

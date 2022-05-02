@@ -40,8 +40,8 @@ export default {
           },
           {
             id:3,
-            path:'/person',
-            name:'check',
+            path:'/search',
+            name:'Search',
             icon:'el-icon-search',
             comment:'搜索论文'
           },
@@ -65,6 +65,13 @@ export default {
             name:'Category',
             icon:'el-icon-position',
             comment:'研究方向'
+          },
+          {
+            id:7,
+            path:'/note',
+            name:'Note',
+            icon:'el-icon-edit-outline',
+            comment:'笔记管理'
           },
         ]
       },
