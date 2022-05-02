@@ -8,10 +8,12 @@ import java.util.List;
 public class MyUser implements Serializable {
     private static final long serialVersionUID = 3497935890426858541L;
 
+    private int user_id;
     private String userName;
 
     private String password;
 
+    private String email;
     private boolean accountNonExpired = true;
 
     private boolean accountNonLocked= true;
@@ -20,6 +22,13 @@ public class MyUser implements Serializable {
 
     private boolean enabled= true;
 
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
+    }
     public String getUserName() {
         return userName;
     }
@@ -34,6 +43,14 @@ public class MyUser implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public boolean isAccountNonExpired() {

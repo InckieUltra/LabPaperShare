@@ -4,12 +4,32 @@ import demo.spring.entity.MyUser;
 import demo.spring.entity.Result;
 import demo.spring.service.MyUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.MailSendException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Random;
 
 @RestController
 public class UserController {
@@ -22,7 +42,7 @@ public class UserController {
 
     private MyUser myUser;
 
-   @CrossOrigin
+    @CrossOrigin
     @PostMapping("/api/login")
     public Result login(@RequestBody LoginRequest loginRequest) {
        System.out.println(loginRequest);
@@ -36,22 +56,101 @@ public class UserController {
         return Result.success(0,"success",myUser);
     }
 
-   /* @CrossOrigin
-    @RequestMapping("/api/login")
-    public Result login(@RequestParam String username,@RequestParam String password) {
-        UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(username, password);
-        Authentication authentication = authenticationManager.authenticate(token);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+    @CrossOrigin
+    @PostMapping("/api/register")
+    public Result register(@RequestBody RegisterRequest registerRequest) {
+        if(myUserService.findPwdbyUsername(registerRequest.getUsername())!=null){
+            return Result.fail(1,"用户已存在",null);
+        }
 
-        myUser= myUserService.findUserbyUsername(username);
 
-        return Result.success(0,"success",myUser);
-    }*/
+        //判断验证码是否正确
+        String requestHash = resultMap.get("hash").toString();
 
-    @GetMapping("session/invalid")
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public String sessionInvalid(){
-        return "session已失效，请重新认证";
+        String tamp = resultMap.get("tamp").toString();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmmss");//当前时间
+        Calendar c = Calendar.getInstance();
+        String currentTime = sf.format(c.getTime());
+        if (tamp.compareTo(currentTime) > 0) {
+            String hash =  MD5Utils.code(registerRequest.getIdentify());//生成MD5值
+            if (!hash.equalsIgnoreCase(requestHash)){
+                return Result.success(0,"验证码错误",null);
+            }
+        }
+        else{
+            return Result.fail(1,"验证码过期",null);
+        }
+
+
+        PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
+        System.out.println(myUserService.findmaxUser_id());
+        int user_id_next=myUserService.findmaxUser_id()+1;
+        System.out.println(user_id_next);
+        myUser=new MyUser();
+        myUser.setUser_id(user_id_next);
+        myUser.setUserName(registerRequest.getUsername());
+        myUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        myUser.setEmail(registerRequest.getEmail());
+
+        System.out.println(myUserService.addUser(myUser));
+
+        return Result.success(0,"注册成功",null);
     }
+
+    @CrossOrigin
+    @GetMapping(value="/session/invalid")
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public Result sessioninvalid(){
+        return Result.fail(1,"会话过期",null);
+    }
+
+    @Autowired
+    private JavaMailSender jms;
+
+    @Value("${spring.mail.username}")
+    private String from;
+
+    private HashMap<String, Object> resultMap = new HashMap<>();
+    @CrossOrigin
+    @PostMapping("/api/register/sendemail")
+    public Result registersendemail(@RequestBody RegisterRequest registerRequest){
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+        for(int i = 0; i < 6; i++) {
+            int index = random.nextInt(alphabet.length());
+            char randomChar = alphabet.charAt(index);
+            sb.append(randomChar);
+        }
+        String code = sb.toString();//随机数生成6位验证码
+
+        message.setFrom(from);
+        message.setTo(registerRequest.getEmail());
+        message.setSubject("LabPaperShare");// 标题
+        message.setText("【LabPaperShare】你的验证码为："+code+"，有效时间为5分钟(若不是本人操作，可忽略该条邮件)");
+        try {
+            jms.send(message);
+            saveCode(code);
+            return Result.success(0,"邮件发送成功",null);
+        }catch (MailSendException e){
+            return Result.fail(1,"目标邮箱不存在",null);
+        } catch (Exception e) {
+            return Result.fail(1,"文本邮件发送异常",null);
+        }
+    }
+
+    private void saveCode(String code){
+        SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmmss");
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.MINUTE, 5);
+        String currentTime = sf.format(c.getTime());// 生成5分钟后时间，用户校验是否过期
+
+        String hash =  MD5Utils.code(code);//生成MD5值
+        resultMap.put("hash", hash);
+        resultMap.put("tamp", currentTime);
+    }
+
+
 }

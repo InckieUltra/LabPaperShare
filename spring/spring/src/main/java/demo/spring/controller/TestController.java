@@ -1,5 +1,6 @@
 package demo.spring.controller;
 
+import demo.spring.entity.Result;
 import demo.spring.service.MyUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +23,7 @@ public class TestController {
     }
 
     @GetMapping( value="/test")
-    public Object getuser(){
+    public Object getuser() {
         return myUserService.findUserbyUsername(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 }

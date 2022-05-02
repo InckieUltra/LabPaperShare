@@ -13,8 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class MyUserDetailsService implements UserDetailsService {
 
-
-
     @Autowired
     private MyUserService myUserService;
     @Override

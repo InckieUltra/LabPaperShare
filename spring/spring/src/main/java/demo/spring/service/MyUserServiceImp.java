@@ -11,11 +11,6 @@ public class MyUserServiceImp implements  MyUserService{
     private MyUserMapper myUserMapper;
 
     @Override
-    public int add(MyUser myUser) {
-        return this.myUserMapper.add(myUser);
-    }
-
-    @Override
     public String findPwdbyUsername(String uname) {
         return this.myUserMapper.findPwdbyUsername(uname);
     }
@@ -23,5 +18,15 @@ public class MyUserServiceImp implements  MyUserService{
     @Override
     public MyUser findUserbyUsername(String uname){
         return this.myUserMapper.findUserbyUsername(uname);
+    }
+
+    @Override
+    public int addUser(MyUser user){
+        return this.myUserMapper.add(user.getUser_id(),user.getUserName(),user.getPassword());
+    }
+
+    @Override
+    public int findmaxUser_id(){
+        return this.myUserMapper.findmaxUser_id();
     }
 }

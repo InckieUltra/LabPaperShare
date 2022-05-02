@@ -30,25 +30,22 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
                 http
-                        //禁用baisc和form认证，在LoginController中自己实现认证逻
+                        //禁用baisc和form认证，在Controller中自己实现认证逻
                         .httpBasic().disable()
-                        .formLogin()
-                        .loginPage("/login")
-                        .loginProcessingUrl("/user/login")
-                        .and()
+                        .formLogin().disable()
                         .csrf().disable()
                         .logout().disable()
+                        .exceptionHandling()
+                        .authenticationEntryPoint(new MyAuthenticationEntryPoint())
+                        .and()
                         .authorizeRequests() // 授权配置
-                        .antMatchers("/authentication/require","/api/login","/test",
-                                "/login", "/code/image","/code/sms","/session/invalid","/user/login").permitAll()
+                        .antMatchers("/authentication/require","/api/login","/test","/api/register/sendemail",
+                                "/api/register","/session/invalid","/user/login").permitAll()
                         .anyRequest()  // 所有请求
                         .authenticated() // 都需要认证
                         .and()
                         .sessionManagement() // 添加 Session管理器
                         .invalidSessionUrl("/session/invalid") // Session失效后跳转到这个链接
-                        .maximumSessions(1)
-                        .maxSessionsPreventsLogin(true)
-                        .expiredSessionStrategy(mySessionExpiredStrategy)
                 ;
         }
 

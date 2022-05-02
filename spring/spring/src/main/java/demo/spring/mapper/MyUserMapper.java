@@ -7,14 +7,16 @@ import org.springframework.stereotype.Component;
 @Component
 @Mapper
 public interface MyUserMapper {
-    @Insert("insert into user(user_id,username,password) values(#{user_id},#{name},#{passwd})")
-    int add(MyUser user);
-
+    @Insert("insert into user(user_id,username,password) values(#{user_id},#{username},#{password})")
+    int add(int user_id,String username,String password);
     @Select("select password from user where username=#{uname}")
     String findPwdbyUsername(String uname);
 
-    @Select("select username,password from user where username=#{uname}")
+    @Select("select max(user_id) from user")
+    int findmaxUser_id();
+    @Select("select user_id,username,password from user where username=#{uname}")
     @Results(id="userMap",value={
+            @Result(property = "user_id",column = "user_id",javaType = Integer.class),
             @Result(property = "userName",column = "username",javaType = String.class),
             @Result(property = "password",column = "password",javaType = String.class)
     })
