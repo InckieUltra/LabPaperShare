@@ -75,9 +75,9 @@ export default {
       // this.update()
     },
     update() {
-      request.put("/user", this.form).then(res => {
+      request.put("api/person", this.form).then(res => {
         console.log(res)
-        if (res.code === '0') {
+        if (res.code === 0) {
           this.$message({
             type: "success",
             message: "更新成功"

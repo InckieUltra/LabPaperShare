@@ -131,7 +131,7 @@ export default {
                 type: "success",
                 message: "注册成功"
               })
-              //this.$router.push("/login")  //登录成功之后进行页面的跳转，跳转到主页
+              this.$router.push("/login")  //zhuce成功之后进行页面的跳转，跳转到主页
             } else {
               this.$message({
                 type: "error",

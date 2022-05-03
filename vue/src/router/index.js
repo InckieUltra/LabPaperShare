@@ -48,6 +48,11 @@ const routes = [
                 name: 'Note',
                 component: () => import("@/views/Note")
             },
+            {
+                path: '/changeProfile',
+                name: 'ChangeProfile',
+                component: () => import("@/views/ChangeProfile")
+            },
         ]
     },
     {

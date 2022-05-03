@@ -128,7 +128,7 @@ export default {
           }).catch(failRes=>{
             this.$message({
               type: "error",
-              message: "寄"
+              message: "用户名或密码错误"
             })
           })
         }
