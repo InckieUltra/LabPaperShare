@@ -52,10 +52,22 @@ export default {
       }
     }
   },
-  created() {
-    let str = sessionStorage.getItem("user") || "{}"
-    this.form = JSON.parse(str)
-  },
+  // created() {
+  //   let userStr = sessionStorage.getItem("user") || "{}"
+  //   this.user = JSON.parse(userStr)
+  //   // 请求服务端，确认当前登录用户的 合法信息
+  //   request.get("/user/" + this.user.id).then(res => {
+  //     if (res.code === 0) {
+  //       this.user = res.data
+  //     }
+  //   })
+  //
+  //   this.load()
+  // },
+  // created() {
+  //   let str = sessionStorage.getItem("user") || "{}"
+  //   this.form = JSON.parse(str)
+  // },
   methods: {
     handleAvatarSuccess(res) {
       this.form.avatar = res.data

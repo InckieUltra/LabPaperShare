@@ -8,8 +8,17 @@
 
     </div>
     <div style="flex: 1"></div>
-    <div style="width: 100px">
-      <el-dropdown>
+    <div>
+      <el-badge :value="200" :max="99" class="item">
+        <el-button size="small">评论</el-button>
+      </el-badge>
+      <el-badge :value="100" :max="10" class="item">
+        <el-button size="small">消息</el-button>
+      </el-badge>
+
+    </div>
+    <div style="width: 100px ">
+      <el-dropdown style="margin-top: 10px;">
         <span class="el-dropdown-link">
           <el-avatar :size="30" :src="user.avatar" style="position: relative; top: 10px"></el-avatar>
            {{ user.nickName }}
@@ -47,6 +56,9 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style>
+.item {
+  margin-top: 10px;
+  margin-right: 40px;
+}
 </style>

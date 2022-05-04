@@ -1,23 +1,6 @@
 <template>
   <div style="padding: 10px">
-<!--    <div>-->
-<!--      <el-select-->
-<!--          v-model="value"-->
-<!--          multiple-->
-<!--          filterable-->
-<!--          remote-->
-<!--          reserve-keyword-->
-<!--          placeholder="请输入关键词"-->
-<!--          :remote-method="remoteMethod"-->
-<!--          :loading="loading">-->
-<!--        <el-option-->
-<!--            v-for="item in options"-->
-<!--            :key="item.value"-->
-<!--            :label="item.label"-->
-<!--            :value="item.value">-->
-<!--        </el-option>-->
-<!--      </el-select>-->
-<!--    </div>-->
+
 
     <div>
       <el-card>
@@ -47,6 +30,18 @@ export default {
     this.drawLine();
     this.drawLine1();
   },
+  // created() {
+  //   let userStr = sessionStorage.getItem("user") || "{}"
+  //   this.user = JSON.parse(userStr)
+  //   // 请求服务端，确认当前登录用户的 合法信息
+  //   request.get("/user/" + this.user.id).then(res => {
+  //     if (res.code === 0) {
+  //       this.user = res.data
+  //     }
+  //   })
+  //
+  //   this.load()
+  // },
   methods: {
     drawLine1(){
 
