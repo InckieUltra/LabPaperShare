@@ -78,8 +78,6 @@ export default {
   },
   mounted() {
 
-    sessionStorage.removeItem("user")
-
   },
   methods: {
     // 接收验证码组件提交的 4位验证码
@@ -110,26 +108,26 @@ export default {
                 type: "success",
                 message: "登录成功"
               })
-              //activeRouter()
               sessionStorage.setItem("user", JSON.stringify(res.data))  // 缓存用户信息
-              this.$router.push("/")  //登录成功之后进行页面的跳转，跳转到主页
-
+              request.post("/api/permission?user_id=" + res.data.user_id).then(res1 => {
+                console.log(res1)
+                console.log("permission Get")
+                sessionStorage.setItem("userPermission", JSON.stringify(res1))  // 缓存用户信息
+                let userStrr = sessionStorage.getItem("userPermission") || "{}"
+                this.permissionList = JSON.parse(userStrr)
+                this.$router.push("/")  //登录成功之后进行页面的跳转，跳转到主页
+              })
 
               // 登录成功的时候更新当前路由
+              //activeRouter()
 
 
-
-            } else {
+            } else  {
               this.$message({
                 type: "error",
                 message: res.msg
               })
             }
-          }).catch(failRes=>{
-            this.$message({
-              type: "error",
-              message: "用户名或密码错误"
-            })
           })
         }
       })

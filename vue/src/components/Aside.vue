@@ -2,15 +2,18 @@
 <template>
   <div>
     <el-menu
-        style="width: 200px; min-height: calc(100vh - 50px)"
+        style="width: 220px; min-height: calc(100vh - 50px)"
         :default-active="$route.path"
+        background-color="#545c64"
+        text-color="#fff"
+        active-text-color="#ffd04b"
         router
     >
-      <div  v-for="m in data.list" :key="m.id">
-        <el-menu-item :index="m.path" v-if="m.name !== 'Person' && m.name !== 'Password' ">
-          <i :class="m.icon"></i>  {{ m.comment }}
-        </el-menu-item>
-      </div>
+      <div  v-for="m in permissionList" :key="m.permission_id">
+      <el-menu-item :index="m.path" >
+        <i :class="m.icon"></i>  {{ m.comment }}
+      </el-menu-item>
+    </div>
     </el-menu>
   </div>
 </template>
@@ -22,6 +25,12 @@ export default {
   name: "Aside",
   data() {
     return {
+      user:{
+        user_id: ""
+      },
+      permissionList:{
+
+      },
       data: {
         list:[{
           id:1,
@@ -78,14 +87,19 @@ export default {
     }
   },
   created() {
-    let userStr = sessionStorage.getItem("user") || "{}"
-    this.user = JSON.parse(userStr)
-
-    // 请求服务端，确认当前登录用户的 合法信息
-    // request.get("/user/" + this.user.id).then(res => {
-    //   if (res.code === '0') {
-    //     this.user = res.data
-    //   }
+    let userStr = sessionStorage.getItem("userPermission") || "{}"
+    this.permissionList = JSON.parse(userStr)
+    //console.log(this.permissionList)
+    //请求服务端，确认当前登录用户的 合法信息
+    //alert("/api/permission?user_id=" + this.user.user_id)
+    // request.post("/api/permission?user_id=" + this.user.user_id).then(res => {
+    //     console.log(res)
+    //     console.log("permission Get")
+    //     this.permissionList = res.data
+    //     sessionStorage.setItem("userPermission", JSON.stringify(res))  // 缓存用户信息
+    //     console.log(res.data)
+    //     let userStrr = sessionStorage.getItem("userPermission") || "{}"
+    //     this.permissionList = JSON.parse(userStrr)
     // })
   }
 }

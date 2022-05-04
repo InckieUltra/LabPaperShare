@@ -75,30 +75,30 @@ const router = createRouter({
     routes
 })
 
-activeRouter()
-
-function activeRouter() {
-    const userStr = sessionStorage.getItem("user")
-    if (userStr) {
-        const user = JSON.parse(userStr)
-        let root = {
-            path: '/',
-            name: 'Layout',
-            component: Layout,
-            redirect: "/home",
-            children: []
-        }
-        user.permissions.forEach(p => {
-            let obj = {
-                path: p.path,
-                name: p.name,
-                component: () => import("@/views/" + p.name)
-            };
-            root.children.push(obj)
-        })
-        if (router) {
-            router.addRoute(root)
-        }
-    }
-}
+// activeRouter()
+//
+// function activeRouter() {
+//     const userStr = sessionStorage.getItem("user")
+//     if (userStr) {
+//         const user = JSON.parse(userStr)
+//         let root = {
+//             path: '/',
+//             name: 'Layout',
+//             component: Layout,
+//             redirect: "/home",
+//             children: []
+//         }
+//         user.permissions.forEach(p => {
+//             let obj = {
+//                 path: p.path,
+//                 name: p.name,
+//                 component: () => import("@/views/" + p.name)
+//             };
+//             root.children.push(obj)
+//         })
+//         if (router) {
+//             router.addRoute(root)
+//         }
+//     }
+// }
 export default router
