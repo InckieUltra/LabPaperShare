@@ -162,7 +162,7 @@ public class UserController {
 
     @CrossOrigin
     @PostMapping("/api/permission")
-    public List<Permission> permission(@RequestBody PermissionRequest permissionRequest) {
-        return this.myUserService.findPermission(permissionRequest.getUser_id());
+    public List<Permission> permission(@RequestParam("user_id") Integer user_id) {
+        return this.myUserService.findPermission(user_id);
     }
 }
