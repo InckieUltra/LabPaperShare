@@ -49,7 +49,11 @@ public class UserController {
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
         Authentication authentication = authenticationManager.authenticate(token);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }catch (Exception e){
+            return Result.fail(1,"用户名或密码错误",null);
+        }
 
         myUser= myUserService.findUserbyUsername(loginRequest.getUsername());
 
