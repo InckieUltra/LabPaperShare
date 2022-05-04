@@ -1,10 +1,14 @@
 package demo.spring.service;
 
 import demo.spring.entity.MyUser;
+import demo.spring.entity.Permission;
 import demo.spring.entity.Result;
 import demo.spring.mapper.MyUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public interface MyUserService{
 
@@ -16,5 +20,5 @@ public interface MyUserService{
 
     public int findmaxUser_id();
 
-    public int[] findPermission(int user_id);
+    public List<Permission> findPermission(int user_id);
 }
