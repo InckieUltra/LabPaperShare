@@ -5,25 +5,36 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MyInvalidSessionStrategy implements InvalidSessionStrategy {
+    String[] puburi={"/api/login"};
     @Override
     public void onInvalidSessionDetected(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
-        //SessionRegistryImpl.registerNewSession();
+        String requestUri = request.getRequestURI();
+        System.out.println(requestUri);
+        if(isPublicUri(requestUri)){
+            request.getSession(true).invalidate();
+            RequestDispatcher dispatcher=request.getRequestDispatcher(requestUri);
+            dispatcher.forward(request,response);
+        }
+        else {
+            Map<Object, Object> map = new LinkedHashMap<>();
+            map.put("code", 1);
+            map.put("msg", "会话过期，请重新登录");
 
-        Map<Object, Object> map = new LinkedHashMap<>();
-        map.put("code",1);
-        map.put("msg","会话过期，请重新登录");
+            String jsonMap = new ObjectMapper().writeValueAsString(map);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().println(jsonMap);
+        }
+    }
 
-        String jsonMap = new ObjectMapper().writeValueAsString(map);
-        response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().println(jsonMap);
+    public boolean isPublicUri(String uri){
+        return Arrays.asList(puburi).contains(uri);
     }
 }

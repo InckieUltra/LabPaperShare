@@ -29,4 +29,9 @@ public class MyUserServiceImp implements  MyUserService{
     public int findmaxUser_id(){
         return this.myUserMapper.findmaxUser_id();
     }
+
+    @Override
+    public int[] findPermission(int user_id){
+        return this.myUserMapper.findPermisssion(user_id);
+    }
 }

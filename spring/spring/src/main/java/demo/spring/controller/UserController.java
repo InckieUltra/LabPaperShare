@@ -63,8 +63,11 @@ public class UserController {
             return Result.fail(1,"用户已存在",null);
         }
 
-
+        resultMap=VerifyCode.queryvCode(registerRequest.getUsername());
         //判断验证码是否正确
+        if(resultMap==null){
+            return Result.fail(1,"请先接收验证码",null);
+        }
         String requestHash = resultMap.get("hash").toString();
 
         String tamp = resultMap.get("tamp").toString();
@@ -132,7 +135,7 @@ public class UserController {
         message.setText("【LabPaperShare】你的验证码为："+code+"，有效时间为5分钟(若不是本人操作，可忽略该条邮件)");
         try {
             jms.send(message);
-            saveCode(code);
+            saveCode(registerRequest.getUsername(),code);
             return Result.success(0,"邮件发送成功",null);
         }catch (MailSendException e){
             return Result.fail(1,"目标邮箱不存在",null);
@@ -141,7 +144,7 @@ public class UserController {
         }
     }
 
-    private void saveCode(String code){
+    private void saveCode(String username,String code){
         SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmmss");
         Calendar c = Calendar.getInstance();
         c.add(Calendar.MINUTE, 5);
@@ -150,7 +153,13 @@ public class UserController {
         String hash =  MD5Utils.code(code);//生成MD5值
         resultMap.put("hash", hash);
         resultMap.put("tamp", currentTime);
+
+        VerifyCode.insertvCode(username,resultMap);
     }
 
-
+    @CrossOrigin
+    @PostMapping("/api/permission")
+    public int[] permission(@RequestBody PermissionRequest permissionRequest) {
+        return this.myUserService.findPermission(permissionRequest.getUser_id());
+    }
 }

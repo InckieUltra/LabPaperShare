@@ -45,7 +45,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                         .authenticated() // 都需要认证
                         .and()
                         .sessionManagement() // 添加 Session管理器
-                        .invalidSessionUrl("/session/invalid") // Session失效后跳转到这个链接
+                        .invalidSessionStrategy(new MyInvalidSessionStrategy()) // Session失效后跳转到这个链接
                 ;
         }
 
