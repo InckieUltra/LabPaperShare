@@ -14,6 +14,9 @@ public interface MyUserMapper {
 
     @Select("select max(user_id) from user")
     int findmaxUser_id();
+
+    @Select("select permission_id from user_role natural join role natural join role_permission where user_id=#{user_id}")
+    int[] findPermisssion(int user_id);
     @Select("select user_id,username,password from user where username=#{uname}")
     @Results(id="userMap",value={
             @Result(property = "user_id",column = "user_id",javaType = Integer.class),

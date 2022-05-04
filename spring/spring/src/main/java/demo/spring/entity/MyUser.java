@@ -14,6 +14,8 @@ public class MyUser implements Serializable {
     private String password;
 
     private String email;
+
+    private int role;
     private boolean accountNonExpired = true;
 
     private boolean accountNonLocked= true;
@@ -85,5 +87,11 @@ public class MyUser implements Serializable {
         this.enabled = enabled;
     }
 
+    public int getRole() {
+        return role;
+    }
 
+    public void setRole(int role) {
+        this.role = role;
+    }
 }

@@ -36,7 +36,6 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                         .csrf().disable()
                         .logout().disable()
                         .exceptionHandling()
-                        .authenticationEntryPoint(new MyAuthenticationEntryPoint())
                         .and()
                         .authorizeRequests() // 授权配置
                         .antMatchers("/authentication/require","/api/login","/test","/api/register/sendemail",
@@ -45,7 +44,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                         .authenticated() // 都需要认证
                         .and()
                         .sessionManagement() // 添加 Session管理器
-                        .invalidSessionUrl("/session/invalid") // Session失效后跳转到这个链接
+                        .invalidSessionStrategy(new MyInvalidSessionStrategy()) // Session失效后跳转到这个链接
                 ;
         }
 

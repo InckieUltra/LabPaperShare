@@ -15,4 +15,6 @@ public interface MyUserService{
     public int addUser(MyUser user);
 
     public int findmaxUser_id();
+
+    public int[] findPermission(int user_id);
 }
