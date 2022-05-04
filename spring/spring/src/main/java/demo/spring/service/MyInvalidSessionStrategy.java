@@ -26,7 +26,7 @@ public class MyInvalidSessionStrategy implements InvalidSessionStrategy {
         else {
             Map<Object, Object> map = new LinkedHashMap<>();
             map.put("code", 1);
-            map.put("msg", "会话过期，请重新登录");
+            map.put("msg", "你还没有登陆");
 
             String jsonMap = new ObjectMapper().writeValueAsString(map);
             response.setContentType("application/json;charset=UTF-8");

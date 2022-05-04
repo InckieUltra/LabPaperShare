@@ -36,7 +36,6 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                         .csrf().disable()
                         .logout().disable()
                         .exceptionHandling()
-                        .authenticationEntryPoint(new MyAuthenticationEntryPoint())
                         .and()
                         .authorizeRequests() // 授权配置
                         .antMatchers("/authentication/require","/api/login","/test","/api/register/sendemail",
