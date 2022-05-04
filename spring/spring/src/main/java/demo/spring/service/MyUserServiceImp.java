@@ -1,9 +1,13 @@
 package demo.spring.service;
 
 import demo.spring.entity.MyUser;
+import demo.spring.entity.Permission;
 import demo.spring.mapper.MyUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service("myUserService")
 public class MyUserServiceImp implements  MyUserService{
@@ -31,7 +35,7 @@ public class MyUserServiceImp implements  MyUserService{
     }
 
     @Override
-    public int[] findPermission(int user_id){
+    public List<Permission> findPermission(int user_id){
         return this.myUserMapper.findPermisssion(user_id);
     }
 }

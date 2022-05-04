@@ -1,6 +1,7 @@
 package demo.spring.controller;
 
 import demo.spring.entity.MyUser;
+import demo.spring.entity.Permission;
 import demo.spring.entity.Result;
 import demo.spring.service.MyUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 @RestController
 public class UserController {
@@ -163,7 +162,7 @@ public class UserController {
 
     @CrossOrigin
     @PostMapping("/api/permission")
-    public int[] permission(@RequestBody PermissionRequest permissionRequest) {
+    public List<Permission> permission(@RequestBody PermissionRequest permissionRequest) {
         return this.myUserService.findPermission(permissionRequest.getUser_id());
     }
 }
