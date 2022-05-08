@@ -17,6 +17,7 @@
 import Header from "@/components/Header";
 import Aside from "@/components/Aside";
 import request from "@/utils/request";
+import router from "@/router";
 
 export default {
   name: "Layout",
@@ -36,13 +37,8 @@ export default {
     refreshUser() {
       let userJson = sessionStorage.getItem("user");
       if (!userJson) {
-        return
+        router.push("/login")
       }
-      let userId = JSON.parse(userJson).id
-      // 从后台取出更新后的最新用户信息
-      request.get("/user/" + userId).then(res => {
-        this.user = res.data
-      })
     }
   }
 }

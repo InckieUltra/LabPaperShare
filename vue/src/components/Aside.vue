@@ -26,63 +26,11 @@ export default {
   data() {
     return {
       user:{
-        user_id: ""
       },
       permissionList:{
 
       },
       data: {
-        list:[{
-          id:1,
-          path:'/home',
-          name:'Home',
-          icon:'el-icon-house',
-          comment:'首页'
-        },
-
-          {
-            id:2,
-            path:'/upload',
-            name:'Upload',
-            icon:'el-icon-upload',
-            comment:'上传论文'
-          },
-          {
-            id:3,
-            path:'/search',
-            name:'Search',
-            icon:'el-icon-search',
-            comment:'搜索论文'
-          },
-          {
-            id:4,
-            path:'/permission',
-            name:'Permission',
-            icon:'el-icon-menu',
-            comment:'权限管理'
-          },
-          {
-            id:5,
-            path:'/role',
-            name:'Role',
-            icon:'el-icon-s-custom',
-            comment:'角色管理'
-          },
-          {
-            id:6,
-            path:'/category',
-            name:'Category',
-            icon:'el-icon-position',
-            comment:'研究方向'
-          },
-          {
-            id:7,
-            path:'/note',
-            name:'Note',
-            icon:'el-icon-edit-outline',
-            comment:'笔记管理'
-          },
-        ]
       },
     }
   },

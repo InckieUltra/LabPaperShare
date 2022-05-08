@@ -79,6 +79,18 @@ export default {
   mounted() {
 
   },
+  beforeCreate() {
+    console.log("before Login Create")
+    let userJson = sessionStorage.getItem("user")
+    if (userJson) {
+      this.$message({
+        type: "success",
+        message: "您已登录,自动跳转",
+
+      })
+      this.$router.push("/")
+    }
+  },
   methods: {
     // 接收验证码组件提交的 4位验证码
     createValidCode(data) {
@@ -86,6 +98,8 @@ export default {
     },
 
     login () {
+      //console.log(this.form)
+      console.log("denglule")
       this.$refs['form'].validate((valid) => {
         if (valid) {
           if (!this.form.validCode) {

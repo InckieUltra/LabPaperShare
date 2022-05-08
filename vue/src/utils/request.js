@@ -14,7 +14,7 @@ const whiteUrls = ["/api/login", '/api/register']
 // 可以自请求发送前对请求做一些处理
 // 比如统一加token，对请求参数统一加密
 request.interceptors.request.use(config => {
-    console.log("拦截器")
+    console.log("拦截器1")
     // 取出sessionStorage里面缓存的用户信息
     let userJson = sessionStorage.getItem("user")
 

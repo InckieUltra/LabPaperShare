@@ -24,11 +24,6 @@ const routes = [
                 component: () => import("@/views/Upload")
             },
             {
-                path: '/permission',
-                name: 'Permission',
-                component: () => import("@/views/Permission")
-            },
-            {
                 path: '/role',
                 name: 'Role',
                 component: () => import("@/views/Role")
@@ -52,6 +47,11 @@ const routes = [
                 path: '/changeProfile',
                 name: 'ChangeProfile',
                 component: () => import("@/views/ChangeProfile")
+            },
+            {
+                path: '/user',
+                name: 'User',
+                component: () => import("@/views/User")
             },
         ]
     },

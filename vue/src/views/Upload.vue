@@ -7,17 +7,19 @@
       <div class="block">
         <el-form-item label="研究领域" style="width: 50%">
         <el-cascader
-            v-model="field"
+            v-model="form.field"
             :options="options"
             @change="handleChange"></el-cascader>
         </el-form-item>
       </div>
-
+      <el-form-item label="发布会议" style="width: 50%">
+        <el-input v-model="form.conference"></el-input>
+      </el-form-item>
       <div style="display: inline-block">
-        <el-form-item label="论文作者" style="width: 50%;">
+        <el-form-item label="论文作者" style="width: 100%;">
           <el-tag
               :key="author"
-              v-for="author in form.dynamicAuthors"
+              v-for="author in form.Authors"
               closable
               :disable-transitions="false"
               @close="handleClose(author)" style="">
@@ -25,9 +27,6 @@
           </el-tag>
         </el-form-item>
       </div>
-
-
-
 
       <el-input
           class="input-new-tag"
@@ -44,28 +43,43 @@
 
       <el-form-item label="发布时间">
         <el-col :span="11">
-          <el-date-picker type="date" placeholder="选择日期" v-model="form.date" style="width: 100%;"></el-date-picker>
+          <el-date-picker type="date" placeholder="选择论文发表日期" v-model="form.date" style="width: 100%;"></el-date-picker>
         </el-col>
 
       </el-form-item>
 
-      <el-form-item label="活动性质">
-        <el-checkbox-group v-model="form.type">
-          <el-checkbox label="美食/餐厅线上活动" name="type"></el-checkbox>
-          <el-checkbox label="地推活动" name="type"></el-checkbox>
-          <el-checkbox label="线下主题活动" name="type"></el-checkbox>
-          <el-checkbox label="单纯品牌曝光" name="type"></el-checkbox>
-        </el-checkbox-group>
+      <el-form-item label="论文类型" >
+        <el-select v-model="form.type" placeholder="请选择论文类型" >
+          <el-option label="理论证明型" value="理论证明型" ></el-option>
+          <el-option label="综述型" value="综述型"></el-option>
+          <el-option label="实验型" value="实验型"></el-option>
+          <el-option label="工具型" value="工具型"></el-option>
+          <el-option label="数据集型" value="数据集型"></el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item label="特殊资源">
-        <el-radio-group v-model="form.resource">
-          <el-radio label="线上品牌商赞助"></el-radio>
-          <el-radio label="线下场地免费"></el-radio>
-        </el-radio-group>
+
+      <el-form-item label="笔记内容">
+        <div id="div1" style="position:relative;z-index: 0">
+
+        </div>
       </el-form-item>
-      <el-form-item label="活动形式" style="width: 50%">
-        <el-input type="textarea" v-model="form.desc"></el-input>
+
+      <el-form-item label="附加文件">
+        <el-upload
+            class="upload-demo"
+            action="http://localhost:9090/user/import"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :before-remove="beforeRemove"
+            multiple
+            :limit="3"
+            :on-exceed="handleExceed"
+            :file-list="form.fileList">
+          <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
+
       </el-form-item>
+
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即创建</el-button>
         <el-button>取消</el-button>
@@ -76,8 +90,14 @@
 </template>
 
 <script>
+import request from "@/utils/request";
+
+let editor;
+import E from 'wangeditor'
 export default {
   name: "Upload",
+  components:{
+  },
   data() {
     return {
 
@@ -85,15 +105,17 @@ export default {
       inputValue: '',
       form: {
         name: '',
-        region: '',
         date: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: '',
-        dynamicAuthors: [],
+        conference:'',
+        type: '',
+        content:'',
+        Authors: [],
+        field: [],
+        fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
+          {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
+
       },
-      field: [],
+
       options: [{
         value: 'zhinan',
         label: '指南',
@@ -292,18 +314,46 @@ export default {
 
     }
   },
+  mounted() {
+    this.init()
 
+  },
   methods: {
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+    handleExceed(files, fileList) {
+      this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+    },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${ file.name }？`);
+    },
     onSubmit() {
+      // this.form.content = JSON.parse(JSON.stringify(this.BasicEditor.getHtml()))
+      // console.log(this.form.content)
+      request.post("/api/upload").then(res=>{
+
+      })
+      this.form.content = editor.txt.html()  // 获取 编辑器里面的值，然后赋予到实体当中
+      console.log(this.form)
       console.log('submit!');
+    },
+    init(){
+      editor = new E('#div1')
+      // 或者 const editor = new E( document.getElementById('div1') )
+
+      editor.create()
+      editor.txt.html("")
     },
     handleChange(value) {
       console.log(value);
     },
     handleClose(author) {
-      this.form.dynamicAuthors.splice(this.dynamicAuthors.indexOf(author), 1);
+      this.form.Authors.splice(this.Authors.indexOf(author), 1);
     },
-
     showInput() {
       this.inputVisible = true;
       this.$nextTick(_ => {
@@ -314,7 +364,7 @@ export default {
     handleInputConfirm() {
       let inputValue = this.inputValue;
       if (inputValue) {
-        this.form.dynamicAuthors.push(inputValue);
+        this.form.Authors.push(inputValue);
       }
       this.inputVisible = false;
       this.inputValue = '';
