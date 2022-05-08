@@ -2,6 +2,7 @@ package demo.spring.mapper;
 
 import demo.spring.entity.MyUser;
 import demo.spring.entity.Permission;
+import demo.spring.entity.Role;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -48,6 +49,13 @@ public interface MyUserMapper {
     })
     List<MyUser> findallUser();
 
+    @Select("select role_id,name,comment from role")
+    @Results(id="allRoleMap",value={
+            @Result(property = "role_id",column = "role_id",javaType = Integer.class),
+            @Result(property = "name",column = "name",javaType = String.class),
+            @Result(property = "comment",column = "comment",javaType = String.class)
+    })
+    List<Role> findallRole();
     @Update("update user set username='deleteduser',valid=0 where user_id=#{user_id}")
     int deleteUser(int user_id);
 

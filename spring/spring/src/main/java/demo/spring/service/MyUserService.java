@@ -2,6 +2,7 @@ package demo.spring.service;
 
 import demo.spring.entity.MyUser;
 import demo.spring.entity.Permission;
+import demo.spring.entity.Role;
 
 import java.util.List;
 
@@ -22,4 +23,6 @@ public interface MyUserService{
     public int deleteUser(int user_id);
 
     public int changeUserRole(int user_id,int role_id);
+
+    public List<Role> findallRole();
 }

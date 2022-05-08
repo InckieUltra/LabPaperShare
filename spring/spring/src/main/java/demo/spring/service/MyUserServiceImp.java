@@ -2,6 +2,7 @@ package demo.spring.service;
 
 import demo.spring.entity.MyUser;
 import demo.spring.entity.Permission;
+import demo.spring.entity.Role;
 import demo.spring.mapper.MyUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,5 +49,9 @@ public class MyUserServiceImp implements  MyUserService{
 
     public int changeUserRole(int user_id,int role_id){
         return this.myUserMapper.changeUserRole(user_id,role_id);
+    }
+
+    public List<Role> findallRole(){
+        return this.myUserMapper.findallRole();
     }
 }

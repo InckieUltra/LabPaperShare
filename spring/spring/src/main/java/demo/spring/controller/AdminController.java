@@ -3,6 +3,7 @@ package demo.spring.controller;
 import demo.spring.entity.MyUser;
 import demo.spring.entity.Permission;
 import demo.spring.entity.Result;
+import demo.spring.entity.Role;
 import demo.spring.service.MyUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -42,6 +43,17 @@ public class AdminController {
         return Result.success("查询成功",res);
     }
 
+    @CrossOrigin
+    @PostMapping("/api/admin/allrole")
+    public Result findallrole() {
+        List<Role> res;
+        try{
+            res=this.myUserService.findallRole();
+        }catch (Exception e){
+            return Result.fail("查询失败",null);
+        }
+        return Result.success("查询成功",res);
+    }
     @CrossOrigin
     @PostMapping("/api/admin/user/changerole")
     public Result deleteuser(@RequestParam("user_id") Integer user_id,
