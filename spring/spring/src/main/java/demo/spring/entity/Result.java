@@ -36,17 +36,17 @@ public class Result implements Serializable {
     }
 
     //成功 不返回数据直接返回成功信息
-    public static Result success(Integer c,String m,Object d) {
+    public static Result success(String m,Object d) {
         Result result = new Result();
-        result.setCode(c);
+        result.setCode(0);
         result.setMsg(m);
         result.setData(d);
         return result;
     }
 
-    public static Result fail(Integer c,String m,Object d) {
+    public static Result fail(String m,Object d) {
         Result result = new Result();
-        result.setCode(c);
+        result.setCode(1);
         result.setMsg(m);
         result.setData(d);
         return result;

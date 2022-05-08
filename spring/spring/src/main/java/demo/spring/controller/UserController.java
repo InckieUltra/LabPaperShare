@@ -51,25 +51,25 @@ public class UserController {
             Authentication authentication = authenticationManager.authenticate(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }catch (Exception e){
-            return Result.fail(1,"用户名或密码错误",null);
+            return Result.fail("用户名或密码错误",null);
         }
 
         myUser= myUserService.findUserbyUsername(loginRequest.getUsername());
 
-        return Result.success(0,"success",myUser);
+        return Result.success("success",myUser);
     }
 
     @CrossOrigin
     @PostMapping("/api/register")
     public Result register(@RequestBody RegisterRequest registerRequest) {
         if(myUserService.findPwdbyUsername(registerRequest.getUsername())!=null){
-            return Result.fail(1,"用户已存在",null);
+            return Result.fail("用户已存在",null);
         }
 
         resultMap=VerifyCode.queryvCode(registerRequest.getUsername());
         //判断验证码是否正确
         if(resultMap==null){
-            return Result.fail(1,"请先接收验证码",null);
+            return Result.fail("请先接收验证码",null);
         }
         String requestHash = resultMap.get("hash").toString();
 
@@ -80,11 +80,11 @@ public class UserController {
         if (tamp.compareTo(currentTime) > 0) {
             String hash =  MD5Utils.code(registerRequest.getIdentify());//生成MD5值
             if (!hash.equalsIgnoreCase(requestHash)){
-                return Result.success(0,"验证码错误",null);
+                return Result.success("验证码错误",null);
             }
         }
         else{
-            return Result.fail(1,"验证码过期",null);
+            return Result.fail("验证码过期",null);
         }
 
 
@@ -97,17 +97,18 @@ public class UserController {
         myUser.setUserName(registerRequest.getUsername());
         myUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         myUser.setEmail(registerRequest.getEmail());
+        myUser.setRole(2);
 
         System.out.println(myUserService.addUser(myUser));
 
-        return Result.success(0,"注册成功",null);
+        return Result.success("注册成功",null);
     }
 
     @CrossOrigin
     @GetMapping(value="/session/invalid")
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Result sessioninvalid(){
-        return Result.fail(1,"会话过期",null);
+        return Result.fail("会话过期",null);
     }
 
     @Autowired
@@ -134,16 +135,16 @@ public class UserController {
 
         message.setFrom(from);
         message.setTo(registerRequest.getEmail());
-        message.setSubject("LabPaperShare");// 标题
-        message.setText("【LabPaperShare】你的验证码为："+code+"，有效时间为5分钟(若不是本人操作，可忽略该条邮件)");
+        message.setSubject(registerRequest.getUsername()+"LabPaperShare注册");// 标题
+        message.setText("你的验证码为："+code+"，有效时间为5分钟(若不是本人操作，可忽略该条邮件)");
         try {
             jms.send(message);
             saveCode(registerRequest.getUsername(),code);
-            return Result.success(0,"邮件发送成功",null);
+            return Result.success("邮件发送成功",null);
         }catch (MailSendException e){
-            return Result.fail(1,"目标邮箱不存在",null);
+            return Result.fail("目标邮箱不存在",null);
         } catch (Exception e) {
-            return Result.fail(1,"文本邮件发送异常",null);
+            return Result.fail("文本邮件发送异常",null);
         }
     }
 

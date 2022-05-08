@@ -13,7 +13,8 @@ import java.io.IOException;
 import java.util.*;
 
 public class MyInvalidSessionStrategy implements InvalidSessionStrategy {
-    String[] puburi={"/api/login"};
+    String[] puburi={"/authentication/require","/api/login","/test","/api/register/sendemail",
+            "/api/register","/session/invalid","/user/login"};
     @Override
     public void onInvalidSessionDetected(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
         String requestUri = request.getRequestURI();

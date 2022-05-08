@@ -6,7 +6,6 @@ import demo.spring.mapper.MyUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service("myUserService")
@@ -26,7 +25,7 @@ public class MyUserServiceImp implements  MyUserService{
 
     @Override
     public int addUser(MyUser user){
-        return this.myUserMapper.add(user.getUser_id(),user.getUserName(),user.getPassword());
+        return this.myUserMapper.add(user.getUser_id(),user.getUserName(),user.getPassword(),user.getEmail());
     }
 
     @Override
@@ -37,5 +36,17 @@ public class MyUserServiceImp implements  MyUserService{
     @Override
     public List<Permission> findPermission(int user_id){
         return this.myUserMapper.findPermisssion(user_id);
+    }
+
+    public List<MyUser> findallUser() {
+        return this.myUserMapper.findallUser();
+    }
+
+    public int deleteUser(int user_id){
+        return this.myUserMapper.deleteUser(user_id);
+    }
+
+    public int changeUserRole(int user_id,int role_id){
+        return this.myUserMapper.changeUserRole(user_id,role_id);
     }
 }
