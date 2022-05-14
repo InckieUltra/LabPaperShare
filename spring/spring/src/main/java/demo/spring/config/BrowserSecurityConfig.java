@@ -19,9 +19,6 @@ import java.util.List;
 public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 
         @Autowired
-        private MyAuthenticationSuccessHandler authenticationSuccessHandler;
-
-        @Autowired
         private MyUserDetailsService myUserDetailsService;
 
         @Autowired

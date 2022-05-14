@@ -5,6 +5,7 @@ import demo.spring.entity.Permission;
 import demo.spring.entity.Role;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,12 @@ import java.util.List;
 @Component
 @Mapper
 public interface MyUserMapper {
+    @Insert("insert into role values(#{role_id},#{name},#{comment})")
+    int addRole(int role_id,String name,String comment);
+
+    @Insert("insert into role_permission values(#{role_id},#{permission_id})")
+    int RoleaddPermission(int role_id,int permission_id);
+
     @Insert("insert into user(user_id,username,password,email,role_id,valid) values(#{user_id},#{username},#{password},#{email},2,1)")
     int add(int user_id,String username,String password,String email);
     @Select("select password from user where username=#{uname} and valid=1 and username!='deleteduser'")
@@ -19,6 +26,8 @@ public interface MyUserMapper {
 
     @Select("select max(user_id) from user")
     int findmaxUser_id();
+    @Select("select max(role_id) from role")
+    int findmaxRole_id();
 
     @Select("select permission_id,name,comment,path,icon from user natural join role_permission natural join permission where user_id=#{user_id}")
     @Results(id="permissionMap",value={
@@ -56,6 +65,16 @@ public interface MyUserMapper {
             @Result(property = "comment",column = "comment",javaType = String.class)
     })
     List<Role> findallRole();
+
+    @Select("select permission_id,name,comment,path,icon from permission")
+    @Results(id="allPermissionMap",value={
+            @Result(property = "permission_id",column = "permission_id",javaType = Integer.class),
+            @Result(property = "name",column = "name",javaType = String.class),
+            @Result(property = "comment",column = "comment",javaType = String.class),
+            @Result(property = "path",column = "path"),
+            @Result(property = "icon",column = "path")
+    })
+    List<Permission> findallPermission();
     @Update("update user set username='deleteduser',valid=0 where user_id=#{user_id}")
     int deleteUser(int user_id);
 

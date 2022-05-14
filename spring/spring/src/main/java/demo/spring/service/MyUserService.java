@@ -1,6 +1,7 @@
 package demo.spring.service;
 
 import demo.spring.entity.MyUser;
+import demo.spring.entity.Paper;
 import demo.spring.entity.Permission;
 import demo.spring.entity.Role;
 
@@ -25,4 +26,11 @@ public interface MyUserService{
     public int changeUserRole(int user_id,int role_id);
 
     public List<Role> findallRole();
+
+    public List<Permission> findallPermission();
+
+    public int addRole(Role role);
+
+    public int RoleaddPermission(int role_id,int permission_id);
+
 }

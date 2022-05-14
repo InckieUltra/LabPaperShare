@@ -1,6 +1,7 @@
 package demo.spring.service;
 
 import demo.spring.entity.MyUser;
+import demo.spring.entity.Paper;
 import demo.spring.entity.Permission;
 import demo.spring.entity.Role;
 import demo.spring.mapper.MyUserMapper;
@@ -53,5 +54,17 @@ public class MyUserServiceImp implements  MyUserService{
 
     public List<Role> findallRole(){
         return this.myUserMapper.findallRole();
+    }
+
+    public List<Permission> findallPermission(){
+        return this.myUserMapper.findallPermission();
+    }
+
+    public int addRole(Role role) {
+        return this.myUserMapper.addRole(role.getRole_id(),role.getName(),role.getComment());
+    }
+
+    public int RoleaddPermission(int role_id,int permission_id){
+        return this.myUserMapper.RoleaddPermission(role_id,permission_id);
     }
 }

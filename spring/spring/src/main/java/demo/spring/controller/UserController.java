@@ -44,7 +44,7 @@ public class UserController {
     @CrossOrigin
     @PostMapping("/api/login")
     public Result login(@RequestBody LoginRequest loginRequest) {
-       System.out.println(loginRequest);
+       System.out.println(new BCryptPasswordEncoder().encode("123456"));
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
         try {
