@@ -1,13 +1,11 @@
 package demo.spring.service;
 
-import demo.spring.entity.MyUser;
-import demo.spring.entity.Paper;
-import demo.spring.entity.Permission;
-import demo.spring.entity.Role;
+import demo.spring.entity.*;
 import demo.spring.mapper.MyUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service("myUserService")
@@ -58,6 +56,27 @@ public class MyUserServiceImp implements  MyUserService{
 
     public List<Permission> findallPermission(){
         return this.myUserMapper.findallPermission();
+    }
+
+    public List<RoleInfo> findallRoleInfo(){
+        List<Role> rolelist=this.findallRole();
+        List<RoleInfo> res=new ArrayList<RoleInfo>();
+        RoleInfo roleInfo;
+        for(int i=0;i<rolelist.size();i++) {
+            roleInfo=new RoleInfo();
+            roleInfo.setRole_id(rolelist.get(i).getRole_id());
+            roleInfo.setComment(rolelist.get(i).getComment());
+            roleInfo.setName(rolelist.get(i).getName());
+            List<Permission> permissionList = new ArrayList<Permission>();
+            try {
+                permissionList = this.findPermission(rolelist.get(i).getRole_id());
+            } catch (Exception e) {
+
+            }
+            roleInfo.setPermissions(permissionList);
+            res.add(roleInfo);
+        }
+        return res;
     }
 
     public int addRole(Role role) {

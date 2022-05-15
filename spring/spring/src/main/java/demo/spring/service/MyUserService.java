@@ -1,9 +1,6 @@
 package demo.spring.service;
 
-import demo.spring.entity.MyUser;
-import demo.spring.entity.Paper;
-import demo.spring.entity.Permission;
-import demo.spring.entity.Role;
+import demo.spring.entity.*;
 
 import java.util.List;
 
@@ -28,6 +25,8 @@ public interface MyUserService{
     public List<Role> findallRole();
 
     public List<Permission> findallPermission();
+
+    public List<RoleInfo> findallRoleInfo();
 
     public int addRole(Role role);
 

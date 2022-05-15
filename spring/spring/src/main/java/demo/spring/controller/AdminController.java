@@ -1,9 +1,6 @@
 package demo.spring.controller;
 
-import demo.spring.entity.MyUser;
-import demo.spring.entity.Permission;
-import demo.spring.entity.Result;
-import demo.spring.entity.Role;
+import demo.spring.entity.*;
 import demo.spring.mapper.MyUserMapper;
 import demo.spring.service.MyUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +35,18 @@ public class AdminController {
         List<MyUser> res;
         try{
             res=this.myUserService.findallUser();
+        }catch (Exception e){
+            return Result.fail("查询失败",null);
+        }
+        return Result.success("查询成功",res);
+    }
+
+    @CrossOrigin
+    @PostMapping("/api/admin/allroleinfo")
+    public Result findallroleinfo() {
+        List<RoleInfo> res;
+        try{
+            res=this.myUserService.findallRoleInfo();
         }catch (Exception e){
             return Result.fail("查询失败",null);
         }
