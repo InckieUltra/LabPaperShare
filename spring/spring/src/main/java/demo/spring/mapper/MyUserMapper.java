@@ -38,6 +38,19 @@ public interface MyUserMapper {
             @Result(property = "icon",column = "icon")
     })
     List<Permission> findPermisssion(int user_id);
+
+    @Select("select permission.permission_id,permission.name,permission.comment,path,icon \n" +
+            "from role join role_permission join permission\n" +
+            "where role.role_id=role_permission.role_id and role_permission.permission_id=permission.permission_id and role.role_id=#{role_id}")
+    @Results(id="rolepermissionMap",value={
+            @Result(property = "permission_id",column = "permission_id"),
+            @Result(property = "name",column = "name"),
+            @Result(property = "comment",column = "comment"),
+            @Result(property = "path",column = "path"),
+            @Result(property = "icon",column = "icon")
+    })
+    List<Permission> findRolePermission(int role_id);
+
     @Select("select user_id,username,password,email,role_id from user where username=#{uname}")
     @Results(id="userMap",value={
             @Result(property = "user_id",column = "user_id",javaType = Integer.class),
@@ -80,6 +93,9 @@ public interface MyUserMapper {
 
     @Update("update user set role_id=#{role_id} where user_id=#{user_id}")
     int changeUserRole(int user_id,int role_id);
+
+    @Delete("delete from role_permission where role_id=#{role_id}")
+    int deleteRolePermission(int role_id);
 
     //@Update("update student set sname=#{name},ssex=#{sex} where sno=#{sno}")
     //int update(Student student);

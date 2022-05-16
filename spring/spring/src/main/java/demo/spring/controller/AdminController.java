@@ -106,16 +106,13 @@ public class AdminController {
     }
 
     @CrossOrigin
-    @PostMapping("/api/admin/mofidypermission")
+    @PostMapping("/api/admin/modifypermission")
     public Result addrole(@RequestBody ModifyPermissionRequest modifyPermissionRequest) {
-        int[] l=modifyPermissionRequest.getPermission_id();
-        for(int i = 0; i< l.length; i++) {
-            try {
-                this.myUserService.RoleaddPermission(modifyPermissionRequest.getRole_id(),l[i]);
+        try {
+                this.myUserService.RoleaddPermission(modifyPermissionRequest.getRole_id(),modifyPermissionRequest.getPermission_id());
             } catch (Exception e) {
                 return Result.fail("失败", null);
             }
-        }
         return Result.success("成功",null);
     }
 }

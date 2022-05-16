@@ -1,5 +1,6 @@
 package demo.spring.controller;
 
+import demo.spring.entity.Field;
 import demo.spring.entity.Paper;
 import demo.spring.entity.Result;
 import demo.spring.mapper.PaperMapper;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -32,5 +34,17 @@ public class PaperController {
             return Result.fail("上传失败",null);
         }
         return Result.success("成功",paper);
+    }
+
+    @CrossOrigin
+    @PostMapping("/api/allfield")
+    public Result allfield() {
+        List<Field> res=new ArrayList<Field>();
+        try {
+            res=this.paperService.findallField();
+        } catch (Exception e) {
+            return Result.fail("查询失败", null);
+        }
+        return Result.success("查询成功",res);
     }
 }

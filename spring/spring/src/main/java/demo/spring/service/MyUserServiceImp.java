@@ -67,13 +67,7 @@ public class MyUserServiceImp implements  MyUserService{
             roleInfo.setRole_id(rolelist.get(i).getRole_id());
             roleInfo.setComment(rolelist.get(i).getComment());
             roleInfo.setName(rolelist.get(i).getName());
-            List<Permission> permissionList = new ArrayList<Permission>();
-            try {
-                permissionList = this.findPermission(rolelist.get(i).getRole_id());
-            } catch (Exception e) {
-
-            }
-            roleInfo.setPermissions(permissionList);
+            roleInfo.setPermissions(this.myUserMapper.findRolePermission(rolelist.get(i).getRole_id()));
             res.add(roleInfo);
         }
         return res;
@@ -83,7 +77,11 @@ public class MyUserServiceImp implements  MyUserService{
         return this.myUserMapper.addRole(role.getRole_id(),role.getName(),role.getComment());
     }
 
-    public int RoleaddPermission(int role_id,int permission_id){
-        return this.myUserMapper.RoleaddPermission(role_id,permission_id);
+    public int RoleaddPermission(int role_id,int[] permission_id){
+        this.myUserMapper.deleteRolePermission(role_id);
+        for(int i=0;i<permission_id.length;i++) {
+            this.myUserMapper.RoleaddPermission(role_id, permission_id[i]);
+        }
+        return 0;
     }
 }

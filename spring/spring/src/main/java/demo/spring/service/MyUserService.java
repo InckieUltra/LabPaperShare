@@ -30,6 +30,6 @@ public interface MyUserService{
 
     public int addRole(Role role);
 
-    public int RoleaddPermission(int role_id,int permission_id);
+    public int RoleaddPermission(int role_id,int[] permission_id);
 
 }
