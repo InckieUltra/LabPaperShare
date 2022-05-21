@@ -2,7 +2,9 @@ package demo.spring.controller;
 
 import demo.spring.entity.*;
 import demo.spring.mapper.MyUserMapper;
+import demo.spring.mapper.PaperMapper;
 import demo.spring.service.MyUserService;
+import demo.spring.service.PaperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +19,9 @@ public class AdminController {
 
     @Autowired
     private MyUserMapper myUserMapper;
+
+    @Autowired
+    private PaperService paperService;
 
     @CrossOrigin
     @PostMapping("/api/admin/user/delete")
@@ -114,5 +119,44 @@ public class AdminController {
                 return Result.fail("失败", null);
             }
         return Result.success("成功",null);
+    }
+
+    @CrossOrigin
+    @PostMapping("/api/admin/addfield")
+    public Result addfield(@RequestBody Field field) {
+        try {
+            this.paperService.addField(field);
+        } catch (Exception e) {
+            return Result.fail("失败", null);
+        }
+        return Result.success("成功",null);
+    }
+
+    @CrossOrigin
+    @PostMapping("/api/admin/modifyfieldname")
+    public Result modifyfieldname(@RequestBody Field field) {
+        try {
+            this.paperService.modifyFieldName(field);
+        } catch (Exception e) {
+            return Result.fail("失败", null);
+        }
+        return Result.success("成功",null);
+    }
+
+    @CrossOrigin
+    @PostMapping("/api/admin/deletefield")
+    public Result modifyfieldname(@RequestParam("field_id") Integer field_id) {
+        int code;
+        try {
+            code=this.paperService.deleteField(field_id);
+        } catch (Exception e) {
+            return Result.fail("失败", null);
+        }
+        if(code==0)
+            return Result.success("成功",null);
+        else if(code==1)
+            return Result.fail("请先解除相关论文的关联",null);
+        else
+            return Result.fail("请先删除子节点",null);
     }
 }

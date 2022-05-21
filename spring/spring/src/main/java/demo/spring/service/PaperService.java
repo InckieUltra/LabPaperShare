@@ -8,4 +8,7 @@ import java.util.List;
 public interface PaperService {
     public int addPaper(Paper paper);
     public List<Field> findallField();
+    public int addField(Field field);
+    public int modifyFieldName(Field field);
+    public int deleteField(int field_id);
 }

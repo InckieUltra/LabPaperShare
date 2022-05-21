@@ -10,9 +10,9 @@ public class Field implements Serializable {
 
     String field_name;
 
-    int pid;
+    Integer pid;
 
-    List<Integer> children;
+    List<Field> children;
 
     public int getField_id() {
         return field_id;
@@ -30,19 +30,19 @@ public class Field implements Serializable {
         this.field_name = field_name;
     }
 
-    public int getPid() {
+    public Integer getPid() {
         return pid;
     }
 
-    public void setPid(int pid) {
+    public void setPid(Integer pid) {
         this.pid = pid;
     }
 
-    public List<Integer> getChildren() {
+    public List<Field> getChildren() {
         return children;
     }
 
-    public void setChildren(List<Integer> children) {
+    public void setChildren(List<Field> children) {
         this.children = children;
     }
 }

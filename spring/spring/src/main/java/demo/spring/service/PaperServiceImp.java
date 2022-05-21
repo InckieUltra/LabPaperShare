@@ -21,9 +21,44 @@ public class PaperServiceImp implements PaperService{
     @Override
     public List<Field> findallField(){
         List<Field> fields=this.paperMapper.findallField();
-        for(int i=0;i<fields.size();i++){
-            fields.get(i).setChildren(this.paperMapper.findFieldChildren(fields.get(i).getField_id()));
+        return loopQuery(null,fields);
+    }
+
+    private List<Field> loopQuery(Integer pid,List<Field> allFields){
+        List<Field> fieldList=new ArrayList<Field>();
+        for(Field field:allFields){
+            if(pid==null){
+                if(field.getPid()==null){
+                    fieldList.add(field);
+                    field.setChildren(loopQuery(field.getField_id(),allFields));
+                }
+            }
+            else if(pid==field.getPid()){
+                fieldList.add(field);
+                field.setChildren(loopQuery(field.getField_id(),allFields));
+            }
         }
-        return fields;
+        return fieldList;
+    }
+
+    @Override
+    public int addField(Field field){
+        return this.paperMapper.addField(field.getField_name(),field.getPid());
+    }
+
+    @Override
+    public int modifyFieldName(Field field){
+        return this.paperMapper.modifyFieldName(field.getField_id(),field.getField_name());
+    }
+
+    @Override
+    public int deleteField(int field_id){
+        if(this.paperMapper.findPaperbyField_id(field_id).size()!=0){
+            return 1;
+        }
+        if(this.paperMapper.findFieldChildren(field_id).size()!=0)
+            return 2;
+        this.paperMapper.deleteField(field_id);
+        return 0;
     }
 }
