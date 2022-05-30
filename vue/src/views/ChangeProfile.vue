@@ -14,18 +14,19 @@
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </el-form-item>
+          <el-form-item label="用户ID">
+            <el-input v-model="form.user_id" disabled></el-input>
+          </el-form-item>
           <el-form-item label="用户名">
             <el-input v-model="form.username"></el-input>
           </el-form-item>
 
-          <el-form-item label="年龄">
-            <el-input v-model="form.age"></el-input>
-          </el-form-item>
+
           <!--        <el-form-item label="密码">-->
           <!--          <el-input v-model="form.password" show-password></el-input>-->
           <!--        </el-form-item>-->
         <el-form-item label="原密码" prop="password">
-          <el-input v-model="form.password" show-password></el-input>
+          <el-input v-model="form.oldPassword" show-password></el-input>
         </el-form-item>
         <el-form-item label="新密码" prop="newPass">
           <el-input v-model="form.newPass" show-password></el-input>
@@ -47,17 +48,24 @@ import request from "@/utils/request";
 
 export default {
   name: "ChangeProfile",
+  created() {
+    let userStr = sessionStorage.getItem("user") || "{}"
+    this.form = JSON.parse(userStr)
+  },
   data() {
     return {
      form: {
-       username: "",
-       nickName: "",
-       password: '',
+       userName: "",
+       user_id: "",
+       oldPassword: '',
        newPass: '',
        confirmPass: ''
      },
+      userInfo:{
+
+      },
       rules: {
-        username: [
+        userName: [
           {required: true, message: '请输入用户名', trigger: 'blur'}
           ,{
             min: 3,
@@ -66,7 +74,7 @@ export default {
             trigger: 'blur'
           }
         ],
-        password: [
+        oldPassword: [
           {required: true, message: '请输入密码', trigger: 'blur'},
           {
             min: 6,

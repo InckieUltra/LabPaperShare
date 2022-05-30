@@ -79,18 +79,18 @@ export default {
   mounted() {
 
   },
-  beforeCreate() {
-    console.log("before Login Create")
-    let userJson = sessionStorage.getItem("user")
-    if (userJson) {
-      this.$message({
-        type: "success",
-        message: "您已登录,自动跳转",
-
-      })
-      this.$router.push("/")
-    }
-  },
+  // beforeCreate() {
+  //   console.log("before Login Create")
+  //   let userJson = sessionStorage.getItem("user")
+  //   if (userJson) {
+  //     this.$message({
+  //       type: "success",
+  //       message: "您已登录,自动跳转",
+  //
+  //     })
+  //     this.$router.push("/")
+  //   }
+  // },
   methods: {
     // 接收验证码组件提交的 4位验证码
     createValidCode(data) {
@@ -129,6 +129,7 @@ export default {
                 sessionStorage.setItem("userPermission", JSON.stringify(res1))  // 缓存用户信息
                 let userStrr = sessionStorage.getItem("userPermission") || "{}"
                 this.permissionList = JSON.parse(userStrr)
+                activeRouter()
                 this.$router.push("/")  //登录成功之后进行页面的跳转，跳转到主页
               })
 

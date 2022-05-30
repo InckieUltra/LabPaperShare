@@ -20,6 +20,9 @@ request.interceptors.request.use(config => {
 
         if(!userJson) {
             router.push("/login")
+        }else {
+            let user = JSON.parse(userJson);
+            config.headers['token'] = user.token;  // 设置请求头
         }
     return config
 }, error => {

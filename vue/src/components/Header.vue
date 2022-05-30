@@ -22,12 +22,11 @@
       <el-dropdown style="margin-top: 10px;">
         <span class="el-dropdown-link">
           <el-avatar :size="30" :src="user.avatar" style="position: relative; top: 10px"></el-avatar>
-           {{ user.nickName }}
+           {{ user.userName }}
           <i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item @click="$router.push('/person')">个人信息</el-dropdown-item>
             <el-dropdown-item @click="$router.push('/changeProfile')">修改信息</el-dropdown-item>
             <el-dropdown-item @click="loginOut">退出系统</el-dropdown-item>
           </el-dropdown-menu>
@@ -49,6 +48,7 @@ export default {
     }
   },
   created() {
+
   },
   components: {
     Sunrise,

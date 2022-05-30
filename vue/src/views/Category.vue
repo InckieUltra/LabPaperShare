@@ -23,11 +23,22 @@ export default {
   //
   //   this.load()
   // },
+
   methods: {
+    append(data) {
+      const newChild = { name: 'testtest', children: [] };
+      if (!data.children) {
+        this.$set(data, 'children', []);
+      }
+      data.children.push(newChild);
+    },
     showChart() {
       // 基于准备好的dom，初始化echarts实例
       let myChart = this.$root.echarts.init(document.getElementById('treeChart'))
-
+      myChart.on('click',function (params){
+        console.log("dianji")
+        this.append(data)
+      })
       // 指定图表的配置项和数据
       let option = {
         tooltip: {
@@ -76,9 +87,9 @@ export default {
             },
 
             emphasis: {
-              focus: 'descendant'
+              focus: 'descendant',
             },
-            expandAndCollapse: true,
+            expandAndCollapse: false,
             animationDuration: 550,
             animationDurationUpdate: 750
           }
@@ -116,7 +127,6 @@ export default {
             name: 'display',
             children: [
               { name: 'DirtySprite', value: 8833 },
-              { name: 'LineSprite', value: 1732 },
               { name: 'RectSprite', value: 3623 }
             ]
           },
@@ -127,55 +137,24 @@ export default {
           {
             name: 'query',
             children: [
-              { name: 'AggregateExpression', value: 1616 },
-              { name: 'And', value: 1027 },
-              { name: 'Arithmetic', value: 3891 },
-              { name: 'Average', value: 891 },
-              { name: 'BinaryExpression', value: 2893 },
-              { name: 'Comparison', value: 5103 },
-              { name: 'CompositeExpression', value: 3677 },
-              { name: 'Count', value: 781 },
+
               { name: 'DateUtil', value: 4141 },
               { name: 'Distinct', value: 933 },
 
               {
                 name: 'methods',
                 children: [
-                  { name: 'add', value: 593 },
-                  { name: 'and', value: 330 },
-                  { name: 'average', value: 287 },
-                  { name: 'count', value: 277 },
-                  { name: 'distinct', value: 292 },
-                  { name: 'div', value: 595 },
-                  { name: 'eq', value: 594 },
-                  { name: 'fn', value: 460 },
-                  { name: 'gt', value: 603 },
                   { name: 'xor', value: 354 },
                   { name: 'x_x', value: 264 }
                 ]
               },
-              { name: 'Minimum', value: 843 },
-              { name: 'Not', value: 1554 },
-              { name: 'Or', value: 970 },
-              { name: 'Query', value: 13896 },
-              { name: 'Range', value: 1594 },
-              { name: 'StringUtil', value: 4130 },
-              { name: 'Sum', value: 791 },
-              { name: 'Variable', value: 1124 },
-              { name: 'Variance', value: 1876 },
+
               { name: 'Xor', value: 1101 }
             ]
           },
           {
             name: 'scale',
             children: [
-              { name: 'IScaleMap', value: 2105 },
-              { name: 'LinearScale', value: 1316 },
-              { name: 'LogScale', value: 3151 },
-              { name: 'OrdinalScale', value: 3770 },
-              { name: 'QuantileScale', value: 2435 },
-              { name: 'QuantitativeScale', value: 4839 },
-
               { name: 'ScaleType', value: 1821 },
               { name: 'TimeScale', value: 5833 }
             ]

@@ -1,6 +1,5 @@
 <template>
   <div style="padding: 10px">
-    <!--    功能区域-->
     <div style="margin: 10px 0">
       <el-button type="primary" @click="add">新增</el-button>
     </div>
@@ -12,20 +11,19 @@
     </div>
     <el-table
         v-loading="loading"
-        :data="tableData"
+        :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         border
         stripe
         style="width: 100%">
       <el-table-column
-          prop="id"
-          label="ID"
+          prop="role_id"
+          label="roleId"
           sortable
-          width="80"
       >
       </el-table-column>
       <el-table-column
           prop="name"
-          label="名称">
+          label="用户类型">
       </el-table-column>
       <el-table-column
           prop="comment"
@@ -33,16 +31,15 @@
       </el-table-column>
       <el-table-column label="权限菜单">
         <template #default="scope">
-          <el-select clearable v-model="scope.row.permissions" multiple placeholder="请选择" style="width: 80%">
-            <el-option v-for="item in permissions" :key="item.id" :label="item.comment" :value="item.id"></el-option>
+          <el-select clearable v-model="scope.row.permissions" multiple placeholder="请选择" style="width: 100%">
+            <el-option v-for="item in permissions" :key="item.permission_id" :label="item.comment" :value="item.permission_id"></el-option>
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" width="200">
         <template #default="scope">
-          <el-button size="mini" type="primary" @click="handleChange(scope.row)">保存权限菜单</el-button>
-          <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
-          <el-popconfirm title="确定删除吗？" @confirm="handleDelete(scope.row.id)">
+          <el-button size="mini" type="primary" @click="handleChange(scope.row)">保存角色信息</el-button>
+          <el-popconfirm title="确定删除吗？" @confirm="handleDelete(scope.row.user_id)">
             <template #reference>
               <el-button size="mini" type="danger">删除</el-button>
             </template>
@@ -65,7 +62,7 @@
 
     <el-dialog title="提示" v-model="dialogVisible" width="30%">
       <el-form :model="form" label-width="120px">
-        <el-form-item label="名称">
+        <el-form-item label="用户类型名称">
           <el-input v-model="form.name" style="width: 80%"></el-input>
         </el-form-item>
         <el-form-item label="备注">
@@ -85,7 +82,9 @@
 
 <script>
 
+
 import request from "@/utils/request";
+import {activeRouter} from "@/utils/permission";
 
 export default {
   name: 'Role',
@@ -95,86 +94,30 @@ export default {
       loading: true,
       form: {},
       dialogVisible: false,
+      bookVis: false,
       search: '',
       currentPage: 1,
       pageSize: 10,
       total: 0,
+      totalPage:1,
       tableData: [],
-      permissions: []
+      permissions: [],
+      changePermissions:{
+        role_id:'',
+        permission_id:[]
+      }
     }
   },
-  // beforeCreated() {
-  //   let userStr = sessionStorage.getItem("user") || "{}"
-  //   this.user = JSON.parse(userStr)
-  //   // 请求服务端，确认当前登录用户的 合法信息
-  //   request.get("/user/" + this.user.id).then(res => {
-  //     if (res.code === 0) {
-  //       this.user = res.data
-  //     }
-  //   })
-  //
-  //   this.load()
-  // },
+  created() {
+    this.load()
+    //this.setCurrentPageData()
+  },
   methods: {
-    handleChange(row) {
-      request.put("/role/changePermission", row).then(res => {
-        if (res.code === '0') {
-          this.$message.success("更新成功")
-          if (res.data) {
-            this.$router.push("/login")
-          }
-        }
-      })
-    },
-    load() {
-      this.loading = true
-      request.get("/role", {
-        params: {
-          pageNum: this.currentPage,
-          pageSize: this.pageSize,
-          search: this.search
-        }
-      }).then(res => {
-        this.loading = false
-        this.tableData = res.data.records
-        this.total = res.data.total
-      })
-
-      request.get("/permission/all").then(res => {
-        this.permissions = res.data
-      })
-    },
-    add() {
-      this.dialogVisible = true
-      this.form = {}
-    },
     save() {
+      console.log(this.form)
 
-      if (this.form.id) {  // 更新
-        request.put("/role", this.form).then(res => {
-          console.log(res)
-          if (res.code === '0') {
-            this.$message({
-              type: "success",
-              message: "更新成功"
-            })
-          } else {
-            this.$message({
-              type: "error",
-              message: res.msg
-            })
-          }
-          this.load() // 刷新表格的数据
-          this.dialogVisible = false  // 关闭弹窗
-        })
-      } else {  // 新增
-        let userStr = sessionStorage.getItem("user") || "{}"
-        let user = JSON.parse(userStr)
-        this.form.author = user.nickName
-
-        request.post("/role", this.form).then(res => {
-          console.log(res)
-          if (res.code === '0') {
+      request.post("/api/admin/addrole?name="+this.form.name+"&comment="+this.form.comment, this.form).then(res => {
+          if (res.code === 0) {
             this.$message({
               type: "success",
               message: "新增成功"
@@ -189,17 +132,76 @@ export default {
           this.load() // 刷新表格的数据
           this.dialogVisible = false  // 关闭弹窗
         })
-      }
+
 
     },
+    handleChange(row) {
+      this.changePermissions.role_id = row.role_id
+      this.changePermissions.permission_id = row.permissions
+      console.log(this.changePermissions)
+
+      request.post("/api/admin/modifypermission",this.changePermissions).then(res => {
+        if (res.code === 0) {
+          this.$message.success("更新成功")
+          if (res.data) {
+            this.$router.push("/login")
+          }
+        }
+      })
+    },
+    add() {
+      this.dialogVisible = true
+      this.form = {}
+    },
+    load() {
+      this.loading = true
+      request.post("/api/admin/allroleinfo").then(res => {
+        if (res.code === 0){
+          console.log(res.data.length)
+          console.log("打印tableData: ")
+
+          this.loading = false
+          this.tableData = res.data
+          for(let i=0;i<this.tableData.length;i++){
+            let arr = new Array()
+            for (let j = 0;j<this.tableData[i].permissions.length;j++){
+              arr.push(this.tableData[i].permissions[j].permission_id)
+            }
+            this.tableData[i].permissions = arr;
+          }
+          console.log(this.tableData)
+          this.total = res.data.length
+        }else if (res.code === 1){
+          this.$message({
+            type: "error",
+            message: res.msg,
+          })
+          this.$router.push("/login")
+        }else{
+          this.$message({
+            type: "error",
+            message: res.msg,
+          })
+        }
+
+      })
+
+      request.post("/api/admin/allpermission").then(res => {
+        this.permissions = res.data
+        console.log("打印permissions: ")
+
+        console.log(res.data)
+      })
+    },
+
     handleEdit(row) {
       this.form = JSON.parse(JSON.stringify(row))
       this.dialogVisible = true
     },
     handleDelete(id) {
       console.log(id)
-      request.delete("/role/" + id).then(res => {
-        if (res.code === '0') {
+      request.post("/api/admin/user/delete?user_id=" + id).then(res => {
+        if (res.code === 0) {
           this.$message({
             type: "success",
             message: "删除成功"

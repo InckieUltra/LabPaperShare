@@ -10,7 +10,7 @@
         router
     >
       <div  v-for="m in permissionList" :key="m.permission_id">
-      <el-menu-item :index="m.path" >
+      <el-menu-item :index="m.path"  v-if="m.name !== 'ChangeProfile'">
         <i :class="m.icon"></i>  {{ m.comment }}
       </el-menu-item>
     </div>

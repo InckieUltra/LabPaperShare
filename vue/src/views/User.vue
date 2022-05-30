@@ -110,10 +110,16 @@ export default {
           this.tableData = res.data
           console.log(this.tableData)
           this.total = res.data.length
+        }else if (res.code === 1){
+          this.$message({
+            type: "error",
+            message: res.msg,
+          })
+          this.$router.push("/login")
         }else{
           this.$message({
             type: "error",
-            message: res.msg
+            message: res.msg,
           })
         }
 
