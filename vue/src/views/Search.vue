@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-select v-model="value" placeholder='value' style="width: 4%; padding: 5px; border-radius: 50px;margin-left: 7%">
+    <el-select v-model="value" placeholder='value' style="width: 10%; padding: 5px; border-radius: 50px;margin-left: 7%">
       <el-option
           v-for="item in options"
           :key="item.value"
