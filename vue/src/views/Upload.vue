@@ -1,18 +1,22 @@
 <template>
-  <el-card style="width: 50%;margin: 10px">
+  <el-card style="width: 50%;margin: 10px" >
     <div s>
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="论文标题" style="width: 50%">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
+        <el-form-item label="研究领域" style="width: 50%">
+
         <div class="block">
-          <el-form-item label="研究领域" style="width: 50%">
             <el-cascader
+                ref="cserve"
                 v-model="form.field"
                 :options="options"
-                @change="handleChange"></el-cascader>
-          </el-form-item>
+                :props="props"
+                clearable></el-cascader>
         </div>
+        </el-form-item>
+
         <el-form-item label="发布会议" style="width: 50%">
           <el-input v-model="form.conference"></el-input>
         </el-form-item>
@@ -59,9 +63,24 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="笔记内容">
-          <div id="div1" style="position:relative;">
+        <el-form-item label="引用文献" >
+        <el-select
+            v-model="form.references"
+            multiple
+            collapse-tags
 
+            placeholder="请选择">
+          <el-option
+              v-for="item in refOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+          </el-option>
+        </el-select>
+        </el-form-item>
+
+        <el-form-item label="笔记内容">
+          <div id="div1" style="position:relative; z-index: 0">
           </div>
         </el-form-item>
 
@@ -71,12 +90,13 @@
               action="http://localhost:9090/user/import"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
+              :before-upload="beforeUpload"
               :before-remove="beforeRemove"
               multiple
-              :limit="3"
+              :limit="1"
               :on-exceed="handleExceed"
               :file-list="form.fileList">
-            <el-button size="small" type="primary">点击上传</el-button>
+            <el-button size="small" >点击上传</el-button>
           </el-upload>
 
         </el-form-item>
@@ -103,9 +123,14 @@ export default {
   },
   data() {
     return {
-
+      props: { multiple: true,
+        checkStrictly: true,
+        value:'field_id',
+      label: 'field_name'
+      },
       inputVisible: false,
       inputValue: '',
+      tableData:[],
       form: {
         name: '',
         date: '',
@@ -113,209 +138,31 @@ export default {
         type: '',
         content:'',
         Authors: [],
+        references:[],
         field: [],
-        fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-          {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
+        fileList: [{
+          name: 'food.jpeg',
+          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+        }, {
+          name: 'food2.jpeg',
+          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+        }]
 
       },
 
-      options: [{
-        value: 'zhinan',
-        label: '指南',
-        children: [{
-          value: 'shejiyuanze',
-          label: '设计原则',
-          children: [{
-            value: 'yizhi',
-            label: '一致'
-          }, {
-            value: 'fankui',
-            label: '反馈'
-          }, {
-            value: 'xiaolv',
-            label: '效率'
-          }, {
-            value: 'kekong',
-            label: '可控'
-          }]
-        }, {
-          value: 'daohang',
-          label: '导航',
-          children: [{
-            value: 'cexiangdaohang',
-            label: '侧向导航'
-          }, {
-            value: 'dingbudaohang',
-            label: '顶部导航'
-          }]
-        }]
-      }, {
-        value: 'zujian',
-        label: '组件',
-        children: [{
-          value: 'basic',
-          label: 'Basic',
-          children: [{
-            value: 'layout',
-            label: 'Layout 布局'
-          }, {
-            value: 'color',
-            label: 'Color 色彩'
-          }, {
-            value: 'typography',
-            label: 'Typography 字体'
-          }, {
-            value: 'icon',
-            label: 'Icon 图标'
-          }, {
-            value: 'button',
-            label: 'Button 按钮'
-          }]
-        }, {
-          value: 'form',
-          label: 'Form',
-          children: [{
-            value: 'radio',
-            label: 'Radio 单选框'
-          }, {
-            value: 'checkbox',
-            label: 'Checkbox 多选框'
-          }, {
-            value: 'input',
-            label: 'Input 输入框'
-          }, {
-            value: 'input-number',
-            label: 'InputNumber 计数器'
-          }, {
-            value: 'select',
-            label: 'Select 选择器'
-          }, {
-            value: 'cascader',
-            label: 'Cascader 级联选择器'
-          }, {
-            value: 'switch',
-            label: 'Switch 开关'
-          }, {
-            value: 'slider',
-            label: 'Slider 滑块'
-          }, {
-            value: 'time-picker',
-            label: 'TimePicker 时间选择器'
-          }, {
-            value: 'date-picker',
-            label: 'DatePicker 日期选择器'
-          }, {
-            value: 'datetime-picker',
-            label: 'DateTimePicker 日期时间选择器'
-          }, {
-            value: 'upload',
-            label: 'Upload 上传'
-          }, {
-            value: 'rate',
-            label: 'Rate 评分'
-          }, {
-            value: 'form',
-            label: 'Form 表单'
-          }]
-        }, {
-          value: 'data',
-          label: 'Data',
-          children: [{
-            value: 'table',
-            label: 'Table 表格'
-          }, {
-            value: 'tag',
-            label: 'Tag 标签'
-          }, {
-            value: 'progress',
-            label: 'Progress 进度条'
-          }, {
-            value: 'tree',
-            label: 'Tree 树形控件'
-          }, {
-            value: 'pagination',
-            label: 'Pagination 分页'
-          }, {
-            value: 'badge',
-            label: 'Badge 标记'
-          }]
-        }, {
-          value: 'notice',
-          label: 'Notice',
-          children: [{
-            value: 'alert',
-            label: 'Alert 警告'
-          }, {
-            value: 'loading',
-            label: 'Loading 加载'
-          }, {
-            value: 'message',
-            label: 'Message 消息提示'
-          }, {
-            value: 'message-box',
-            label: 'MessageBox 弹框'
-          }, {
-            value: 'notification',
-            label: 'Notification 通知'
-          }]
-        }, {
-          value: 'navigation',
-          label: 'Navigation',
-          children: [{
-            value: 'menu',
-            label: 'NavMenu 导航菜单'
-          }, {
-            value: 'tabs',
-            label: 'Tabs 标签页'
-          }, {
-            value: 'breadcrumb',
-            label: 'Breadcrumb 面包屑'
-          }, {
-            value: 'dropdown',
-            label: 'Dropdown 下拉菜单'
-          }, {
-            value: 'steps',
-            label: 'Steps 步骤条'
-          }]
-        }, {
-          value: 'others',
-          label: 'Others',
-          children: [{
-            value: 'dialog',
-            label: 'Dialog 对话框'
-          }, {
-            value: 'tooltip',
-            label: 'Tooltip 文字提示'
-          }, {
-            value: 'popover',
-            label: 'Popover 弹出框'
-          }, {
-            value: 'card',
-            label: 'Card 卡片'
-          }, {
-            value: 'carousel',
-            label: 'Carousel 走马灯'
-          }, {
-            value: 'collapse',
-            label: 'Collapse 折叠面板'
-          }]
-        }]
-      }, {
-        value: 'ziyuan',
-        label: '资源',
-        children: [{
-          value: 'axure',
-          label: 'Axure Components'
-        }, {
-          value: 'sketch',
-          label: 'Sketch Templates'
-        }, {
-          value: 'jiaohu',
-          label: '组件交互文档'
-        }]
-      }]
-
+      options: [],
+      refOptions:[]
     }
+  },
+  created() {
+    request.post("/api/allfield").then(res => {
+      this.options = res.data
+      console.log("res.data")
+      console.log(this.options)
+      console.log("seccessQ!!")
+    })
+
+    //this.getTreeData(this.tableData)
   },
   mounted() {
     this.init()
@@ -325,11 +172,23 @@ export default {
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
+    beforeUpload(file) {
+      let fileSize = file.size
+      const FIVE_M= 5*1024*1024;
+      //大于5M，不允许上传
+      if(fileSize>FIVE_M){
+        this.$message.error("最大上传5M")
+        return  false
+      }
+      //判断文件类型，必须是xlsx格式
+
+      return true
+    },
     handlePreview(file) {
       console.log(file);
     },
     handleExceed(files, fileList) {
-      this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+      this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${ file.name }？`);
@@ -342,20 +201,21 @@ export default {
       })
       this.form.content = editor.txt.html()  // 获取 编辑器里面的值，然后赋予到实体当中
       console.log(this.form)
+      console.log(this.options)
       console.log('submit!');
     },
     init(){
       editor = new E('#div1')
       // 或者 const editor = new E( document.getElementById('div1') )
-
       editor.create()
       editor.txt.html("")
+
     },
-    handleChange(value) {
+  handleChange(value) {
       console.log(value);
     },
     handleClose(author) {
-      this.form.Authors.splice(this.Authors.indexOf(author), 1);
+      this.form.Authors.splice(this.form.Authors.indexOf(author), 1);
     },
     showInput() {
       this.inputVisible = true;

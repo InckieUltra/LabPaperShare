@@ -41,6 +41,7 @@ export default {
   //   this.load()
   // },
   methods: {
+
     drawLine1(){
 
       let myChart = this.$root.echarts.init(document.getElementById('main'))
