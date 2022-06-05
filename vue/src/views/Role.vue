@@ -176,6 +176,7 @@ export default {
             type: "error",
             message: res.msg,
           })
+
           this.$router.push("/login")
         }else{
           this.$message({

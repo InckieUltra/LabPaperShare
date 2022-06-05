@@ -10,10 +10,10 @@
     <div style="flex: 1"></div>
 
     <div>
-      <el-badge :value="200" :max="99" class="item">
+      <el-badge class="item">
         <el-button size="small">评论</el-button>
       </el-badge>
-      <el-badge :value="100" :max="10" class="item">
+      <el-badge  class="item">
         <el-button size="small">消息</el-button>
       </el-badge>
 

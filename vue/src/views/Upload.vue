@@ -9,8 +9,7 @@
 
         <div class="block">
             <el-cascader
-                ref="cserve"
-                v-model="form.field"
+                v-model="tableData"
                 :options="options"
                 :props="props"
                 clearable></el-cascader>
@@ -195,14 +194,17 @@ export default {
     },
     onSubmit() {
       // this.form.content = JSON.parse(JSON.stringify(this.BasicEditor.getHtml()))
-      // console.log(this.form.content)
-      request.post("/api/upload").then(res=>{
-
-      })
+       console.log(this.tableData)
+      for(let i = 0;i<this.tableData.length;i++){
+        this.form.field.push(this.tableData[i][this.tableData[i].length-1])
+      }
+      // request.post("/api/upload").then(res=>{
+      //
+      // })
       this.form.content = editor.txt.html()  // 获取 编辑器里面的值，然后赋予到实体当中
-      console.log(this.form)
-      console.log(this.options)
+
       console.log('submit!');
+      console.log(this.form)
     },
     init(){
       editor = new E('#div1')
