@@ -5,11 +5,10 @@ import demo.spring.entity.Paper;
 import demo.spring.entity.Result;
 import demo.spring.mapper.PaperMapper;
 import demo.spring.service.PaperService;
+import org.apache.tomcat.util.http.fileupload.UploadContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,19 +20,13 @@ public class PaperController {
 
     @CrossOrigin
     @PostMapping("/api/paper/upload")
-    public Result upload(@RequestBody Paper paper) {
+    public Result upload(@RequestBody UploadRequest uploadRequest) {
         try {
-                this.paperService.addPaper(paper);
+                this.paperService.upload(uploadRequest);
             } catch (Exception e) {
                 return Result.fail("添加论文失败", null);
             }
-        try{
-            //this.paperService.addUpload(upload);
-            int i=1;
-        }catch (Exception e){
-            return Result.fail("上传失败",null);
-        }
-        return Result.success("成功",paper);
+        return Result.success("成功",uploadRequest.paper_merge());
     }
 
     @CrossOrigin
@@ -46,5 +39,18 @@ public class PaperController {
             return Result.fail("查询失败", null);
         }
         return Result.success("查询成功",res);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/api/uploadfile")
+    public Result uploadFolder(@RequestBody MultipartFile file) {
+        try {
+            byte[] bytes = file.getBytes();
+            FTPUtil.sshSftp(bytes, file.getOriginalFilename());
+            return Result.success("上传成功",null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.fail("上传失败",null);
     }
 }

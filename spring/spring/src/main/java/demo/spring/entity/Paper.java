@@ -11,7 +11,6 @@ public class Paper implements Serializable {
     String date;
     String link;
     String type;
-    int reference_id;
 
     public int getPaper_id() {
         return paper_id;
@@ -67,13 +66,5 @@ public class Paper implements Serializable {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public int getReference_id() {
-        return reference_id;
-    }
-
-    public void setReference_id(int reference_id) {
-        this.reference_id = reference_id;
     }
 }
