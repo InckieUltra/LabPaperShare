@@ -1,12 +1,18 @@
 package demo.spring.service;
 
+import demo.spring.controller.UploadRequest;
 import demo.spring.entity.Field;
+import demo.spring.entity.Note;
 import demo.spring.entity.Paper;
+import demo.spring.entity.Upload;
 import demo.spring.mapper.PaperMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service("paperService")
@@ -15,7 +21,7 @@ public class PaperServiceImp implements PaperService{
     private PaperMapper paperMapper;
 
     public int addPaper(Paper paper){
-        return this.paperMapper.addPaper(paper.getTitle(),paper.getConference(),paper.getDate(),paper.getSummary(),paper.getLink(),paper.getType());
+        return this.paperMapper.addPaper(paper);
     }
 
     @Override
@@ -59,6 +65,44 @@ public class PaperServiceImp implements PaperService{
         if(this.paperMapper.findFieldChildren(field_id).size()!=0)
             return 2;
         this.paperMapper.deleteField(field_id);
+        return 0;
+    }
+
+    public int addNote(Note note){return this.paperMapper.addNote(note);}
+
+    public int addUpload(Upload upload){return this.paperMapper.addUpload(upload);}
+
+    public int addCover(int paper_id,int field_id){return this.paperMapper.addCover(paper_id,field_id);}
+
+    public int addAttach_File(int upload_id,String file_path){return this.paperMapper.addAttach_File(upload_id,file_path);}
+
+    public int addPublish(int paper_id,String author_name){return this.paperMapper.addPublish(paper_id,author_name);}
+    @Override
+    @Transactional
+    public int upload(UploadRequest uploadRequest){
+        Date date = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String str = df.format(date);
+        Paper paper=uploadRequest.paper_merge();
+        this.addPaper(paper);
+        Note note=new Note();
+        note.setContent(uploadRequest.getContent());
+        this.addNote(note);
+        Upload upload=new Upload();
+        upload.setPaper_id(paper.getPaper_id());
+        upload.setNote_id(note.getNote_id());
+        upload.setUser_id(uploadRequest.getUser_id());
+        upload.setUpload_date(str);
+        this.addUpload(upload);
+        for(int i=0;i<uploadRequest.getAuthors().size();i++){
+            this.addPublish(paper.getPaper_id(),uploadRequest.getAuthors().get(i));
+        }
+        for(int i=0;i<uploadRequest.getField().size();i++) {
+            this.addCover(paper.getPaper_id(),uploadRequest.getField().get(i));
+        }
+        for(int i=0;i<uploadRequest.getFileList().size();i++) {
+            this.addAttach_File(upload.getUpload_id(),uploadRequest.getFileList().get(i));
+        }
         return 0;
     }
 }

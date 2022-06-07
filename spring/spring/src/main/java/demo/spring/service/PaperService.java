@@ -1,5 +1,6 @@
 package demo.spring.service;
 
+import demo.spring.controller.UploadRequest;
 import demo.spring.entity.Field;
 import demo.spring.entity.Paper;
 
@@ -11,4 +12,6 @@ public interface PaperService {
     public int addField(Field field);
     public int modifyFieldName(Field field);
     public int deleteField(int field_id);
+
+    public int upload(UploadRequest uploadRequest);
 }

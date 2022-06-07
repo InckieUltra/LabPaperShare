@@ -1,6 +1,9 @@
 package demo.spring.mapper;
 
 import demo.spring.entity.Field;
+import demo.spring.entity.Note;
+import demo.spring.entity.Paper;
+import demo.spring.entity.Upload;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
@@ -9,11 +12,29 @@ import java.util.List;
 @Component
 @Mapper
 public interface PaperMapper {
-    @Insert("insert into paper values((select max(paper_id)+1 from (select paper_id from paper) as tmp),#{title},#{conference},#{date},#{summary},#{link},#{type})")
-    int addPaper(String title,String conference,String date,String summary,String link,String type);
+    @Insert("insert into paper(title,conference,date,summary,link,type) values(#{title},#{conference},#{date},#{summary},#{link},#{type})")
+    @Options(useGeneratedKeys = true, keyProperty = "paper_id", keyColumn = "paper_id")
+    int addPaper(Paper paper);
 
     @Insert("insert into field(field_name,pid) values(#{field_name},#{pid})")
     int addField(String field_name,int pid);
+
+    @Insert("insert into upload(user_id,upload_date,paper_id,note_id) values(#{user_id},#{upload_date},#{paper_id},#{note_id})")
+    @Options(useGeneratedKeys = true, keyProperty = "upload_id", keyColumn = "upload_id")
+    int addUpload(Upload upload);
+
+    @Insert("insert into note(content) values(#{content})")
+    @Options(useGeneratedKeys = true, keyProperty = "note_id", keyColumn = "note_id")
+    int addNote(Note note);
+
+    @Insert("insert into cover values(#{paper_id},#{field_id})")
+    int addCover(int paper_id,int field_id);
+
+    @Insert("insert into attach values(#{upload_id},#{file_path})")
+    int addAttach_File(int upload_id,String file_path);
+
+    @Insert("insert into publish values(#{author_name},#{paper_id})")
+    int addPublish(int paper_id,String author_name);
 
     @Select("select * from field")
     @Results(id="fieldMap",value={
@@ -34,4 +55,6 @@ public interface PaperMapper {
 
     @Delete("delete from field where field_id=#{field_id}")
     int deleteField(int field_id);
+
+
 }

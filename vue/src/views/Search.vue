@@ -1,27 +1,25 @@
 <template>
   <div>
-    <el-select v-model="value" placeholder='value' style="width: 4%; padding: 5px; border-radius: 50px;margin-left: 7%">
+    <el-select v-model="value" placeholder='value' style="width: 10%; padding: 5px; border-radius: 50px;margin-left: 7%">
       <el-option
           v-for="item in options"
           :key="item.value"
           :label="item.label"
           :value="item.value"
-
       >
       </el-option>
     </el-select>
-    <el-autocomplete
+    <el-input
         v-model="state"
-        :fetch-suggestions="querySearchAsync"
         placeholder="请输入内容"
-        @select="handleSelect"
         style="width: 70%; padding: 10px; border-radius: 50px;"
-    ></el-autocomplete>
+    ></el-input>
     <el-button v-on:click="loadData()" type="primary" icon="el-icon-search">搜索</el-button>
     <el-table
         :data="tableData"
         style="width: 100%"
-        v-show="loading===false">
+        v-show="show"
+        v-loading="loading">
       <el-table-column
           prop="paper_id"
           label="编号"
@@ -63,12 +61,16 @@
 </template>
 
 <script>
+import VueSimpleSpinner from 'vue-simple-spinner'
 import request from "@/utils/request";
-import {AxiosInstance as axios} from "axios";
 export default {
+  components: {
+    VueSimpleSpinner
+  },
   name: "Search",
   data(){
     return {
+      show:false,
       loading:true,
       options: [{
         value: '版号',
@@ -115,10 +117,18 @@ export default {
     loadData(){
       this.param.paper_id1 = this.state
       this.param.value1 = this.value
+      this.loading=true
       request.post("/api/search",this.param).then((res) => {
             console.log(res)
+        this.$message({
+          duration:700,
+          type: "success",
+          message: "搜索成功"
+        })
             this.tableData = res
             this.loading=false
+            this.show=true
+
           }
       )
     },
