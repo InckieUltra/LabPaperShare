@@ -5,7 +5,7 @@
         :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         border
         stripe
-        style="width: 100%">
+        style="width: 1100px">
       <el-table-column
           prop="role_id"
           label="论文标题"
@@ -47,6 +47,11 @@
     </div>
 
   </div>
+  <el-drawer v-model="drawer" title="I am the title" :with-header="false" size="55%">
+    <span>
+      <comment style="width: 220%"></comment>
+    </span>
+  </el-drawer>
 </template>
 
 <script>
@@ -54,12 +59,15 @@
 
 import request from "@/utils/request";
 import {activeRouter} from "@/utils/permission";
-
+import comment from "@/components/Comment";
 export default {
   name: 'Role',
-  components: {},
+  components: {
+    comment
+  },
   data() {
     return {
+      drawer:false,
       loading: true,
       form: {},
       dialogVisible: false,
@@ -82,28 +90,6 @@ export default {
     //this.setCurrentPageData()
   },
   methods: {
-    save() {
-      console.log(this.form)
-
-      request.post("/api/admin/addrole?name="+this.form.name+"&comment="+this.form.comment, this.form).then(res => {
-        if (res.code === 0) {
-          this.$message({
-            type: "success",
-            message: "新增成功"
-          })
-        } else {
-          this.$message({
-            type: "error",
-            message: res.msg
-          })
-        }
-
-        this.load() // 刷新表格的数据
-        this.dialogVisible = false  // 关闭弹窗
-      })
-
-
-    },
     load() {
       this.loading = true
       request.post("/api/admin/allroleinfo").then(res => {
@@ -144,6 +130,10 @@ export default {
     seeFile(row) {
     },
     seeComment(row) {
+      this.drawer=true;
+        //console.log(row)
+        this.$router.push({path: '/paperList',query:{field_id:row.field_id,field_name:row.field_name }})
+
     },
     handleSizeChange(pageSize) {   // 改变当前每页的个数触发
       this.pageSize = pageSize

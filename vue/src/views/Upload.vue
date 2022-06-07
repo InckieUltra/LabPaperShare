@@ -1,9 +1,9 @@
 <template>
   <el-card style="width: 50%;margin: 10px" >
     <div s>
-      <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="论文标题" style="width: 50%">
-          <el-input v-model="form.name"></el-input>
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px" >
+        <el-form-item label="论文标题"  prop="title" style="width: 50%">
+          <el-input v-model="form.title"></el-input>
         </el-form-item>
         <el-form-item label="研究领域" style="width: 50%">
 
@@ -16,14 +16,14 @@
         </div>
         </el-form-item>
 
-        <el-form-item label="发布会议" style="width: 50%">
+        <el-form-item label="发布会议" prop="conference" style="width: 50%">
           <el-input v-model="form.conference"></el-input>
         </el-form-item>
         <div style="display: inline-block">
-          <el-form-item label="论文作者" style="width: 100%;">
+          <el-form-item label="论文作者"  style="width: 100%;">
             <el-tag
                 :key="author"
-                v-for="author in form.Authors"
+                v-for="author in form.authors"
                 closable
                 :disable-transitions="false"
                 @close="handleClose(author)" style="">
@@ -43,9 +43,15 @@
         >
         </el-input>
         <el-button v-else class="button-new-tag" size="small" @click="showInput">+新增作者</el-button>
-
-
-        <el-form-item label="发布时间">
+        <el-form-item label="论文摘要" prop="summary">
+          <el-input
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              placeholder="请输入内容"
+              v-model="form.summary">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="发布时间" >
           <el-col :span="11">
             <el-date-picker type="date" placeholder="选择论文发表日期" v-model="form.date" style="width: 100%;"></el-date-picker>
           </el-col>
@@ -61,7 +67,9 @@
             <el-option label="数据集型" value="数据集型"></el-option>
           </el-select>
         </el-form-item>
-
+        <el-form-item label="论文链接" style="width: 50%">
+          <el-input v-model="form.link"></el-input>
+        </el-form-item>
         <el-form-item label="引用文献" >
         <el-select
             v-model="form.references"
@@ -122,6 +130,32 @@ export default {
   },
   data() {
     return {
+      rules: {
+        title: [
+          {required: true, message: '请输入论文标题', trigger: 'blur'}
+        ],
+        field: [
+          {required: true, message: '请输入邮箱', trigger: 'blur'},
+        ],
+        conference: [
+          {required: true, message: '请输入发布会议', trigger: 'blur'},
+        ],
+        summary: [
+          {required: true, message: '请输入论文摘要', trigger: 'blur'},
+        ],
+        date: [
+          {required: true, message: '请输入邮箱验证码', trigger: 'blur'},
+        ],
+        type: [
+          {required: true, message: '请输入邮箱验证码', trigger: 'blur'},
+        ],
+        references: [
+          {required: true, message: '请输入邮箱验证码', trigger: 'blur'},
+        ],
+        content: [
+          {required: true, message: '请输入邮箱验证码', trigger: 'blur'},
+        ],
+      },
       props: { multiple: true,
         checkStrictly: true,
         value:'field_id',
@@ -131,13 +165,16 @@ export default {
       inputValue: '',
       tableData:[],
       form: {
-        name: '',
+        user_id:'',
+        title: '',
         date: '',
         conference:'',
         type: '',
         content:'',
-        Authors: [],
+        summary:'',
+        authors: [],
         references:[],
+        link:'',
         field: [],
         fileList: [{
           name: 'food.jpeg',
@@ -156,16 +193,15 @@ export default {
   created() {
     request.post("/api/allfield").then(res => {
       this.options = res.data
-      console.log("res.data")
-      console.log(this.options)
-      console.log("seccessQ!!")
     })
 
     //this.getTreeData(this.tableData)
   },
   mounted() {
     this.init()
-
+    let userId = sessionStorage.getItem("user")
+    this.form.user_id = JSON.parse(userId).user_id
+    console.log(this.form.user_id)
   },
   methods: {
     handleRemove(file, fileList) {
@@ -194,14 +230,25 @@ export default {
     },
     onSubmit() {
       // this.form.content = JSON.parse(JSON.stringify(this.BasicEditor.getHtml()))
-       console.log(this.tableData)
+       console.log(this.form)
+      this.form.content = editor.txt.html()  // 获取 编辑器里面的值，然后赋予到实体当中
+
       for(let i = 0;i<this.tableData.length;i++){
         this.form.field.push(this.tableData[i][this.tableData[i].length-1])
       }
-      // request.post("/api/upload").then(res=>{
-      //
-      // })
-      this.form.content = editor.txt.html()  // 获取 编辑器里面的值，然后赋予到实体当中
+      request.post("/api/paper/upload",this.form).then(res=>{
+        if (res.code === 0){
+          this.$message({
+            type: "success",
+            message: res.msg,
+          })
+        }else {
+          this.$message({
+            type: "error",
+            message: res.msg,
+          })
+        }
+      })
 
       console.log('submit!');
       console.log(this.form)
@@ -217,7 +264,7 @@ export default {
       console.log(value);
     },
     handleClose(author) {
-      this.form.Authors.splice(this.form.Authors.indexOf(author), 1);
+      this.form.authors.splice(this.form.authors.indexOf(author), 1);
     },
     showInput() {
       this.inputVisible = true;
@@ -229,7 +276,7 @@ export default {
     handleInputConfirm() {
       let inputValue = this.inputValue;
       if (inputValue) {
-        this.form.Authors.push(inputValue);
+        this.form.authors.push(inputValue);
       }
       this.inputVisible = false;
       this.inputValue = '';

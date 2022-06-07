@@ -39,11 +39,11 @@
           <span class="author-time">{{ item.time }}</span>
         </div>
         <div class="icon-btn">
-        <span @click="showReplyInput(i, '0',item.name, item.id)" style="font-size: 14px">
+        <span @click="showReplyInput(i, item.name, item.comment_id)" style="font-size: 14px">
           <i class="el-icon-s-comment"></i>
           回复
         </span>
-          <span @click="showReplyInput(i,j, reply.from, reply.id)" style="font-size: 14px">
+          <span @click="deleteReply(i,reply.from, reply.comment_id)" style="font-size: 14px">
                 <i class="el-icon-s-delete"></i>
                 删除
               </span>
@@ -69,13 +69,13 @@
               <span class="author-time">{{ reply.time }}</span>
             </div>
             <div class="icon-btn">
-            <span @click="showReplyInput(i,j, reply.from, reply.id)" style="font-size: 14px">
+            <span @click="showReplyInput(i, reply.from, reply.comment_id)" style="font-size: 14px">
               <i class="el-icon-s-comment"></i>
-              回复
+              回复1
             </span>
-              <span @click="showReplyInput(i,j, reply.from, reply.id)" style="font-size: 14px">
+              <span @click="deleteReply(i, reply.from, reply.comment_id)" style="font-size: 14px">
                 <i class="el-icon-s-delete"></i>
-                删除
+                删除1
               </span>
             </div>
             <div class="talk-box"  style="font-size: 14px">
@@ -103,7 +103,7 @@
             <el-button
                 class="reply-btn"
                 size="medium"
-                @click="sendCommentReply(i)"
+                @click="sendCommentReply(i,this.toId)"
             >
               发表回复
             </el-button>
@@ -151,6 +151,8 @@ export default {
   },
   data(){
     return{
+      user_id:'',
+      comment_id:1,
       btnShow: false,
       index:'0',
       replyComment:'',
@@ -160,13 +162,14 @@ export default {
       toId :-1,
       comments:[
         {
+          comment_id:12,
           name:'Lana Del Rey',
           headImg:'https://ae01.alicdn.com/kf/Hd60a3f7c06fd47ae85624badd32ce54dv.jpg',
           comment:'我发布一张新专辑Norman Fucking Rockwell,大家快来听啊',
           time:'2019年9月16日 18:43',
           inputShow:false,
           reply:[
-            {
+            { comment_id:13,
               from:'Taylor Swift',
               fromHeadImg:'https://ae01.alicdn.com/kf/H94c78935ffa64e7e977544d19ecebf06L.jpg',
               to:'Lana Del Rey',
@@ -174,7 +177,7 @@ export default {
               time:'2019年9月16日 18:43',
               inputShow:false
             },
-            {
+            {comment_id:14,
               from:'Ariana Grande',
               fromHeadImg:'https://ae01.alicdn.com/kf/Hf6c0b4a7428b4edf866a9fbab75568e6U.jpg',
               to:'Lana Del Rey',
@@ -186,6 +189,7 @@ export default {
           ]
         },
         {
+          comment_id:15,
           name:'Taylor Swift',
           headImg:'https://ae01.alicdn.com/kf/H94c78935ffa64e7e977544d19ecebf06L.jpg',
           comment:'我发行了我的新专辑Lover',
@@ -193,6 +197,7 @@ export default {
           inputShow:false,
           reply:[
             {
+              comment_id:16,
               from:'Lana Del Rey',
               fromHeadImg:'https://ae01.alicdn.com/kf/Hd60a3f7c06fd47ae85624badd32ce54dv.jpg',
               to:'Taylor Swift',
@@ -206,6 +211,10 @@ export default {
     }
   },
   directives: {clickoutside},
+  created() {
+    let userStrr = sessionStorage.getItem("user")
+    this.user_id = JSON.parse(userStrr).user_id
+  },
   methods: {
     inputFocus(){
       var replyInput = document.getElementById('replyInput');
@@ -226,6 +235,7 @@ export default {
       this.index =i
       this.comments[i].inputShow = true
       this.to = name
+      console.log(id)
       this.toId = id
     },
     _inputShow(i){
@@ -243,19 +253,23 @@ export default {
         let input =  document.getElementById('replyInput')
         let timeNow = new Date().getTime();
         let time= this.dateStr(timeNow);
-        a.name= this.userName
+
+        a.user_id = this.user_id
+        a.userName= this.userName
         a.comment =this.replyComment
         a.headImg = this.myHeader
         a.time = time
-        a.commentNum = 0
-        a.like = 0
+        a.toId = ''
+        a.to =-1
+        console.log(a)
         this.comments.push(a)
         this.replyComment = ''
         input.innerHTML = '';
 
       }
     },
-    sendCommentReply(i,j){
+    sendCommentReply(i,toid){
+      console.log("toId: "+toid);
       if(!this.replyComment){
         this.$message({
           showClose: true,
@@ -266,13 +280,17 @@ export default {
         let a ={}
         let timeNow = new Date().getTime();
         let time= this.dateStr(timeNow);
+        a.user_id = this.user_id
         a.from= this.userName
         a.to = this.to
         a.fromHeadImg = this.myHeader
         a.comment =this.replyComment
         a.time = time
-        a.commentNum = 0
-        a.like = 0
+        a.toId = toid
+        console.log(a)
+        console.log(this.to)
+
+
         this.comments[i].reply.push(a)
         this.replyComment = ''
         document.getElementsByClassName("reply-comment-input")[i].innerHTML = ""

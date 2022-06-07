@@ -176,7 +176,8 @@ export default {
             type: "error",
             message: res.msg,
           })
-
+          sessionStorage.removeItem("user")
+          sessionStorage.removeItem("userPermission")
           this.$router.push("/login")
         }else{
           this.$message({
