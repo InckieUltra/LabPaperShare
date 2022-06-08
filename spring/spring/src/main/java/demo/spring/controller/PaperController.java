@@ -1,5 +1,6 @@
 package demo.spring.controller;
 
+import demo.spring.entity.Comment;
 import demo.spring.entity.Field;
 import demo.spring.entity.Paper;
 import demo.spring.entity.Result;
@@ -52,5 +53,28 @@ public class PaperController {
             e.printStackTrace();
         }
         return Result.fail("上传失败",null);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/api/comment")
+    public Result comment(@RequestBody Comment comment) {
+        try {
+            paperService.addComment(comment);
+            return Result.success("评论成功",null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.fail("评论失败",null);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/api/getcomment")
+    public Result comment(@RequestParam("paper_id") Integer paper_id) {
+        try {
+            return Result.success("查询成功",this.paperService.findComment(paper_id));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.fail("查询失败",null);
     }
 }

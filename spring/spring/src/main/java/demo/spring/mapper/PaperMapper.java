@@ -1,10 +1,8 @@
 package demo.spring.mapper;
 
-import demo.spring.entity.Field;
-import demo.spring.entity.Note;
-import demo.spring.entity.Paper;
-import demo.spring.entity.Upload;
+import demo.spring.entity.*;
 import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Result;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -36,6 +34,11 @@ public interface PaperMapper {
     @Insert("insert into publish values(#{author_name},#{paper_id})")
     int addPublish(int paper_id,String author_name);
 
+    @Insert("insert into reference values(#{paper_id},#{reference_id})")
+    int addReference(int paper_id,int reference_id);
+
+    @Insert("insert into comment(text,time,super_id,paper_id,user_id) values(#{text},#{time},#{super_id},#{paper_id},#{user_id})")
+    int addComment(Comment comment);
     @Select("select * from field")
     @Results(id="fieldMap",value={
             @Result(property = "field_id",column = "field_id",javaType = Integer.class),
@@ -50,6 +53,30 @@ public interface PaperMapper {
     @Select("select paper_id from cover where field_id=#{field_id}")
     List<Integer> findPaperbyField_id(int field_id);
 
+    @Select("select * from comment natural join user where paper_id = #{paper_id} and super_id = 0")
+    @Results(id="multiCommentMap",value={
+            @Result(property = "comment_id",column = "comment_id"),
+            @Result(property = "text",column = "text"),
+            @Result(property = "time",column = "time"),
+            @Result(property = "super_id",column = "super_id"),
+            @Result(property = "user_id",column = "user_id"),
+            @Result(property = "name",column = "username")
+    })
+    List<MultiComment> findMultiComment(int paper_id);
+
+    @Select("select * from comment natural join user where paper_id = #{paper_id} and super_id = #{super_id}")
+    @Results(id="commentMap",value={
+            @Result(property = "comment_id",column = "comment_id"),
+            @Result(property = "text",column = "text"),
+            @Result(property = "time",column = "time"),
+            @Result(property = "super_id",column = "super_id"),
+            @Result(property = "user_id",column = "user_id"),
+            @Result(property = "name",column = "username")
+    })
+    List<Comment> findComment(int paper_id,int super_id);
+
+    @Select("select username from comment natural join user where comment_id = #{super_id}")
+    String findRepliedUser(int super_id);
     @Update("update field set field_name=#{field_name} where field_id=#{field_id}")
     int modifyFieldName(int field_id,String field_name);
 

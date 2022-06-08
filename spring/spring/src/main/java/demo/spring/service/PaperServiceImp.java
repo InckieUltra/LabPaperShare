@@ -1,10 +1,7 @@
 package demo.spring.service;
 
 import demo.spring.controller.UploadRequest;
-import demo.spring.entity.Field;
-import demo.spring.entity.Note;
-import demo.spring.entity.Paper;
-import demo.spring.entity.Upload;
+import demo.spring.entity.*;
 import demo.spring.mapper.PaperMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,6 +74,8 @@ public class PaperServiceImp implements PaperService{
     public int addAttach_File(int upload_id,String file_path){return this.paperMapper.addAttach_File(upload_id,file_path);}
 
     public int addPublish(int paper_id,String author_name){return this.paperMapper.addPublish(paper_id,author_name);}
+
+    public int addReference(int paper_id,int reference_id){return this.paperMapper.addReference(paper_id,reference_id);}
     @Override
     @Transactional
     public int upload(UploadRequest uploadRequest){
@@ -100,9 +99,29 @@ public class PaperServiceImp implements PaperService{
         for(int i=0;i<uploadRequest.getField().size();i++) {
             this.addCover(paper.getPaper_id(),uploadRequest.getField().get(i));
         }
+        for(int i=0;i<uploadRequest.getReferences().size();i++){
+            this.addReference(paper.getPaper_id(),uploadRequest.getReferences().get(i));
+        }
         for(int i=0;i<uploadRequest.getFileList().size();i++) {
             this.addAttach_File(upload.getUpload_id(),uploadRequest.getFileList().get(i));
         }
         return 0;
+    }
+
+    public int addComment(Comment comment){
+        return this.paperMapper.addComment(comment);
+    }
+
+    public List<MultiComment> findComment(int paper_id){
+        List<MultiComment> res=this.paperMapper.findMultiComment(paper_id);
+        List<Comment> comments;
+        for(int i=0;i<res.size();i++){
+            comments=this.paperMapper.findComment(paper_id,res.get(i).getComment_id());
+            for(int j=0;j<comments.size();j++){
+                comments.get(j).setTo(this.paperMapper.findRepliedUser(comments.get(j).getSuper_id()));
+            }
+            res.get(i).setReply(comments);
+        }
+        return res;
     }
 }

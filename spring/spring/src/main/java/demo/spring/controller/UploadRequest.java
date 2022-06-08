@@ -19,6 +19,16 @@ public class UploadRequest {
 
     String content;
 
+    public List<Integer> getReferences() {
+        return references;
+    }
+
+    public void setReferences(List<Integer> references) {
+        this.references = references;
+    }
+
+    List<Integer> references;
+
     public String getContent() {
         return content;
     }
