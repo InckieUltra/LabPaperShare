@@ -1,6 +1,6 @@
 <template>
   <div style="padding: 10px">
-      <el-button type="primary" @click="addRoot" >新增根领域</el-button>
+<!--      <el-button type="primary" @click="addRoot" >新增根领域</el-button>-->
     <el-table
         v-loading="loading"
         :data="this.tableData"
@@ -30,21 +30,6 @@
     </el-table>
 
 
-    <div style="margin: 10px 0">
-      <el-dialog title="修改" v-model="dialogVisible" width="30%">
-        <el-form :model="form" label-width="120px">
-          <el-form-item label="名称">
-            <el-input v-model="form.field_name" style="width: 80%"></el-input>
-          </el-form-item>
-        </el-form>
-        <template #footer>
-          <span class="dialog-footer">
-            <el-button @click="dialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="save">确 定</el-button>
-          </span>
-        </template>
-      </el-dialog>
-    </div>
 
     <div style="margin: 10px 0">
       <el-dialog title="新增" v-model="dialogVisible2" width="30%">
@@ -118,7 +103,8 @@ export default {
       this.dialogVisible2 = true
     },
     addRoot() {
-      this.form.pid=this.form.field_id;
+
+      this.form.pid=null;
       this.form.field_id = null
       this.dialogVisible2 = true
     },

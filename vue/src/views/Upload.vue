@@ -94,15 +94,17 @@
         <el-form-item label="附加文件">
           <el-upload
               class="upload-demo"
-              action="http://localhost:9090/user/import"
+              action="/api/file/upload?file"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
+              :on-success="handleSuccess"
+              :on-error="handleError"
               :before-upload="beforeUpload"
               :before-remove="beforeRemove"
               multiple
-              :limit="1"
+              :limit="3"
               :on-exceed="handleExceed"
-              :file-list="form.fileList">
+              :file-list="files">
             <el-button size="small" >点击上传</el-button>
           </el-upload>
 
@@ -164,25 +166,20 @@ export default {
       inputVisible: false,
       inputValue: '',
       tableData:[],
+      files:[],
       form: {
         user_id:'',
         title: '',
         date: '',
         conference:'',
         type: '',
-        content:'',
+        content:"",
         summary:'',
         authors: [],
         references:[],
         link:'',
         field: [],
-        fileList: [{
-          name: 'food.jpeg',
-          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }, {
-          name: 'food2.jpeg',
-          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }]
+        fileList: []
 
       },
 
@@ -207,6 +204,14 @@ export default {
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
+    handleError(err,file,fileList){
+      console.log(err)
+    },
+    handleSuccess(res,file,fileList){
+      console.log(res)
+      this.form.fileList.push(res.data[0])
+      console.log(this.form.fileList)
+    },
     beforeUpload(file) {
       let fileSize = file.size
       const FIVE_M= 5*1024*1024;
@@ -223,13 +228,14 @@ export default {
       console.log(file);
     },
     handleExceed(files, fileList) {
-      this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+      this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${ file.name }？`);
     },
     onSubmit() {
       // this.form.content = JSON.parse(JSON.stringify(this.BasicEditor.getHtml()))
+      this.form.references.push(2)
        console.log(this.form)
       this.form.content = editor.txt.html()  // 获取 编辑器里面的值，然后赋予到实体当中
 

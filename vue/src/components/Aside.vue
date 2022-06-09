@@ -2,7 +2,7 @@
 <template>
   <div>
     <el-menu
-        style="width: 220px; min-height: calc(100vh - 50px)"
+        style="width: 220px; min-height: calc(100vh - 50px);height: 100%"
         :default-active="$route.path"
         background-color="#545c64"
         text-color="#fff"

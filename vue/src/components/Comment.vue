@@ -1,8 +1,7 @@
 <template>
 
 
-    <div style="width: 50%">
-      <el-card style="width: 50%">
+    <div style="width: 50%;">
       <div v-clickoutside="hideReplyBtn" @click="inputFocus" class="my-reply">
         <el-avatar class="header-img" :size="40" :src="myHeader"></el-avatar>
         <div class="reply-info">
@@ -24,7 +23,7 @@
               @click="sendComment"
               type="primary"
           >
-            发表评论
+            发表评论2
           </el-button>
         </div>
       </div>
@@ -43,18 +42,18 @@
           <i class="el-icon-s-comment"></i>
           回复
         </span>
-          <span @click="deleteReply(i,reply.from, reply.comment_id)" style="font-size: 14px">
+          <span @click="deleteReply(i,reply.name, reply.comment_id)" style="font-size: 14px" v-if="user_id==1">
                 <i class="el-icon-s-delete"></i>
                 删除
-              </span>
-          <!-- <span  @click="addlikeNumber(i, item.from, item.id)">
-          <i class="iconfont el-icon-caret-top"></i>
-          {{ item.like }}
-          </span> -->
+          </span>
+          <span @click="updateReply(i, reply.name, reply.comment_id)" style="font-size: 14px" v-if="user_id==1">
+                <i class="el-icon-s-delete"></i>
+                修改1
+          </span>
         </div>
         <div class="talk-box">
           <p>
-            <span class="reply">{{ item.comment }}</span>
+            <span class="reply">{{ item.text }}</span>
           </p>
         </div>
         <div class="reply-box">
@@ -65,23 +64,27 @@
                 :src="reply.fromHeadImg"
             ></el-avatar>
             <div class="author-info">
-              <span class="author-name">{{ reply.from }}</span>
+              <span class="author-name">{{ reply.name }}</span>
               <span class="author-time">{{ reply.time }}</span>
             </div>
             <div class="icon-btn">
-            <span @click="showReplyInput(i, reply.from, reply.comment_id)" style="font-size: 14px">
+            <span @click="showReplyInput(i, reply.name, reply.comment_id)" style="font-size: 14px">
               <i class="el-icon-s-comment"></i>
               回复1
             </span>
-              <span @click="deleteReply(i, reply.from, reply.comment_id)" style="font-size: 14px">
+              <span @click="deleteReply(i, reply.name, reply.comment_id)" style="font-size: 14px" v-if="user_id==1">
                 <i class="el-icon-s-delete"></i>
                 删除1
+              </span>
+              <span @click="updateReply(i, reply.name, reply.comment_id)" style="font-size: 14px" v-if="user_id==1">
+                <i class="el-icon-s-delete"></i>
+                修改1
               </span>
             </div>
             <div class="talk-box"  style="font-size: 14px">
               <p>
                 <span>回复 {{ reply.to }}:</span>
-                <span class="reply">{{ reply.comment }}</span>
+                <span class="reply">{{ reply.text }}</span>
               </p>
             </div>
             <div class="reply-box"></div>
@@ -103,14 +106,13 @@
             <el-button
                 class="reply-btn"
                 size="medium"
-                @click="sendCommentReply(i,this.toId)"
+                @click="sendCommentReply(i,this.super_id)"
             >
-              发表回复
+              发表回复1
             </el-button>
           </div>
         </div>
       </div>
-      </el-card>
     </div>
 
 
@@ -119,6 +121,8 @@
 
 
 <script>
+import request from "@/utils/request";
+
 const clickoutside = {
   // 初始化指令
   bind(el, binding, vnode) {
@@ -152,6 +156,7 @@ export default {
   data(){
     return{
       user_id:'',
+      paper_id:'',
       comment_id:1,
       btnShow: false,
       index:'0',
@@ -159,54 +164,36 @@ export default {
       userName:'Lana Del Rey',
       myHeader:'https://ae01.alicdn.com/kf/Hd60a3f7c06fd47ae85624badd32ce54dv.jpg',
       to:'',
-      toId :-1,
+      super_id :0,
       comments:[
-        {
-          comment_id:12,
-          name:'Lana Del Rey',
-          headImg:'https://ae01.alicdn.com/kf/Hd60a3f7c06fd47ae85624badd32ce54dv.jpg',
-          comment:'我发布一张新专辑Norman Fucking Rockwell,大家快来听啊',
-          time:'2019年9月16日 18:43',
-          inputShow:false,
-          reply:[
-            { comment_id:13,
-              from:'Taylor Swift',
-              fromHeadImg:'https://ae01.alicdn.com/kf/H94c78935ffa64e7e977544d19ecebf06L.jpg',
-              to:'Lana Del Rey',
-              comment:'我很喜欢你的新专辑！！',
-              time:'2019年9月16日 18:43',
-              inputShow:false
-            },
-            {comment_id:14,
-              from:'Ariana Grande',
-              fromHeadImg:'https://ae01.alicdn.com/kf/Hf6c0b4a7428b4edf866a9fbab75568e6U.jpg',
-              to:'Lana Del Rey',
-              comment:'别忘记宣传我们的合作单曲啊',
-              time:'2019年9月16日 18:43',
-              inputShow:false
-
-            }
-          ]
-        },
-        {
-          comment_id:15,
-          name:'Taylor Swift',
-          headImg:'https://ae01.alicdn.com/kf/H94c78935ffa64e7e977544d19ecebf06L.jpg',
-          comment:'我发行了我的新专辑Lover',
-          time:'2019年9月16日 18:43',
-          inputShow:false,
-          reply:[
-            {
-              comment_id:16,
-              from:'Lana Del Rey',
-              fromHeadImg:'https://ae01.alicdn.com/kf/Hd60a3f7c06fd47ae85624badd32ce54dv.jpg',
-              to:'Taylor Swift',
-              comment:'新专辑和speak now 一样棒！',
-              time:'2019年9月16日 18:43',
-              inputShow:false
-            }
-          ]
-        },
+        // {
+        //   comment_id:12,
+        //   name:'Lana Del Rey',
+        //   headImg:'https://ae01.alicdn.com/kf/Hd60a3f7c06fd47ae85624badd32ce54dv.jpg',
+        //   text:'我发布一张新专辑Norman Fucking Rockwell,大家快来听啊',
+        //   time:'2019年9月16日 18:43',
+        //   inputShow:false,
+        //   reply:[
+        //     { comment_id:13,
+        //       from:'Taylor Swift',
+        //       fromHeadImg:'https://ae01.alicdn.com/kf/H94c78935ffa64e7e977544d19ecebf06L.jpg',
+        //       to:'Lana Del Rey',
+        //       super_id:'',
+        //       text:'我很喜欢你的新专辑！！',
+        //       time:'2019年9月16日 18:43',
+        //       inputShow:false
+        //     },
+        //     {comment_id:14,
+        //       from:'Ariana Grande',
+        //       fromHeadImg:'https://ae01.alicdn.com/kf/Hf6c0b4a7428b4edf866a9fbab75568e6U.jpg',
+        //       to:'Lana Del Rey',
+        //       text:'别忘记宣传我们的合作单曲啊',
+        //       time:'2019年9月16日 18:43',
+        //       inputShow:false
+        //
+        //     }
+        //   ]
+        // },
       ]
     }
   },
@@ -214,13 +201,28 @@ export default {
   created() {
     let userStrr = sessionStorage.getItem("user")
     this.user_id = JSON.parse(userStrr).user_id
+    //this.paper_id = this.$route.query.paper_id
+    this.paper_id=2
+    request.post("/api/getcomment?paper_id="+this.paper_id).then(res => {
+      if (res.code === 0) {
+        console.log(res.data)
+        this.comments = res.data
+        this.$message.success("jiazaiok")
+      }
+    })
   },
+
   methods: {
     inputFocus(){
       var replyInput = document.getElementById('replyInput');
       replyInput.style.padding= "8px 8px"
       replyInput.style.border ="2px solid blue"
       replyInput.focus()
+    },
+    loadMsg(){
+      request.post("/api/getcomment?paper_id="+this.paper_id).then(res => {
+        this.comments = res.data
+      })
     },
     showReplyBtn(){
       this.btnShow = true
@@ -235,8 +237,9 @@ export default {
       this.index =i
       this.comments[i].inputShow = true
       this.to = name
-      console.log(id)
-      this.toId = id
+      console.log(i)
+      console.log(this.comments[i].comment_id)
+      this.super_id = this.comments[i].comment_id
     },
     _inputShow(i){
       return this.comments[i].inputShow
@@ -251,21 +254,33 @@ export default {
       }else{
         let a ={}
         let input =  document.getElementById('replyInput')
-        let timeNow = new Date().getTime();
-        let time= this.dateStr(timeNow);
+        let time= this.getCurTime()
 
         a.user_id = this.user_id
         a.userName= this.userName
-        a.comment =this.replyComment
-        a.headImg = this.myHeader
+        a.text =this.replyComment
+        a.paper_id = 2
+        //a.headImg = this.myHeader
         a.time = time
-        a.toId = ''
-        a.to =-1
+        a.super_id = 0
         console.log(a)
         this.comments.push(a)
         this.replyComment = ''
         input.innerHTML = '';
-
+        request.post("/api/comment",a).then(res=>{
+          if (res.code === 0){
+            this.$message({
+              type: "success",
+              message: "评论成功"
+            })
+          }else{
+            this.$message({
+              type: "error",
+              message: "评论失败"
+            })
+          }
+        })
+        this.loadMsg()
       }
     },
     sendCommentReply(i,toid){
@@ -278,53 +293,45 @@ export default {
         })
       }else{
         let a ={}
-        let timeNow = new Date().getTime();
-        let time= this.dateStr(timeNow);
+
+        let time= this.getCurTime()
         a.user_id = this.user_id
         a.from= this.userName
         a.to = this.to
         a.fromHeadImg = this.myHeader
-        a.comment =this.replyComment
+        a.text =this.replyComment
         a.time = time
-        a.toId = toid
+        a.super_id = toid
         console.log(a)
         console.log(this.to)
-
-
+        a.paper_id = 2
         this.comments[i].reply.push(a)
+        request.post("/api/comment",a).then(res=>{
+          if (res.code === 0){
+            this.$message({
+              type: "success",
+              message: "评论成功"
+            })
+          }else{
+            this.$message({
+              type: "error",
+              message: "评论失败"
+            })
+          }
+        })
         this.replyComment = ''
         document.getElementsByClassName("reply-comment-input")[i].innerHTML = ""
+        this.loadMsg()
       }
     },
     onDivInput: function(e) {
       this.replyComment = e.target.innerHTML;
     },
-    dateStr(date){
+    getCurTime(){
       //获取js 时间戳
-      var time=new Date().getTime();
+      var time=new Date()
       //去掉 js 时间戳后三位，与php 时间戳保持一致
-      time=parseInt((time-date)/1000);
-      //存储转换值
-      var s;
-      if(time<60*10){//十分钟内
-        return '刚刚';
-      }else if((time<60*60)&&(time>=60*10)){
-        //超过十分钟少于1小时
-        s = Math.floor(time/60);
-        return  s+"分钟前";
-      }else if((time<60*60*24)&&(time>=60*60)){
-        //超过1小时少于24小时
-        s = Math.floor(time/60/60);
-        return  s+"小时前";
-      }else if((time<60*60*24*30)&&(time>=60*60*24)){
-        //超过1天少于30天内
-        s = Math.floor(time/60/60/24);
-        return s+"天前";
-      }else{
-        //超过30天ddd
-        var date= new Date(parseInt(date));
-        return date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate();
-      }
+      return time.toLocaleString( )
     }
   },
 }

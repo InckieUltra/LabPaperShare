@@ -1,11 +1,15 @@
 <template>
   <div style="padding: 10px">
+    <el-breadcrumb separator="/">
+      <el-breadcrumb-item :to="{ path: '/category' }">浏览论文</el-breadcrumb-item>
+      <el-breadcrumb-item>{{field_name}}</el-breadcrumb-item>
+    </el-breadcrumb>
     <el-table
         v-loading="loading"
         :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         border
         stripe
-        style="width: 1100px">
+        style="width: 1100px;margin-top: 10px;">
       <el-table-column
           prop="role_id"
           label="论文标题"
@@ -19,7 +23,7 @@
 
       <el-table-column
           prop="comment"
-          label="所属领域">
+          label="发布会议">
       </el-table-column>
       <el-table-column
           prop="comment"
@@ -49,7 +53,9 @@
   </div>
   <el-drawer v-model="drawer" title="I am the title" :with-header="false" size="55%">
     <span>
-      <comment style="width: 220%"></comment>
+      <el-card style="width: 200%">
+        <comment></comment>
+      </el-card>
     </span>
   </el-drawer>
 </template>
@@ -69,6 +75,7 @@ export default {
     return {
       drawer:false,
       loading: true,
+      field_name:'',
       form: {},
       dialogVisible: false,
       bookVis: false,
@@ -92,6 +99,7 @@ export default {
   methods: {
     load() {
       this.loading = true
+      this.field_name = this.$route.query.field_name
       request.post("/api/admin/allroleinfo").then(res => {
         if (res.code === 0){
           console.log(res.data.length)
@@ -113,7 +121,8 @@ export default {
             type: "error",
             message: res.msg,
           })
-
+          sessionStorage.removeItem("user")
+          sessionStorage.removeItem("userPermission")
           this.$router.push("/login")
         }else{
           this.$message({
@@ -126,14 +135,16 @@ export default {
     },
 
     seeDetail(row) {
+      console.log(row)
+      console.log(this.$route.path)
+      window.open(this.$router.resolve({path: '/detail',query:{field_id:row.field_id,field_name:row.field_name,lastPath:this.$route.path }}).href)
+
     },
     seeFile(row) {
     },
     seeComment(row) {
       this.drawer=true;
-        //console.log(row)
-        this.$router.push({path: '/paperList',query:{field_id:row.field_id,field_name:row.field_name }})
-
+        console.log(row)
     },
     handleSizeChange(pageSize) {   // 改变当前每页的个数触发
       this.pageSize = pageSize

@@ -1,6 +1,10 @@
 <template>
-  <div style="padding: 10px">
 
+  <div style="padding: 10px">
+    <el-breadcrumb separator="/">
+      <el-breadcrumb-item>浏览论文</el-breadcrumb-item>
+
+    </el-breadcrumb>
     <el-table
         v-loading="loading"
         :data="this.tableData"
