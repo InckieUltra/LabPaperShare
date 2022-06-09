@@ -9,24 +9,66 @@
 
   </div>
   <div style="padding: 10px">
-  <el-card>
-    <div id="myChart" :style="{width: '750px', height: '600px'}"></div>
-  </el-card>
+    <el-card>
+      <div id="myChart" :style="{width: '750px', height: '600px'}"></div>
+    </el-card>
   </div>
 
 </template>
 
 <script>
 import request from "@/utils/request";
+import {onMounted, toRaw} from "vue";
 
 export default {
-  name: "Home",
+
   data() {
-    return {}
+    return {
+      name: "Home",
+      param:[{
+        type:0,
+        user_id:0
+      }],
+      param1:[{
+
+      }],
+      id:1,
+      tableData:[{
+        count:1,
+        Date:1
+      }],
+      tableData1:[{
+        count:0,
+        Date:0
+      }],
+      tableData2:[{
+        name:'',
+        value:1
+      }]
+    }
   },
-  mounted() {
-    this.drawLine();
-    this.drawLine1();
+  async mounted() {
+    this.user1 = JSON.parse(window.sessionStorage.getItem('user'));
+    let that = this;
+    this.id = parseInt(this.user1.user_id);
+    this.param = {user_id: this.id,type: 0};
+    console.log(this.param);
+    const result =await request.post("/api/Field",this.param1)
+    this.tableData2 = result
+    console.log(this.tableData2)
+    request.post("/api/home",this.param).then((res) => {
+      this.tableData = res
+      console.log(this.tableData)
+      this.param={user_id: 0,type: 1};
+      request.post("/api/home",this.param).then((res) => {
+        this.tableData1 = res
+        console.log(this.tableData1)
+        this.drawLine();
+        this.drawLine1();
+      });
+    });
+
+
   },
   // created() {
   //   let userStr = sessionStorage.getItem("user") || "{}"
@@ -41,11 +83,10 @@ export default {
   //   this.load()
   // },
   methods: {
-
     drawLine1(){
 
       let myChart = this.$root.echarts.init(document.getElementById('main'))
-
+      let that = this;
       let option = {
         title: {
           text: '我的上传 vs 全组上传',
@@ -83,9 +124,7 @@ export default {
           {
             name: '我的上传',
             type: 'bar',
-            data: [
-              3, 0, 1, 8, 14, 2, 16, 11, 2, 10, 6, 3
-            ],
+            data:[],
             markPoint: {
               data: [
                 { type: 'max', name: 'Max' },
@@ -99,9 +138,7 @@ export default {
           {
             name: '全组上传',
             type: 'bar',
-            data: [
-              6, 9, 10, 26, 28, 31, 17, 18, 48, 18, 8, 7
-            ],
+            data:[],
             markPoint: {
               data: [
                 { type: 'max', name: 'Max' },
@@ -114,6 +151,13 @@ export default {
           }
         ]
       }
+      this.tableData.filter(item=>{
+        option.series[0].data.push(item.count)
+      })
+      this.tableData1.filter(item=>{
+        option.series[1].data.push(item.count)
+      })
+      console.log(option.series[0].data)
       myChart.setOption(option);
     },
     drawLine() {
@@ -121,7 +165,7 @@ export default {
       let myChart = this.$root.echarts.init(document.getElementById('myChart'))
       let option = {
         title: {
-          text: '我的上传论文比例统计图',
+          text: '上传论文比例统计图',
           subtext: '虚拟数据',
           left: 'left',
           bottom:'bottom'
@@ -151,19 +195,15 @@ export default {
             itemStyle: {
               borderRadius: 8
             },
-            data: [{name :"哲学",value : 2},
-              {name :"语言文学",value : 1},
-              {name :"历史学",value : 4},
-              {name :"法学",value : 8},
-              {name :"管理学",value : 2},
-              {name :"教育学",value : 3},
-              {name :"医学",value : 5},
-              {name :"工程学",value : 3 },
+            data: [
             ]
           },
 
         ]
       }
+      this.tableData2.filter(item=>{
+        option.series[0].data.push(item)
+      })
       myChart.setOption(option);
       // request.get("/user/count").then(res => {
       //   if (res.code === '0') {
