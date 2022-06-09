@@ -28,7 +28,7 @@ public interface PaperMapper {
     @Insert("insert into cover values(#{paper_id},#{field_id})")
     int addCover(int paper_id,int field_id);
 
-    @Insert("insert into attach values(#{upload_id},#{file_path})")
+    @Insert("insert into attach_file values(#{upload_id},#{file_path})")
     int addAttach_File(int upload_id,String file_path);
 
     @Insert("insert into publish values(#{author_name},#{paper_id})")
