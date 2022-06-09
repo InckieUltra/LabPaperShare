@@ -42,6 +42,8 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                         .and()
                         .sessionManagement() // 添加 Session管理器
                         .invalidSessionStrategy(new MyInvalidSessionStrategy()) // Session失效后跳转到这个链接
+                        .maximumSessions(1)
+                        .expiredSessionStrategy(new MySessionExpiredStrategy());
                 ;
         }
 
@@ -55,5 +57,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
         protected void configure(AuthenticationManagerBuilder auth) throws Exception {
                 auth.userDetailsService(myUserDetailsService).passwordEncoder(new BCryptPasswordEncoder());
         }
+
+
 
 }

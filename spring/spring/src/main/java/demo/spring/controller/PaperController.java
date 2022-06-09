@@ -1,18 +1,24 @@
 package demo.spring.controller;
 
+import com.sun.org.apache.xpath.internal.operations.Mult;
 import demo.spring.entity.Comment;
 import demo.spring.entity.Field;
-import demo.spring.entity.Paper;
 import demo.spring.entity.Result;
-import demo.spring.mapper.PaperMapper;
 import demo.spring.service.PaperService;
-import org.apache.tomcat.util.http.fileupload.UploadContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class PaperController {
@@ -43,19 +49,6 @@ public class PaperController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/api/uploadfile")
-    public Result uploadFolder(@RequestBody MultipartFile file) {
-        try {
-            byte[] bytes = file.getBytes();
-            FTPUtil.sshSftp(bytes, file.getOriginalFilename());
-            return Result.success("上传成功",null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return Result.fail("上传失败",null);
-    }
-
-    @CrossOrigin
     @RequestMapping(value = "/api/comment")
     public Result comment(@RequestBody Comment comment) {
         try {
@@ -76,5 +69,55 @@ public class PaperController {
             e.printStackTrace();
         }
         return Result.fail("查询失败",null);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/api/file/upload")
+    public Result uploadfile(MultipartHttpServletRequest request){
+        List<MultipartFile> files = request.getFiles("file");
+        List<String> res=new ArrayList<String>();
+        try {
+            SFTPConfigModel sftpConfigModel=new SFTPConfigModel();
+            SFTPUtil sftpUtil=new SFTPUtil(sftpConfigModel.getDefaultConfig());
+            sftpUtil.login();
+            System.out.println(files.get(0).getOriginalFilename());
+            for(MultipartFile file:files){
+                System.out.println(file.getOriginalFilename());
+                String fileType = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+                String fileName = UUID.randomUUID().toString().replace("-","") + "@" + file.getOriginalFilename();
+                sftpUtil.upload(sftpConfigModel.getUploadUrl(),fileName,file.getInputStream());
+                res.add(fileName);
+            }
+            sftpUtil.logout();
+            return Result.success("成功",res);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.fail("失败",null);
+    }
+
+    @PostMapping("batchUpload")
+    public String batchUpload(MultipartHttpServletRequest request){
+        List<MultipartFile> files = request.getFiles("file");
+        MultipartFile file = null;
+        BufferedOutputStream stream = null;
+        for (int i = 0; i < files.size(); i++) {
+            file = files.get(i);
+            String filePath = "f:/upload/";
+            if (!file.isEmpty()){
+                try {
+                    byte[] bytes = file.getBytes();
+                    stream = new BufferedOutputStream(new FileOutputStream(new File(filePath+file.getOriginalFilename())));
+                    stream.write(bytes);
+                    stream.close();
+                } catch (IOException e) {
+                    stream = null;
+                    return "第"+i+"个文件上传失败："+e.getMessage();
+                }
+            }else {
+                return "第"+i+"个文件上传失败因为文件为空";
+            }
+        }
+        return "上传成功";
     }
 }

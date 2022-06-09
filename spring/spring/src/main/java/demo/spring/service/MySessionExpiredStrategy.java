@@ -12,11 +12,13 @@ import java.io.IOException;
 @Component
 public class MySessionExpiredStrategy implements SessionInformationExpiredStrategy {
 
+    String[] puburi={"/authentication/require","/api/login","/test","/api/register/sendemail",
+            "/api/register","/session/invalid","/user/login"};
     @Override
     public void onExpiredSessionDetected(SessionInformationExpiredEvent event) throws IOException, ServletException {
         HttpServletResponse response = event.getResponse();
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json;charset=utf-8");
-        response.getWriter().write("您的账号已经在别的地方登录，当前登录已失效。如果密码遭到泄露，请立即修改密码！");
+        response.getWriter().write("登录已过期");
     }
 }
