@@ -1,11 +1,9 @@
 package demo.spring.service;
 
 import demo.spring.controller.UploadRequest;
-import demo.spring.entity.Comment;
-import demo.spring.entity.Field;
-import demo.spring.entity.MultiComment;
-import demo.spring.entity.Paper;
+import demo.spring.entity.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface PaperService {
@@ -19,4 +17,7 @@ public interface PaperService {
 
     public int addComment(Comment comment);
     public List<MultiComment> findComment(int paper_id);
+
+    public List<Object> findPaperbyField(int field_id, int page_no, int page_size);
+    public PaperDetail findPaperDetail(int paper_id);
 }

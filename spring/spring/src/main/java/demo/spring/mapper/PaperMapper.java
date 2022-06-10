@@ -50,7 +50,7 @@ public interface PaperMapper {
     @Select("select field_id from field where pid=#{id}")
     List<Integer> findFieldChildren(int id);
 
-    @Select("select paper_id from cover where field_id=#{field_id}")
+    @Select("select distinct paper_id from cover where field_id=#{field_id}")
     List<Integer> findPaperbyField_id(int field_id);
 
     @Select("select * from comment natural join user where paper_id = #{paper_id} and super_id = 0")
@@ -75,8 +75,45 @@ public interface PaperMapper {
     })
     List<Comment> findComment(int paper_id,int super_id);
 
+    @Select("select paper_id,title,conference,date,group_concat(distinct author_name) as name from paper natural join cover natural join publish where field_id = #{field_id} group by paper_id limit #{offset},#{page_size}")
+    @Results(id="paperfieldMap",value={
+            @Result(property = "paper_id",column = "paper_id",javaType = Integer.class),
+            @Result(property = "title",column = "title",javaType = String.class),
+            @Result(property = "date",column = "date",javaType = String.class),
+            @Result(property = "conference",column = "conference",javaType = String.class),
+            @Result(property = "authors",column = "name",javaType = String.class)
+    })
+    List<PaperOutline> findPaperbyField(int field_id,int offset,int page_size);
+
+    @Select("select * from paper natural join upload natural join user where paper_id=#{paper_id}")
+    PaperDetail findPaperDetail(int field_id);
+
     @Select("select username from comment natural join user where comment_id = #{super_id}")
     String findRepliedUser(int super_id);
+
+    @Select("select author_name from publish where paper_id = #{paper_id}")
+    List<String> findAuthors(int paper_id);
+
+    @Select("select field_id,field_name from cover natural join field where paper_id = #{paper_id}")
+    @Results(id="fieldMap2",value={
+            @Result(property = "field_id",column = "field_id",javaType = Integer.class),
+            @Result(property = "field_name",column = "field_name",javaType = String.class)
+    })
+    List<Field> findFields(int paper_id);
+
+    @Select("select file_path from upload natural join attach_file where paper_id = #{paper_id}")
+    List<String> findFiles(int paper_id);
+
+    @Select("select note_id,content from upload natural join note where paper_id = #{paper_id}")
+    Note findNote(int paper_id);
+
+    @Select("select paper.paper_id as paper_id,title from reference join paper on reference.reference_id=paper.paper_id where paper.paper_id = #{paper_id}")
+    @Results(id="referenceMap",value={
+            @Result(property = "paper_id",column = "paper_id",javaType = Integer.class),
+            @Result(property = "title",column = "title",javaType = String.class)
+    })
+    List<Paper> findReferences(int paper_id);
+
     @Update("update field set field_name=#{field_name} where field_id=#{field_id}")
     int modifyFieldName(int field_id,String field_name);
 

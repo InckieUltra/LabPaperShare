@@ -68,7 +68,4 @@ public class parper {
         this.type = type;
     }
 
-
-
-
 }

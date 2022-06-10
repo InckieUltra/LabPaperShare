@@ -120,4 +120,28 @@ public class PaperController {
         }
         return "上传成功";
     }
+
+    @CrossOrigin
+    @RequestMapping(value = "/api/findpaperbyfield")
+    public Result findpaperbyfield(@RequestParam("field_id") Integer field_id,
+                                   @RequestParam("page_no") Integer page_no,
+                                   @RequestParam("page_size") Integer page_size) {
+        try {
+            return Result.success("查询成功",this.paperService.findPaperbyField(field_id,page_no,page_size));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.fail("查询失败",null);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/api/paper")
+    public Result findpaperbyfield(@RequestParam("paper_id") Integer paper_id) {
+        try {
+            return Result.success("查询成功",this.paperService.findPaperDetail(paper_id));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.fail("查询失败",null);
+    }
 }

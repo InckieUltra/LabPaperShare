@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service("paperService")
 public class PaperServiceImp implements PaperService{
@@ -123,5 +121,26 @@ public class PaperServiceImp implements PaperService{
             res.get(i).setReply(comments);
         }
         return res;
+    }
+
+    public List<Object> findPaperbyField(int field_id, int page_no, int page_size){
+        Integer page_total=this.paperMapper.findPaperbyField_id(field_id).size();
+        List<PaperOutline> paperOutlines=this.paperMapper.findPaperbyField(field_id,page_no*page_size,page_size);
+        List<Object> res = new ArrayList<Object>();
+        res.add(page_total);
+        res.add(paperOutlines);
+        return res;
+    }
+
+    public PaperDetail findPaperDetail(int paper_id){
+        PaperDetail paperDetail=this.paperMapper.findPaperDetail(paper_id);
+        paperDetail.setAuthors(this.paperMapper.findAuthors(paper_id));
+        Note note=this.paperMapper.findNote(paper_id);
+        paperDetail.setNote_id(note.getNote_id());
+        paperDetail.setContent(note.getContent());
+        paperDetail.setFields(this.paperMapper.findFields(paper_id));
+        paperDetail.setReferences(this.paperMapper.findReferences(paper_id));
+        paperDetail.setFiles(this.paperMapper.findFiles(paper_id));
+        return paperDetail;
     }
 }
