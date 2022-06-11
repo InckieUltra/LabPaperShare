@@ -2,15 +2,15 @@
 
   <div style="padding: 10px">
     <div>
-      <el-card>
-        <div id="main" :style="{width: '750px', height: '600px'}"></div>
+      <el-card shadow="hover">
+        <div id="main" :style="{width: '725px', height: '600px'}"></div>
       </el-card>
     </div>
 
   </div>
-  <div style="padding: 10px">
-    <el-card>
-      <div id="myChart" :style="{width: '750px', height: '600px'}"></div>
+  <div style="margin-top: 10px">
+    <el-card shadow="hover">
+      <div id="myChart" :style="{width: '725px', height: '600px'}"></div>
     </el-card>
   </div>
 
@@ -90,7 +90,7 @@ export default {
       let option = {
         title: {
           text: '我的上传 vs 全组上传',
-          subtext: 'Fake Data'
+
         },
         tooltip: {
           trigger: 'axis'
@@ -166,7 +166,6 @@ export default {
       let option = {
         title: {
           text: '上传论文比例统计图',
-          subtext: '虚拟数据',
           left: 'left',
           bottom:'bottom'
         },
@@ -187,7 +186,7 @@ export default {
         },
         series: [
           {
-            name: '用户比例',
+            name: '上传数量',
             type: 'pie',
             radius: [50, 250],
             center: ['50%', '50%'],

@@ -21,8 +21,8 @@
     <div style="width: 100px ">
       <el-dropdown style="margin-top: 10px;">
         <span class="el-dropdown-link">
-          <el-avatar :size="30" :src="user.avatar" style="position: relative; top: 10px"></el-avatar>
-           {{ user.userName }}
+          <el-avatar :size="30" :src="circleUrl" style="position: relative; top: 10px"></el-avatar>
+           {{ this.theName }}
           <i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <template #dropdown>
@@ -44,10 +44,13 @@ export default {
   props: ['user'],
   data() {
     return {
-
+      circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
+      theName:''
     }
   },
   created() {
+    let users = sessionStorage.getItem("user") || "{}"
+    this.theName =  JSON.parse(users).userName
 
   },
   components: {

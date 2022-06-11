@@ -6,34 +6,33 @@
     </el-breadcrumb>
     <el-table
         v-loading="loading"
-        :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+        :data="tableData"
         border
         stripe
         style="width: 1100px;margin-top: 10px;">
       <el-table-column
-          prop="role_id"
+          prop="title"
           label="论文标题"
-          sortable
       >
       </el-table-column>
       <el-table-column
-          prop="comment"
+          prop="authors"
           label="论文作者">
       </el-table-column>
 
       <el-table-column
-          prop="comment"
+          prop="conference"
           label="发布会议">
       </el-table-column>
       <el-table-column
-          prop="comment"
+          prop="date"
           label="发布时间">
       </el-table-column>
       <el-table-column label="操作" >
         <template #default="scope">
           <el-button size="mini" type="primary" @click="seeDetail(scope.row)">详情</el-button>
           <el-button size="mini" @click="seeFile(scope.row)">附件</el-button>
-          <el-button size="mini" @click="seeComment(scope.row)">评论</el-button>
+          <el-button size="mini" @click="deletePaper(scope.row)" >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -43,7 +42,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
-          :page-sizes="[5, 10, 20]"
+          :page-sizes="[1,3,5, 10, 20]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total">
@@ -51,20 +50,12 @@
     </div>
 
   </div>
-  <el-drawer v-model="drawer" title="I am the title" :with-header="false" size="55%">
-    <span>
-      <el-card style="width: 200%">
-        <comment></comment>
-      </el-card>
-    </span>
-  </el-drawer>
 </template>
 
 <script>
 
 
 import request from "@/utils/request";
-import {activeRouter} from "@/utils/permission";
 import comment from "@/components/Comment";
 export default {
   name: 'Role',
@@ -75,6 +66,8 @@ export default {
     return {
       drawer:false,
       loading: true,
+      field_id:'',
+      paper_id:'',
       field_name:'',
       form: {},
       dialogVisible: false,
@@ -85,66 +78,46 @@ export default {
       total: 0,
       totalPage:1,
       tableData: [],
-      permissions: [],
-      changePermissions:{
-        role_id:'',
-        permission_id:[]
-      }
     }
   },
   created() {
+    this.field_id = this.$route.query.field_id
+    this.field_name = this.$route.query.field_name
     this.load()
+
     //this.setCurrentPageData()
   },
   methods: {
     load() {
       this.loading = true
-      this.field_name = this.$route.query.field_name
-      request.post("/api/admin/allroleinfo").then(res => {
+      console.log("okNow")
+      let page_no = this.currentPage-1
+      request.post("/api/findpaperbyfield?field_id="+this.field_id+"&page_no="+page_no +"&page_size="+this.pageSize).then(res => {
         if (res.code === 0){
-          console.log(res.data.length)
-          console.log("打印tableData: ")
-
-          this.loading = false
-          this.tableData = res.data
-          for(let i=0;i<this.tableData.length;i++){
-            let arr = new Array()
-            for (let j = 0;j<this.tableData[i].permissions.length;j++){
-              arr.push(this.tableData[i].permissions[j].permission_id)
-            }
-            this.tableData[i].permissions = arr;
-          }
-          console.log(this.tableData)
-          this.total = res.data.length
-        }else if (res.code === 1){
-          this.$message({
-            type: "error",
-            message: res.msg,
-          })
-          sessionStorage.removeItem("user")
-          sessionStorage.removeItem("userPermission")
-          this.$router.push("/login")
-        }else{
-          this.$message({
-            type: "error",
-            message: res.msg,
-          })
+          this.tableData = res.data[1]
+          this.total = res.data[0]
+          console.log(res)
         }
-
       })
+      this.loading = false
+
     },
 
     seeDetail(row) {
+      console.log("seeDetail: ")
       console.log(row)
-      console.log(this.$route.path)
-      window.open(this.$router.resolve({path: '/detail',query:{field_id:row.field_id,field_name:row.field_name,lastPath:this.$route.path }}).href)
+
+      this.$router.push({path: '/detail',query:{paper_id:row.paper_id }})
 
     },
     seeFile(row) {
+      console.log(row)
     },
-    seeComment(row) {
+    deletePaper(row) {
+      console.log("seeComment: ")
+      console.log(row)
+      //this.paper_id = row.paper_id
       this.drawer=true;
-        console.log(row)
     },
     handleSizeChange(pageSize) {   // 改变当前每页的个数触发
       this.pageSize = pageSize

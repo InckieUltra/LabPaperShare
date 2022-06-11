@@ -145,18 +145,7 @@ export default {
         summary: [
           {required: true, message: '请输入论文摘要', trigger: 'blur'},
         ],
-        date: [
-          {required: true, message: '请输入邮箱验证码', trigger: 'blur'},
-        ],
-        type: [
-          {required: true, message: '请输入邮箱验证码', trigger: 'blur'},
-        ],
-        references: [
-          {required: true, message: '请输入邮箱验证码', trigger: 'blur'},
-        ],
-        content: [
-          {required: true, message: '请输入邮箱验证码', trigger: 'blur'},
-        ],
+
       },
       props: { multiple: true,
         checkStrictly: true,
