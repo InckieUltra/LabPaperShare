@@ -51,6 +51,7 @@ export default {
       paper_id:'',
       lastPath:'',
       form:{
+        field:String
       }
     }
   },
@@ -59,10 +60,20 @@ export default {
     console.log("jiazai详情")
     request.post("/api/paper?paper_id="+this.paper_id).then(res => {
       if (res.code === 0){
-        console.log(res.data)
-        this.form = res.data
-        console.log(res.data)
 
+        this.form = res.data
+        console.log(this.form.field)
+        var temp
+        for (var i = 0;i<res.data.fields.length;i++){
+          console.log(res.data.fields[i].field_name)
+          if (i===0){
+            temp = res.data.fields[i].field_name
+          }else{
+            temp= temp + ','+ res.data.fields[i].field_name
+          }
+        }
+        this.form.field=temp
+        console.log(temp)
       }else{
         this.$message.error("加载失败")
       }
