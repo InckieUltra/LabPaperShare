@@ -155,7 +155,7 @@ public class AdminController {
         if(code==0)
             return Result.success("成功",null);
         else if(code==1)
-            return Result.fail("请先解除相关论文的关联",null);
+            return Result.fail("无法删除关联了论文的根节点",null);
         else
             return Result.fail("请先删除子节点",null);
     }

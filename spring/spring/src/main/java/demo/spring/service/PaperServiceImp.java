@@ -1,5 +1,6 @@
 package demo.spring.service;
 
+import demo.spring.controller.ModifyPaperRequest;
 import demo.spring.controller.UploadRequest;
 import demo.spring.entity.*;
 import demo.spring.mapper.PaperMapper;
@@ -54,11 +55,17 @@ public class PaperServiceImp implements PaperService{
 
     @Override
     public int deleteField(int field_id){
-        if(this.paperMapper.findPaperbyField_id(field_id).size()!=0){
+        int pid=this.paperMapper.findFieldPid(field_id);
+        if(this.paperMapper.findPaperbyField_id(field_id).size()!=0 && pid == 0){
             return 1;
         }
         if(this.paperMapper.findFieldChildren(field_id).size()!=0)
             return 2;
+        return this.doDeleteField(field_id,pid);
+    }
+    @Transactional
+    public int doDeleteField(int field_id,int pid){
+        this.paperMapper.changeFieldPid(field_id,pid);
         this.paperMapper.deleteField(field_id);
         return 0;
     }
@@ -106,6 +113,45 @@ public class PaperServiceImp implements PaperService{
         return 0;
     }
 
+    @Transactional
+    public int deletePaper(int paper_id){
+        this.paperMapper.deletePublish(paper_id);
+        this.paperMapper.deleteCover(paper_id);
+        this.paperMapper.deleteCommentbyPaper(paper_id);
+        this.paperMapper.deleteFiles(paper_id);
+        this.paperMapper.deleteReferences(paper_id);
+        this.paperMapper.deleteNoteandUpload(paper_id);
+        this.paperMapper.deletePaper(paper_id);
+        return 0;
+    }
+
+    @Transactional
+    public int modifyPaper(ModifyPaperRequest request){
+        Date date = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String str = df.format(date);
+        this.paperMapper.modifyPaper(request.getOrigin_paper_id(),request.getConference(),request.getDate(),request.getLink(),request.getTitle(),request.getSummary(),request.getType());
+        this.paperMapper.modifyNote(request.getOrigin_upload_id(),request.getContent());
+        //this.paperMapper.modifyUploadTime(request.getOrigin_upload_id(),str);
+        this.paperMapper.deletePublish(request.getOrigin_paper_id());
+        for(int i=0;i<request.getAuthors().size();i++){
+            this.addPublish(request.getOrigin_paper_id(),request.getAuthors().get(i));
+        }
+        this.paperMapper.deleteCover(request.getOrigin_paper_id());
+        for(int i=0;i<request.getField().size();i++) {
+            this.addCover(request.getOrigin_paper_id(),request.getField().get(i));
+        }
+        this.paperMapper.deleteReferences(request.getOrigin_paper_id());
+        for(int i=0;i<request.getReferences().size();i++){
+            this.addReference(request.getOrigin_paper_id(),request.getReferences().get(i));
+        }
+        this.paperMapper.deleteFiles(request.getOrigin_paper_id());
+        for(int i=0;i<request.getFileList().size();i++) {
+            this.addAttach_File(request.getOrigin_upload_id(),request.getFileList().get(i));
+        }
+        return 0;
+    }
+
     public int addComment(Comment comment){
         return this.paperMapper.addComment(comment);
     }
@@ -142,5 +188,13 @@ public class PaperServiceImp implements PaperService{
         paperDetail.setReferences(this.paperMapper.findReferences(paper_id));
         paperDetail.setFiles(this.paperMapper.findFiles(paper_id));
         return paperDetail;
+    }
+
+    public int deleteComment(int comment_id){
+        return this.paperMapper.deleteComment(comment_id);
+    }
+
+    public int modifyComment(Comment comment){
+        return this.paperMapper.modifyComment(comment);
     }
 }

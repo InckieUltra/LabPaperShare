@@ -144,4 +144,37 @@ public class PaperController {
         }
         return Result.fail("查询失败",null);
     }
+
+    @CrossOrigin
+    @RequestMapping(value = "/api/comment/delete")
+    public Result deletecomment(@RequestParam("comment_id") Integer comment_id) {
+        try {
+            return Result.success("删除评论成功",this.paperService.deleteComment(comment_id));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.fail("删除评论失败",null);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/api/paper/delete")
+    public Result deletepaper(@RequestParam("paper_id") Integer paper_id) {
+        try {
+            return Result.success("删除论文成功",this.paperService.deletePaper(paper_id));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.fail("删除论文失败",null);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/api/comment/modify")
+    public Result modifycomment(@RequestBody Comment comment) {
+        try {
+            return Result.success("修改评论成功",this.paperService.modifyComment(comment));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.fail("修改评论失败",null);
+    }
 }

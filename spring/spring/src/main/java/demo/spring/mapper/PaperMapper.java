@@ -39,6 +39,7 @@ public interface PaperMapper {
 
     @Insert("insert into comment(text,time,super_id,paper_id,user_id) values(#{text},#{time},#{super_id},#{paper_id},#{user_id})")
     int addComment(Comment comment);
+
     @Select("select * from field")
     @Results(id="fieldMap",value={
             @Result(property = "field_id",column = "field_id",javaType = Integer.class),
@@ -114,11 +115,51 @@ public interface PaperMapper {
     })
     List<Paper> findReferences(int paper_id);
 
+    @Select("select pid from field where field_id=#{field_id}")
+    int findFieldPid(int field_id);
+
     @Update("update field set field_name=#{field_name} where field_id=#{field_id}")
     int modifyFieldName(int field_id,String field_name);
+
+    @Update("update comment set text='评论内容已被原作者删除',user_id=-1 where comment_id=#{comment_id}")
+    int deleteComment(int comment_id);
+
+    @Update("update comment set text=#{text},time=#{time} where comment_id=#{comment_id}")
+    int modifyComment(Comment comment);
+
+    @Update("update cover set field_id=#{pid} where field_id=#{field_id}")
+    int changeFieldPid(int field_id,int pid);
+
+    @Update("update paper set conference=#{conference},date=#{date},link=#{link},title=#{title},summary=#{summary},type=#{type} where paper_id=#{paper_id}")
+    int modifyPaper(int paper_id,String conference,String date,String link,String title,String summary,String type);
+
+    @Update("update note,upload set content=#{content} where note.note_id=upload.note_id and upload_id=#{upload_id}")
+    int modifyNote(int upload_id,String content);
 
     @Delete("delete from field where field_id=#{field_id}")
     int deleteField(int field_id);
 
+    @Delete("delete from publish where paper_id=#{paper_id}")
+    int deletePublish(int paper_id);
 
+    @Delete("delete from cover where paper_id=#{paper_id}")
+    int deleteCover(int paper_id);
+
+    @Delete("delete from reference where paper_id=#{paper_id}")
+    int deleteReferences(int paper_id);
+
+    @Delete("delete from comment where paper_id=#{paper_id}")
+    int deleteCommentbyPaper(int paper_id);
+
+    @Delete("delete attach_file from attach_file,upload where attach_file.upload_id=upload.upload_id and paper_id=#{paper_id}")
+    int deleteFiles(int paper_id);
+
+    @Delete("delete from upload where paper_id=#{paper_id}")
+    int deleteUpload(int paper_id);
+
+    @Delete("delete from paper where paper_id=#{paper_id}")
+    int deletePaper(int paper_id);
+
+    @Delete("delete note,upload from note,paper,upload where upload.note_id=note.note_id and paper.paper_id=upload.paper_id and paper.paper_id=#{paper_id}")
+    int deleteNoteandUpload(int paper_id);
 }
