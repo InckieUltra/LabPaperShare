@@ -205,4 +205,13 @@ public class PaperServiceImp implements PaperService{
     public int modifyComment(Comment comment){
         return this.paperMapper.modifyComment(comment);
     }
+
+    @Override
+    public List<Object> findAllRef() {
+        List<RefOutline> RefOutlines=this.paperMapper.findAllRef();
+        List<Object> res = new ArrayList<Object>();
+        res.add(RefOutlines);
+        return res;
+    }
+
 }

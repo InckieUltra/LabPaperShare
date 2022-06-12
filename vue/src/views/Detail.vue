@@ -59,7 +59,7 @@ export default {
       if (res.code === 0){
 
         this.form = res.data
-        console.log(this.form.field)
+        console.log(this.form)
         var temp
         for (var i = 0;i<res.data.fields.length;i++){
           console.log(res.data.fields[i].field_name)
@@ -70,7 +70,6 @@ export default {
           }
         }
         this.form.field=temp
-        console.log(temp)
       }else{
         this.$message.error("加载失败")
         console.log(res.msg)

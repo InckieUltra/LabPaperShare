@@ -79,9 +79,9 @@
             placeholder="请选择">
           <el-option
               v-for="item in refOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              :key="item.paper_id"
+              :label="item.title"
+              :value="item.paper_id">
           </el-option>
         </el-select>
         </el-form-item>
@@ -180,7 +180,10 @@ export default {
     request.post("/api/allfield").then(res => {
       this.options = res.data
     })
-
+    request.post("/api/findRef").then(res => {
+      console.log(res.data)
+      this.refOptions = res.data[0]
+    })
     //this.getTreeData(this.tableData)
   },
   mounted() {
@@ -224,7 +227,6 @@ export default {
     },
     onSubmit() {
       // this.form.content = JSON.parse(JSON.stringify(this.BasicEditor.getHtml()))
-      this.form.references.push(2)
        console.log(this.form)
       this.form.content = editor.txt.html()  // 获取 编辑器里面的值，然后赋予到实体当中
 

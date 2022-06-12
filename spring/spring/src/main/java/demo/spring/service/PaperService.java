@@ -24,4 +24,6 @@ public interface PaperService {
     public PaperDetail findPaperDetail(int paper_id);
     public int deletePaper(int paper_id);
     public int modifyPaper(UploadRequest uploadRequest);
+    public List<Object> findPaperbyUser(int user_id, int page_no, int page_size);
+    public List<Object> findAllRef();
 }

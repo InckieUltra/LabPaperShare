@@ -105,6 +105,12 @@ public interface PaperMapper {
     @Select("select file_path from upload natural join attach_file where paper_id = #{paper_id}")
     List<String> findFiles(int paper_id);
 
+    @Select("select distinct paper_id from upload where user_id=#{user_id}")
+    List<Integer> findPaperbyUser_id(int user_id);
+
+    @Select("select paper_id, title from paper")
+    List<RefOutline> findAllRef();
+
     @Select("select note_id,content from upload natural join note where paper_id = #{paper_id}")
     Note findNote(int paper_id);
 
@@ -117,6 +123,18 @@ public interface PaperMapper {
 
     @Select("select pid from field where field_id=#{field_id}")
     int findFieldPid(int field_id);
+
+
+    @Select("select paper_id,title,conference,date,group_concat(distinct author_name) as name from paper natural join upload natural join publish where user_id = #{user_id} group by paper_id limit #{offset},#{page_size}")
+    @Results(id="paperuserMap",value={
+            @Result(property = "paper_id",column = "paper_id",javaType = Integer.class),
+            @Result(property = "title",column = "title",javaType = String.class),
+            @Result(property = "date",column = "date",javaType = String.class),
+            @Result(property = "conference",column = "conference",javaType = String.class),
+            @Result(property = "authors",column = "name",javaType = String.class)
+    })
+    List<PaperOutline> findPaperbyUser(int user_id, int offset, int page_size);
+
 
     @Update("update field set field_name=#{field_name} where field_id=#{field_id}")
     int modifyFieldName(int field_id,String field_name);
