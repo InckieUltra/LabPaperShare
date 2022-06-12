@@ -68,12 +68,14 @@ export default {
       loading: true,
       field_id:'',
       paper_id:'',
+      user_id:'',
       field_name:'',
       form: {},
       dialogVisible: false,
       bookVis: false,
       search: '',
       currentPage: 1,
+      showtype:'',
       pageSize: 10,
       total: 0,
       totalPage:1,
@@ -81,8 +83,16 @@ export default {
     }
   },
   created() {
-    this.field_id = this.$route.query.field_id
-    this.field_name = this.$route.query.field_name
+    this.showtype = this.$route.query.showtype
+    if (this.showtype === '0'){
+      this.field_id = this.$route.query.field_id
+      this.field_name = this.$route.query.field_name
+    }else if (this.showtype === '1'){
+
+      this.user_id = this.$route.query.user_id
+    }
+    console.log("showtype = 1")
+
     this.load()
 
     //this.setCurrentPageData()
@@ -92,13 +102,24 @@ export default {
       this.loading = true
       console.log("okNow")
       let page_no = this.currentPage-1
-      request.post("/api/findpaperbyfield?field_id="+this.field_id+"&page_no="+page_no +"&page_size="+this.pageSize).then(res => {
-        if (res.code === 0){
-          this.tableData = res.data[1]
-          this.total = res.data[0]
-          console.log(res)
-        }
-      })
+      if (this.showtype === '0'){
+        request.post("/api/findpaperbyfield?field_id="+this.field_id+"&page_no="+page_no +"&page_size="+this.pageSize).then(res => {
+          if (res.code === 0){
+            this.tableData = res.data[1]
+            this.total = res.data[0]
+            console.log(res)
+          }
+        })
+      }else if(this.showtype === '1'){
+        request.post("/api/findpaperbyuser?user_id="+this.user_id+"&page_no="+page_no+"&page_size="+this.pageSize).then(res => {
+          if (res.code === 0) {
+            this.tableData = res.data[1]
+            this.total = res.data[0]
+            console.log(res)
+          }
+        })
+      }
+
       this.loading = false
 
     },

@@ -55,7 +55,7 @@ export default {
   methods: {
     handleJump(row) {
       //console.log(row)
-      this.$router.push({path: '/paperList',query:{field_id:row.field_id,field_name:row.field_name }})
+      this.$router.push({path: '/paperList',query:{field_id:row.field_id,field_name:row.field_name,showtype: '0' }})
     },
     load() {
       this.loading = true
