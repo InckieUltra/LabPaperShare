@@ -1,5 +1,6 @@
 package demo.spring.service;
 
+import demo.spring.controller.ModifyPaperRequest;
 import demo.spring.controller.UploadRequest;
 import demo.spring.entity.*;
 
@@ -23,7 +24,7 @@ public interface PaperService {
     public List<Object> findPaperbyField(int field_id, int page_no, int page_size);
     public PaperDetail findPaperDetail(int paper_id);
     public int deletePaper(int paper_id);
-    public int modifyPaper(UploadRequest uploadRequest);
+    public int modifyPaper(ModifyPaperRequest request);
     public List<Object> findPaperbyUser(int user_id, int page_no, int page_size);
     public List<Object> findAllRef();
 }

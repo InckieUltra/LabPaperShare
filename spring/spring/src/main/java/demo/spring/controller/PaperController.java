@@ -1,5 +1,6 @@
 package demo.spring.controller;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import com.sun.org.apache.xpath.internal.operations.Mult;
 import demo.spring.entity.Comment;
 import demo.spring.entity.Field;
@@ -34,6 +35,17 @@ public class PaperController {
                 return Result.fail("添加论文失败", null);
             }
         return Result.success("成功",uploadRequest.paper_merge());
+    }
+
+    @CrossOrigin
+    @PostMapping("/api/paper/modify")
+    public Result modifypaper(@RequestBody ModifyPaperRequest request) {
+        try {
+            this.paperService.modifyPaper(request);
+        } catch (Exception e) {
+            return Result.fail("修改失败", null);
+        }
+        return Result.success("修改成功",null);
     }
 
     @CrossOrigin
