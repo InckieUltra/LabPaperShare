@@ -14,14 +14,28 @@ import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 
 export default {
   name: "App",
+  provide(){
+    return {
+      reload: this.reload
+    }
+  },
   components: {
     [ElConfigProvider.name]: ElConfigProvider,
   },
   data() {
     return {
+      isRouterAlive:true,
       locale: zhCn,
     }
   },
+  methods:{
+    reload(){
+      this.isRouterAlive = false
+      this.$nextTick(function (){
+        this.isRouterAlive = true
+      })
+    }
+  }
 }
 //npm install sass-loader node-sass --save-dev
 </script>

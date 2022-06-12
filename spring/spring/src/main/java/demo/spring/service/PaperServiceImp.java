@@ -177,6 +177,14 @@ public class PaperServiceImp implements PaperService{
         res.add(paperOutlines);
         return res;
     }
+    public List<Object> findPaperbyUser(int user_id, int page_no, int page_size){
+        Integer page_total=this.paperMapper.findPaperbyUser_id(user_id).size();
+        List<PaperOutline> paperOutlines=this.paperMapper.findPaperbyUser(user_id,page_no*page_size,page_size);
+        List<Object> res = new ArrayList<Object>();
+        res.add(page_total);
+        res.add(paperOutlines);
+        return res;
+    }
 
     public PaperDetail findPaperDetail(int paper_id){
         PaperDetail paperDetail=this.paperMapper.findPaperDetail(paper_id);

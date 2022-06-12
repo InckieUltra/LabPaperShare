@@ -53,7 +53,7 @@
         </el-form-item>
         <el-form-item label="发布时间" >
           <el-col :span="11">
-            <el-date-picker type="date" placeholder="选择论文发表日期" v-model="form.date" style="width: 100%;"></el-date-picker>
+            <el-date-picker type="date" placeholder="选择论文发表日期" v-model="form.date" style="width: 100%;" value-format="yyyy-MM-dd" ></el-date-picker>
           </el-col>
 
         </el-form-item>
@@ -145,18 +145,7 @@ export default {
         summary: [
           {required: true, message: '请输入论文摘要', trigger: 'blur'},
         ],
-        date: [
-          {required: true, message: '请输入邮箱验证码', trigger: 'blur'},
-        ],
-        type: [
-          {required: true, message: '请输入邮箱验证码', trigger: 'blur'},
-        ],
-        references: [
-          {required: true, message: '请输入邮箱验证码', trigger: 'blur'},
-        ],
-        content: [
-          {required: true, message: '请输入邮箱验证码', trigger: 'blur'},
-        ],
+
       },
       props: { multiple: true,
         checkStrictly: true,

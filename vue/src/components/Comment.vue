@@ -3,7 +3,7 @@
 
     <div style="width: 50%;">
       <div v-clickoutside="hideReplyBtn" @click="inputFocus" class="my-reply">
-        <el-avatar class="header-img" :size="40" :src="myHeader"></el-avatar>
+        <el-avatar class="header-img" :size="40" :src="circleUrl"></el-avatar>
         <div class="reply-info">
           <div
               tabindex="0"
@@ -23,7 +23,7 @@
               @click="sendComment"
               type="primary"
           >
-            发表评论2
+            发表回复
           </el-button>
         </div>
       </div>
@@ -32,7 +32,7 @@
           :key="i"
           class="author-title reply-father"
       >
-        <el-avatar class="header-img" :size="40" :src="item.headImg"></el-avatar>
+        <el-avatar class="header-img" :size="40" :src="circleUrl"></el-avatar>
         <div class="author-info">
           <span class="author-name">{{ item.name }}</span>
           <span class="author-time">{{ item.time }}</span>
@@ -61,7 +61,7 @@
             <el-avatar
                 class="header-img"
                 :size="40"
-                :src="reply.fromHeadImg"
+                :src="circleUrl"
             ></el-avatar>
             <div class="author-info">
               <span class="author-name">{{ reply.name }}</span>
@@ -72,11 +72,11 @@
               <i class="el-icon-s-comment"></i>
               回复1
             </span>
-              <span @click="deleteReply(i, reply.name, reply.comment_id)" style="font-size: 14px" v-if="user_id==1">
+              <span @click="deleteReply(i, reply.name, reply.comment_id)" style="font-size: 14px" v-if="role==1 || reply.name == this.userName">
                 <i class="el-icon-s-delete"></i>
                 删除1
               </span>
-              <span @click="updateReply(i, reply.name, reply.comment_id)" style="font-size: 14px" v-if="user_id==1">
+              <span @click="updateReply(i, reply.name, reply.comment_id)" style="font-size: 14px" v-if="reply.name == this.userName">
                 <i class="el-icon-s-delete"></i>
                 修改1
               </span>
@@ -91,7 +91,7 @@
           </div>
         </div>
         <div v-show="_inputShow(i)" class="my-reply my-comment-reply">
-          <el-avatar class="header-img" :size="40" :src="myHeader"></el-avatar>
+          <el-avatar class="header-img" :size="40" :src="circleUrl"></el-avatar>
           <div class="reply-info">
             <div
                 tabindex="0"
@@ -142,87 +142,59 @@ const clickoutside = {
     document.addEventListener('click', documentHandler);
   },
   update() {},
-  unbind(el, binding) {
-    // 解除事件监听
-    document.removeEventListener('click', el.vueClickOutside);
-    delete el.vueClickOutside;
-  },
 };
 export default {
   name:'Comment',
   props:{
-    message:String
+    paperid: Number
   },
+  inject:['reload'],
   data(){
     return{
+      circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
       user_id:'',
+      userName:'',
+      role:'',
+      loading:true,
       paper_id:'',
       comment_id:1,
       btnShow: false,
       index:'0',
       replyComment:'',
-      userName:'Lana Del Rey',
       myHeader:'https://ae01.alicdn.com/kf/Hd60a3f7c06fd47ae85624badd32ce54dv.jpg',
       to:'',
       super_id :0,
       comments:[
-        // {
-        //   comment_id:12,
-        //   name:'Lana Del Rey',
-        //   headImg:'https://ae01.alicdn.com/kf/Hd60a3f7c06fd47ae85624badd32ce54dv.jpg',
-        //   text:'我发布一张新专辑Norman Fucking Rockwell,大家快来听啊',
-        //   time:'2019年9月16日 18:43',
-        //   inputShow:false,
-        //   reply:[
-        //     { comment_id:13,
-        //       from:'Taylor Swift',
-        //       fromHeadImg:'https://ae01.alicdn.com/kf/H94c78935ffa64e7e977544d19ecebf06L.jpg',
-        //       to:'Lana Del Rey',
-        //       super_id:'',
-        //       text:'我很喜欢你的新专辑！！',
-        //       time:'2019年9月16日 18:43',
-        //       inputShow:false
-        //     },
-        //     {comment_id:14,
-        //       from:'Ariana Grande',
-        //       fromHeadImg:'https://ae01.alicdn.com/kf/Hf6c0b4a7428b4edf866a9fbab75568e6U.jpg',
-        //       to:'Lana Del Rey',
-        //       text:'别忘记宣传我们的合作单曲啊',
-        //       time:'2019年9月16日 18:43',
-        //       inputShow:false
-        //
-        //     }
-        //   ]
-        // },
       ]
     }
   },
   directives: {clickoutside},
   created() {
+
     let userStrr = sessionStorage.getItem("user")
     this.user_id = JSON.parse(userStrr).user_id
-    //this.paper_id = this.$route.query.paper_id
-    this.paper_id=2
+    this.role = JSON.parse(userStrr).user_id
+    this.userName = JSON.parse(userStrr).userName
+    this.paper_id = this.paperid
     request.post("/api/getcomment?paper_id="+this.paper_id).then(res => {
       if (res.code === 0) {
         console.log(res.data)
         this.comments = res.data
-        this.$message.success("jiazaiok")
+        this.$message.success("成功加载评论")
+      }else{
+        this.$message.error("失败")
+
       }
     })
   },
 
   methods: {
+
     inputFocus(){
       var replyInput = document.getElementById('replyInput');
       replyInput.style.padding= "8px 8px"
       replyInput.style.border ="2px solid blue"
       replyInput.focus()
-    },
-    loadMsg(){
-      request.post("/api/getcomment?paper_id="+this.paper_id).then(res => {
-        this.comments = res.data
-      })
     },
     showReplyBtn(){
       this.btnShow = true
@@ -233,6 +205,24 @@ export default {
       replyInput.style.border ="none"
     },
     showReplyInput(i,name,id){
+      this.comments[this.index].inputShow = false
+      this.index =i
+      this.comments[i].inputShow = true
+      this.to = name
+      console.log(i)
+      console.log(this.comments[i].comment_id)
+      this.super_id = this.comments[i].comment_id
+    },
+    updateReply(i,name,id){
+      this.comments[this.index].inputShow = false
+      this.index =i
+      this.comments[i].inputShow = true
+      this.to = name
+      console.log(i)
+      console.log(this.comments[i].comment_id)
+      this.super_id = this.comments[i].comment_id
+    },
+    deleteReply(i,name,id){
       this.comments[this.index].inputShow = false
       this.index =i
       this.comments[i].inputShow = true
@@ -259,12 +249,11 @@ export default {
         a.user_id = this.user_id
         a.userName= this.userName
         a.text =this.replyComment
-        a.paper_id = 2
+        a.paper_id = this.paper_id
         //a.headImg = this.myHeader
         a.time = time
         a.super_id = 0
         console.log(a)
-        this.comments.push(a)
         this.replyComment = ''
         input.innerHTML = '';
         request.post("/api/comment",a).then(res=>{
@@ -280,7 +269,7 @@ export default {
             })
           }
         })
-        this.loadMsg()
+        this.reload()
       }
     },
     sendCommentReply(i,toid){
@@ -304,8 +293,7 @@ export default {
         a.super_id = toid
         console.log(a)
         console.log(this.to)
-        a.paper_id = 2
-        this.comments[i].reply.push(a)
+        a.paper_id = this.paper_id
         request.post("/api/comment",a).then(res=>{
           if (res.code === 0){
             this.$message({
@@ -321,7 +309,7 @@ export default {
         })
         this.replyComment = ''
         document.getElementsByClassName("reply-comment-input")[i].innerHTML = ""
-        this.loadMsg()
+        this.reload()
       }
     },
     onDivInput: function(e) {

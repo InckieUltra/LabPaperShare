@@ -15,11 +15,13 @@
         style="width: 70%; padding: 10px; border-radius: 50px;"
     ></el-input>
     <el-button v-on:click="loadData()" type="primary" icon="el-icon-search">搜索</el-button>
+    <div>
     <el-table
-        :data="tableData"
+        :data="tabledata1"
         style="width: 100%"
         v-show="show"
-        v-loading="loading">
+        v-loading="loading"
+        border>
       <el-table-column
           prop="paper_id"
           label="编号"
@@ -51,12 +53,22 @@
       >
       </el-table-column>
       <el-table-column
+          prop="field"
+          label="方向"
+      >
+      </el-table-column>
+      <el-table-column
           label="操作"
       >
         <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
         <el-button type="text" size="small">编辑</el-button>
       </el-table-column>
     </el-table>
+      <el-pagination @size-change="sizeChange" @current-change="currentChange"
+                     :current-page="page" :page-size="size" :page-sizes="pageSizes" v-show="show1"
+                     layout="total, sizes, prev, pager, next, jumper" :total="total" style="margin-left:37%">
+      </el-pagination>
+      </div>
   </div>
 </template>
 
@@ -70,8 +82,14 @@ export default {
   name: "Search",
   data(){
     return {
+      page: 1, //第几页
+      size: 3, //一页多少条
+      total: 0, //总条目数
+      pageSizes: [1,3, 5, 10, 20, 50, 100, 200, 300, 400, 500, 1000], //可选择的一页多少条
       show:false,
+      show1:false,
       loading:true,
+      tabledata1:[],
       options: [{
         value: '版号',
         label: '版号'
@@ -97,9 +115,9 @@ export default {
           summary:'',
           role_name:'',
           type:'',
+          field:'',
         }
       ],
-      total:[],
       restaurants: [],
       state: '',
       timeout: null,
@@ -115,23 +133,56 @@ export default {
   },
   methods: {
     loadData(){
+      this.show1=false
       this.param.paper_id1 = this.state
       this.param.value1 = this.value
       this.loading=true
+      console.log("aaaaaa")
       request.post("/api/search",this.param).then((res) => {
-            console.log(res)
+        console.log(res)
         this.$message({
           duration:700,
           type: "success",
           message: "搜索成功"
         })
             this.tableData = res
+            this.getTabelData()
             this.loading=false
             this.show=true
-
+            this.show1=true
           }
       )
     },
+    getTabelData() {
+      //allData为全部数据
+      var data = JSON.parse(JSON.stringify(this.tableData))
+
+      if(data == null){
+        data=[]
+      }
+      this.tabledata1 = data.slice(
+          (this.page - 1) * this.size,
+          this.page * this.size
+      );
+      this.total=this.tableData.length
+    },
+
+    //page改变时的回调函数，参数为当前页码
+    currentChange(val) {
+      console.log("翻页，当前为第几页", val);
+      this.page = val;
+      this.getTabelData();
+    },
+    //size改变时回调的函数，参数为当前的size
+    sizeChange(val) {
+      console.log("改变每页多少条，当前一页多少条数据", val);
+      this.size = val;
+      this.page = 1;
+      this.getTabelData();
+    },
+  created() {
+    this.getTabelData();
+  },
     handleEdit(row) {
       this.form = JSON.parse(JSON.stringify(row))
       this.dialogVisible = true
