@@ -53,6 +53,9 @@ public interface PaperMapper {
     @Select("select distinct paper_id from cover where field_id=#{field_id}")
     List<Integer> findPaperbyField_id(int field_id);
 
+    @Select("select distinct paper_id from upload where user_id=#{user_id}")
+    List<Integer> findPaperbyUser_id(int user_id);
+
     @Select("select * from comment natural join user where paper_id = #{paper_id} and super_id = 0")
     @Results(id="multiCommentMap",value={
             @Result(property = "comment_id",column = "comment_id"),
@@ -120,5 +123,13 @@ public interface PaperMapper {
     @Delete("delete from field where field_id=#{field_id}")
     int deleteField(int field_id);
 
-
+    @Select("select paper_id,title,conference,date,group_concat(distinct author_name) as name from paper natural join upload natural join publish where user_id = #{user_id} group by paper_id limit #{offset},#{page_size}")
+    @Results(id="paperuserMap",value={
+            @Result(property = "paper_id",column = "paper_id",javaType = Integer.class),
+            @Result(property = "title",column = "title",javaType = String.class),
+            @Result(property = "date",column = "date",javaType = String.class),
+            @Result(property = "conference",column = "conference",javaType = String.class),
+            @Result(property = "authors",column = "name",javaType = String.class)
+    })
+    List<PaperOutline> findPaperbyUser(int user_id, int offset, int page_size);
 }

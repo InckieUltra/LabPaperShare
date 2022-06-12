@@ -20,4 +20,6 @@ public interface PaperService {
 
     public List<Object> findPaperbyField(int field_id, int page_no, int page_size);
     public PaperDetail findPaperDetail(int paper_id);
+    public List<Object> findPaperbyUser(int user_id, int page_no, int page_size);
+
 }

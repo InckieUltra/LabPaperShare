@@ -144,4 +144,17 @@ public class PaperController {
         }
         return Result.fail("查询失败",null);
     }
+
+    @CrossOrigin
+    @RequestMapping(value = "/api/findpaperbyuser")
+    public Result findpaperbyuser(@RequestParam("user_id") Integer user_id,
+                                   @RequestParam("page_no") Integer page_no,
+                                   @RequestParam("page_size") Integer page_size) {
+        try {
+            return Result.success("查询成功",this.paperService.findPaperbyUser(user_id,page_no,page_size));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.fail("查询失败",null);
+    }
 }
