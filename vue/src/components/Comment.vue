@@ -148,6 +148,7 @@ export default {
   props:{
     paperid: Number
   },
+  inject:['reload'],
   data(){
     return{
       circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
@@ -188,16 +189,12 @@ export default {
   },
 
   methods: {
+
     inputFocus(){
       var replyInput = document.getElementById('replyInput');
       replyInput.style.padding= "8px 8px"
       replyInput.style.border ="2px solid blue"
       replyInput.focus()
-    },
-    loadMsg(){
-      request.post("/api/getcomment?paper_id="+this.paper_id).then(res => {
-        this.comments = res.data
-      })
     },
     showReplyBtn(){
       this.btnShow = true
@@ -257,7 +254,6 @@ export default {
         a.time = time
         a.super_id = 0
         console.log(a)
-        this.comments.push(a)
         this.replyComment = ''
         input.innerHTML = '';
         request.post("/api/comment",a).then(res=>{
@@ -273,7 +269,7 @@ export default {
             })
           }
         })
-        this.loadMsg()
+        this.reload()
       }
     },
     sendCommentReply(i,toid){
@@ -298,7 +294,6 @@ export default {
         console.log(a)
         console.log(this.to)
         a.paper_id = this.paper_id
-        this.comments[i].reply.push(a)
         request.post("/api/comment",a).then(res=>{
           if (res.code === 0){
             this.$message({
@@ -314,7 +309,7 @@ export default {
         })
         this.replyComment = ''
         document.getElementsByClassName("reply-comment-input")[i].innerHTML = ""
-        this.loadMsg()
+        this.reload()
       }
     },
     onDivInput: function(e) {

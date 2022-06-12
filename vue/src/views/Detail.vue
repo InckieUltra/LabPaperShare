@@ -1,11 +1,5 @@
 <template>
   <div>
-    <el-breadcrumb separator="/" style="padding: 10px">
-      <el-breadcrumb-item :to="{ path: '/category' }">浏览论文</el-breadcrumb-item>
-      <el-breadcrumb-item>{{field_name}}</el-breadcrumb-item>
-      <el-breadcrumb-item>{{lastPath}}</el-breadcrumb-item>
-    </el-breadcrumb>
-
     <el-container>
       <el-header>
         <h1 style="text-align: center">{{form.title}}</h1>
@@ -21,10 +15,12 @@
         <div style="font-size: 15px;">所属领域：{{form.field}}</div>
         <el-divider></el-divider>
         <div style="font-size: 15px;">论文链接：
-          <el-link href={{form.link}}>{{form.link}}</el-link>
+          <el-link href='{{form.link}}'>{{form.link}}</el-link>
           </div>
         <el-divider></el-divider>
-        <div style="font-size: 15px;">笔记内容：{{form.content}}</div>
+        <div style="font-size: 15px;">笔记内容：
+        <div v-html="this.form.content"></div>
+        </div>
 
         <el-divider></el-divider>
         <comment style="width: 100%" :paperid =this.paper_id>
@@ -42,6 +38,7 @@ import comment from "@/components/Comment";
 import request from "@/utils/request";
 export default {
   name: "Detail",
+  inject:['reload'],
   components:{
     comment
   },
@@ -76,6 +73,7 @@ export default {
         console.log(temp)
       }else{
         this.$message.error("加载失败")
+        console.log(res.msg)
       }
     })
   },
