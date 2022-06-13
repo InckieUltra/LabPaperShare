@@ -7,13 +7,14 @@
         </el-form-item>
         <el-form-item label="研究领域" style="width: 50%">
 
-        <div class="block">
+          <div class="block">
             <el-cascader
                 v-model="tableData"
                 :options="options"
                 :props="props"
+                placeholder="请重新选择"
                 clearable></el-cascader>
-        </div>
+          </div>
         </el-form-item>
 
         <el-form-item label="发布会议" prop="conference" style="width: 50%">
@@ -53,7 +54,7 @@
         </el-form-item>
         <el-form-item label="发布时间" >
           <el-col :span="11">
-            <el-date-picker type="date" placeholder="选择论文发表日期" v-model="form.date" style="width: 100%;" value-format="yyyy-MM-dd" ></el-date-picker>
+            <el-date-picker type="date" placeholder="重新选择发表日期" v-model="form.date" style="width: 100%;" value-format="yyyy-MM-dd" ></el-date-picker>
           </el-col>
 
         </el-form-item>
@@ -71,19 +72,19 @@
           <el-input v-model="form.link"></el-input>
         </el-form-item>
         <el-form-item label="引用文献" >
-        <el-select
-            v-model="form.references"
-            multiple
-            collapse-tags
+          <el-select
+              v-model="form.references"
+              multiple
+              collapse-tags
 
-            placeholder="请选择">
-          <el-option
-              v-for="item in refOptions"
-              :key="item.paper_id"
-              :label="item.title"
-              :value="item.paper_id">
-          </el-option>
-        </el-select>
+              placeholder="请选择">
+            <el-option
+                v-for="item in refOptions"
+                :key="item.paper_id"
+                :label="item.title"
+                :value="item.paper_id">
+            </el-option>
+          </el-select>
         </el-form-item>
 
         <el-form-item label="笔记内容">
@@ -111,7 +112,7 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">立即创建</el-button>
+          <el-button type="primary" @click="onSubmit">确认修改</el-button>
           <el-button>取消</el-button>
         </el-form-item>
       </el-form>
@@ -127,7 +128,7 @@ import request from "@/utils/request";
 let editor;
 import E from 'wangeditor'
 export default {
-  name: "Upload",
+  name: "ChangePaper",
   components:{
   },
   data() {
@@ -150,8 +151,9 @@ export default {
       props: { multiple: true,
         checkStrictly: true,
         value:'field_id',
-      label: 'field_name'
+        label: 'field_name'
       },
+      origin_paper_paper_id:'',
       inputVisible: false,
       inputValue: '',
       tableData:[],
@@ -177,6 +179,30 @@ export default {
     }
   },
   created() {
+    this.origin_paper_id = this.$route.query.origin_paper_id
+    this.upload_id = this.$route.query.upload_id
+
+    request.post("/api/paper?paper_id="+this.origin_paper_id).then(res => {
+      if (res.code === 0){
+        this.form.title = res.data.title
+        this.form.origin_paper_id = this.origin_paper_id
+        this.form.origin_upload_id = this.upload_id
+        this.form.date='2002-06-07'
+        this.form.authors = res.data.authors
+        this.form.conference = res.data.conference
+        this.form.references = res.data.references
+        this.form.link = res.data.link
+        this.form.fileList = res.data.fileList
+        this.form.type = res.data.type
+        this.form.summary = res.data.summary
+        this.form.user_id = res.data.user_id
+        this.form.content = res.data.content
+        console.log(this.form)
+      }else{
+        this.$message.error("加载失败")
+        console.log(res.msg)
+      }
+    })
     request.post("/api/allfield").then(res => {
       this.options = res.data
     })
@@ -226,44 +252,37 @@ export default {
       return this.$confirm(`确定移除 ${ file.name }？`);
     },
     onSubmit() {
-      this.form.content = editor.txt.html()  // 获取 编辑器里面的值，然后赋予到实体当中
+      // this.form.content = JSON.parse(JSON.stringify(this.BasicEditor.getHtml()))
       console.log(this.form)
+      this.form.content = editor.txt.html()  // 获取 编辑器里面的值，然后赋予到实体当中
+
       for(let i = 0;i<this.tableData.length;i++){
         this.form.field.push(this.tableData[i][this.tableData[i].length-1])
       }
-      // this.form.content = JSON.parse(JSON.stringify(this.BasicEditor.getHtml()))
-      if (this.form.title === null || this.form.date === null || this.form.conference === null ||
-          this.form.type === null ||this.form.authors.length === 0){
-        this.$message.error("请完善论文信息")
-      }else {
-        request.post("/api/paper/upload",this.form).then(res=>{
-          if (res.code === 0){
-            this.$message({
-              type: "success",
-              message: res.msg,
-            })
-          }else {
-            this.$message({
-              type: "error",
-              message: res.msg,
-            })
-          }
-        })
-      }
-
-
+      request.post("/api/paper/modify",this.form).then(res=>{
+        if (res.code === 0){
+          this.$message({
+            type: "success",
+            message: res.msg,
+          })
+        }else {
+          this.$message({
+            type: "error",
+            message: res.msg,
+          })
+        }
+      })
 
       console.log('submit!');
-
+      console.log(this.form)
     },
     init(){
       editor = new E('#div1')
       // 或者 const editor = new E( document.getElementById('div1') )
       editor.create()
-      editor.txt.html("")
-
+      editor.txt.html(this.form.content)
     },
-  handleChange(value) {
+    handleChange(value) {
       console.log(value);
     },
     handleClose(author) {

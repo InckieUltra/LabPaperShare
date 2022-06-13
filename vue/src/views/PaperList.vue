@@ -62,9 +62,10 @@ export default {
   components: {
     comment
   },
+  inject:['reload'],
   data() {
     return {
-      drawer:false,
+
       loading: true,
       field_id:'',
       paper_id:'',
@@ -135,10 +136,18 @@ export default {
       console.log(row)
     },
     deletePaper(row) {
-      console.log("seeComment: ")
       console.log(row)
       //this.paper_id = row.paper_id
-      this.drawer=true;
+      request.post("/api/paper/delete?paper_id="+row.paper_id).then(res =>{
+        if (res.code ===0){
+          this.$message.success("删除论文成功")
+          this.reload()
+        }else{
+          this.$message.error("删除论文失败")
+          this.reload()
+        }
+      })
+
     },
     handleSizeChange(pageSize) {   // 改变当前每页的个数触发
       this.pageSize = pageSize
