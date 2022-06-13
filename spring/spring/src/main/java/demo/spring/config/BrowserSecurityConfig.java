@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 
 import java.util.Arrays;
@@ -58,6 +59,12 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 auth.userDetailsService(myUserDetailsService).passwordEncoder(new BCryptPasswordEncoder());
         }
 
-
+        public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:9877")
+                        .allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE")
+                        .maxAge(3600)
+                        .allowCredentials(true);
+        }
 
 }

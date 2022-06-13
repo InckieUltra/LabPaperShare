@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -102,6 +103,22 @@ public class PaperController {
             }
             sftpUtil.logout();
             return Result.success("成功",res);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.fail("失败",null);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/api/file/download")
+    public Result downloadfile(@RequestBody DownloadRequest downloadRequest){
+        try {
+            SFTPConfigModel sftpConfigModel=new SFTPConfigModel();
+            SFTPUtil sftpUtil=new SFTPUtil(sftpConfigModel.getDefaultConfig());
+            sftpUtil.login();
+            sftpUtil.download(sftpConfigModel.getUploadUrl(),downloadRequest.getServerfile(),downloadRequest.getSavefile());
+            sftpUtil.logout();
+            return Result.success("成功",null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -211,5 +228,11 @@ public class PaperController {
             e.printStackTrace();
         }
         return Result.fail("查询失败",null);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/api/getsession")
+    public Object getsession(HttpSession session) {
+        return session.getAttribute("role");
     }
 }
