@@ -65,7 +65,7 @@ export default {
   },
   methods:{
     jumpPaperChange(row){
-      this.$router.push({path:'/changePaper', query:{origin_paper_id:row.paper_id,upload_id : row.upload_id}})
+      this.$router.push({path:'/changePaper', query:{origin_paper_id: row.paper_id,upload_id : row.upload_id}})
     }
   },
   created() {

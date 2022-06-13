@@ -187,12 +187,11 @@ export default {
         this.form.title = res.data.title
         this.form.origin_paper_id = this.origin_paper_id
         this.form.origin_upload_id = this.upload_id
-        this.form.date='2002-06-07'
         this.form.authors = res.data.authors
         this.form.conference = res.data.conference
         this.form.references = res.data.references
         this.form.link = res.data.link
-        this.form.fileList = res.data.fileList
+        //this.form.fileList = res.data.fileList
         this.form.type = res.data.type
         this.form.summary = res.data.summary
         this.form.user_id = res.data.user_id
