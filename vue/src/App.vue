@@ -1,7 +1,7 @@
 <template>
   <div id="app" class = "body"></div>
   <el-config-provider :locale="locale">
-    <router-view />
+    <router-view v-if="isRouterAlive"></router-view>
   </el-config-provider>
 
 </template>
