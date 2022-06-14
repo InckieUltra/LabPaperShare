@@ -88,11 +88,18 @@ public interface MyUserMapper {
             @Result(property = "icon",column = "path")
     })
     List<Permission> findallPermission();
+
+    @Select("select permission_id from role_permission where role_id=#{role_id}")
+    List<Integer> findPermissionID(int role_id);
+
     @Update("update user set valid=0 where user_id=#{user_id}")
     int deleteUser(int user_id);
 
     @Update("update user set role_id=#{role_id} where user_id=#{user_id}")
     int changeUserRole(int user_id,int role_id);
+
+    @Update("update user set password=#{password} where username=#{userName}")
+    int modifyPwd(MyUser myUser);
 
     @Delete("delete from role_permission where role_id=#{role_id}")
     int deleteRolePermission(int role_id);

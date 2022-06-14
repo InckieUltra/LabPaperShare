@@ -58,7 +58,10 @@ public class UserController {
 
         myUser= myUserService.findUserbyUsername(loginRequest.getUsername());
 
-        session.setAttribute("role",myUser.getRole());
+        List<Integer> permissionList=myUserService.findPermissionID(myUser.getRole());
+        session.setAttribute("user",permissionList.contains(7));
+        session.setAttribute("field",permissionList.contains(8));
+        session.setAttribute("role",permissionList.contains(9));
 
         return Result.success("success",myUser);
     }
@@ -106,6 +109,49 @@ public class UserController {
         System.out.println(myUserService.addUser(myUser));
 
         return Result.success("注册成功",null);
+    }
+
+    @CrossOrigin
+    @PostMapping("/api/modifypwd")
+    public Result modifypwd(@RequestBody RegisterRequest registerRequest) {
+
+        resultMap=VerifyCode.queryvCode(registerRequest.getUsername());
+        //判断验证码是否正确
+        if(resultMap==null){
+            return Result.fail("请先接收验证码",null);
+        }
+        String requestHash = resultMap.get("hash").toString();
+
+        String tamp = resultMap.get("tamp").toString();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmmss");//当前时间
+        Calendar c = Calendar.getInstance();
+        String currentTime = sf.format(c.getTime());
+        if (tamp.compareTo(currentTime) > 0) {
+            String hash =  MD5Utils.code(registerRequest.getIdentify());//生成MD5值
+            if (!hash.equalsIgnoreCase(requestHash)){
+                return Result.success("验证码错误",null);
+            }
+        }
+        else{
+            return Result.fail("验证码过期",null);
+        }
+
+
+        PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
+        System.out.println(myUserService.findmaxUser_id());
+        int user_id_next=myUserService.findmaxUser_id()+1;
+        System.out.println(user_id_next);
+        myUser=new MyUser();
+        myUser.setUser_id(user_id_next);
+        myUser.setUserName(registerRequest.getUsername());
+        myUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        myUser.setEmail(registerRequest.getEmail());
+        try {
+            System.out.println(myUserService.modifyPwd(myUser));
+        }catch (Exception e){
+            return Result.fail("修改失败",null);
+        }
+        return Result.success("修改成功",null);
     }
 
     @CrossOrigin

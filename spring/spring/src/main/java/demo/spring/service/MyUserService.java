@@ -32,4 +32,8 @@ public interface MyUserService{
 
     public int RoleaddPermission(int role_id,int[] permission_id);
 
+    public List<Integer> findPermissionID(int role_id);
+
+    public int modifyPwd(MyUser myUser);
+
 }

@@ -81,6 +81,7 @@ public class PaperServiceImp implements PaperService{
     public int addPublish(int paper_id,String author_name){return this.paperMapper.addPublish(paper_id,author_name);}
 
     public int addReference(int paper_id,int reference_id){return this.paperMapper.addReference(paper_id,reference_id);}
+
     @Override
     @Transactional
     public int upload(UploadRequest uploadRequest){
@@ -120,8 +121,7 @@ public class PaperServiceImp implements PaperService{
         this.paperMapper.deleteCommentbyPaper(paper_id);
         this.paperMapper.deleteFiles(paper_id);
         this.paperMapper.deleteReferences(paper_id);
-        this.paperMapper.deleteNote(paper_id);
-        this.paperMapper.deleteUpload(paper_id);
+        this.paperMapper.deleteNoteandUpload(paper_id);
         this.paperMapper.deletePaper(paper_id);
         return 0;
     }

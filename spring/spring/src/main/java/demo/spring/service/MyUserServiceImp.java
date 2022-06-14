@@ -84,4 +84,10 @@ public class MyUserServiceImp implements  MyUserService{
         }
         return 0;
     }
+
+    public List<Integer> findPermissionID(int role_id){
+        return this.myUserMapper.findPermissionID(role_id);
+    }
+
+    public int modifyPwd(MyUser myUser){return this.myUserMapper.modifyPwd(myUser);}
 }
