@@ -178,6 +178,6 @@ public interface PaperMapper {
     @Delete("delete from paper where paper_id=#{paper_id}")
     int deletePaper(int paper_id);
 
-    @Delete("delete note,upload from note,paper,upload where upload.note_id=note.note_id and paper.paper_id=upload.paper_id and paper.paper_id=#{paper_id}")
-    int deleteNoteandUpload(int paper_id);
+    @Delete("delete note from note,upload where upload.note_id=note.note_id and upload.paper_id=#{paper_id}")
+    int deleteNote(int paper_id);
 }
