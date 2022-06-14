@@ -5,7 +5,7 @@
     <!--    搜索区域-->
     <div style="margin: 10px 0">
       <el-input v-model="search" placeholder="请输入关键字" style="width: 20%" clearable></el-input>
-      <el-button type="primary" style="margin-left: 5px" @click="load">查询</el-button>
+      <el-button type="primary" style="margin-left: 5px" @click="test">查询</el-button>
     </div>
     <el-table
         v-loading="loading"
@@ -106,6 +106,11 @@ export default {
       console.log(row)
       this.$router.push({path: '/paperList',query:{user_id:row.user_id,showtype: '1' }})
     },
+    test(){
+      request.post("/api/getsession").then(res => {
+        console.log(res)
+      })
+    },
     load() {
       this.loading = true
       request.post("/api/admin/alluser").then(res => {
@@ -117,12 +122,6 @@ export default {
           this.tableData = res.data
           console.log(this.tableData)
           this.total = res.data.length
-        }else if (res.code === 1){
-          this.$message({
-            type: "error",
-            message: res.msg,
-          })
-          this.$router.push("/login")
         }else{
           this.$message({
             type: "error",

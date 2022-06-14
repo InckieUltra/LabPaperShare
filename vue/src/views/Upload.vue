@@ -53,7 +53,7 @@
         </el-form-item>
         <el-form-item label="发布时间" >
           <el-col :span="11">
-            <el-date-picker type="date" placeholder="选择论文发表日期" v-model="form.date" style="width: 100%;" value-format="yyyy-MM-dd" ></el-date-picker>
+            <el-date-picker type="date" placeholder="选择论文发表日期" v-model="form.date" style="width: 100%;"  format="YYYY/MM/DD" value-format="YYYY-MM-DD" ></el-date-picker>
           </el-col>
 
         </el-form-item>
@@ -227,10 +227,11 @@ export default {
     },
     onSubmit() {
       this.form.content = editor.txt.html()  // 获取 编辑器里面的值，然后赋予到实体当中
-      console.log(this.form)
       for(let i = 0;i<this.tableData.length;i++){
         this.form.field.push(this.tableData[i][this.tableData[i].length-1])
       }
+      console.log(this.form)
+
       // this.form.content = JSON.parse(JSON.stringify(this.BasicEditor.getHtml()))
       if (this.form.title === null || this.form.date === null || this.form.conference === null ||
           this.form.type === null ||this.form.authors.length === 0){

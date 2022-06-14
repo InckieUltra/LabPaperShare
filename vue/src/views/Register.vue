@@ -55,7 +55,7 @@ export default {
   data() {
     return {
       disabled: true,
-      timer: 11,
+      timer: 60,
       form: {},
       rules: {
         username: [

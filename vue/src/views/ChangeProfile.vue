@@ -18,16 +18,28 @@
             <el-input v-model="form.user_id" disabled></el-input>
           </el-form-item>
           <el-form-item label="用户名">
-            <el-input v-model="form.username"></el-input>
+            <el-input v-model="form.userName"></el-input>
           </el-form-item>
 
 
           <!--        <el-form-item label="密码">-->
           <!--          <el-input v-model="form.password" show-password></el-input>-->
           <!--        </el-form-item>-->
-        <el-form-item label="原密码" prop="password">
-          <el-input v-model="form.oldPassword" show-password></el-input>
-        </el-form-item>
+          <div style="display: flex">
+            <el-form-item label="邮箱验证" style="width: 50%">
+              <el-input prefix-icon="el-icon-caret-right" v-model="form.identify" placeholder="请输入验证码" ></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button v-if="disabled" type="primary" size="mini" style="width: 200px; height: 40px;margin-left: 12px" @click="verification" plain>
+                发送邮箱验证码
+              </el-button>
+              <el-button v-if="!disabled" type="info" disabled size="mini" style="width: 200px;height: 40px;margin-left: 12px">
+                <div>
+                  {{ timer }}秒后重试
+                </div>
+              </el-button>
+            </el-form-item>
+          </div>
         <el-form-item label="新密码" prop="newPass">
           <el-input v-model="form.newPass" show-password></el-input>
         </el-form-item>
@@ -54,10 +66,13 @@ export default {
   },
   data() {
     return {
+      disabled: true,
+      timer: 60,
      form: {
+
        userName: "",
        user_id: "",
-       oldPassword: '',
+       identify: '',
        newPass: '',
        confirmPass: ''
      },
@@ -71,14 +86,6 @@ export default {
             min: 3,
             max: 20,
             message: '长度在 3 到 20 个字符',
-            trigger: 'blur'
-          }
-        ],
-        oldPassword: [
-          {required: true, message: '请输入密码', trigger: 'blur'},
-          {
-            min: 6,
-            message: '请大于6个字符',
             trigger: 'blur'
           }
         ],
@@ -97,45 +104,47 @@ export default {
       this.$message.success("上传成功")
       // this.update()
     },
-    update() {
+    verification() {
 
-      this.$refs['form'].validate((valid) => {
-        if (valid) {
-          if (!this.form.newPass === this.form.confirmPass) {
-            this.$message.error('2次输入新密码必须一致')
-            return
-          }
-          let user = JSON.parse(sessionStorage.getItem("user"))
-
-          request.put("api/profile", this.form).then(res => {
-            console.log(res)
-            if (res.code === 0) {
-              this.$message({
-                type: "success",
-                message: "更新成功",
-
-              })
-              sessionStorage.setItem("user", JSON.stringify(this.form))
-              // 触发Layout更新用户信息
-              this.$emit("userInfo")
-            } else {
-              this.$message({
-                type: "error",
-                message: res.msg
-              })
-            }
-          })
-          // request.put("/user/pass", this.form).then(res => {
-          //   if (res.code === 0) {
-          //     this.$message.success('修改成功')
-          //     this.$router.push("/login")
-          //   } else {
-          //     this.$message.error(res.msg)
-          //   }
-          // })
+      this.disabled = false
+      this.send()// 调获取验证码接口
+      const authTimer = setInterval(() => {
+        this.timer--
+        if (this.timer <= 0) {
+          this.disabled = true
+          this.timer = 11
+          clearInterval(authTimer)
         }
+      }, 1000)
+    },
+    send() {
+      request.post("/api/register/sendemail", this.form).then(res => {
+        console.log("发送验证码")
       })
 
+    },
+    update() {
+            console.log(this.form)
+            request.put("api/profile", this.form).then(res => {
+              console.log(res)
+              if (res.code === 0) {
+                this.$message({
+                  type: "success",
+                  message: "更新成功",
+                })
+                sessionStorage.removeItem("user")
+                sessionStorage.removeItem("userPermission")
+                request.post("/api/paper/modify",this.form).then(res=>{
+                  console.log(res)
+                })
+                this.$router.push('/login')
+              } else {
+                this.$message({
+                  type: "error",
+                  message: res.msg
+                })
+              }
+            })
     }
   }
 }

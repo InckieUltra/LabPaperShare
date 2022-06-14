@@ -19,14 +19,14 @@ request.interceptors.request.use(config => {
     let userJson = sessionStorage.getItem("user")
     if (!whiteUrls.includes(config.url)) {
         if (!userJson) {
+            console.log("tiaozhuanla")
             router.push("/login")
-        } else {
-            let user = JSON.parse(userJson);
-            config.headers['token'] = user.token;  // 设置请求头
         }
     }
     return config
 }, error => {
+    console.error("拦截器before request")
+
     return Promise.reject(error)
 });
 // response 拦截器
@@ -36,16 +36,27 @@ request.interceptors.response.use(
         let res = response.data;
         // 如果是返回的文件
         if (response.config.responseType === 'blob') {
+            console.error("blob")
+
             return res
         }
         // 兼容服务端返回的字符串数据
         if (typeof res === 'string') {
+            console.error("拦截器string")
+
             res = res ? JSON.parse(res) : res
+        }
+        if (res.code === 3) {
+            this.$message.error("token过期，重新登录")
+            sessionStorage.removeItem("user")
+            sessionStorage.removeItem("userPermission")
+            console.error("token过期，重新登录")
+            router.push("/login")
         }
         return res;
     },
     error => {
-        console.log('err' + error) // for debug
+        console.log('err!!' + error) // for debug
         return Promise.reject(error)
     }
 )

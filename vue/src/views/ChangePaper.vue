@@ -54,7 +54,8 @@
         </el-form-item>
         <el-form-item label="发布时间" >
           <el-col :span="11">
-            <el-date-picker type="date" placeholder="重新选择发表日期" v-model="form.date" style="width: 100%;" value-format="yyyy-MM-dd" ></el-date-picker>
+            <el-date-picker type="date" placeholder="重新选择发表日期" v-model="form.date" style="width: 100%;"  format="YYYY/MM/DD"
+                            value-format="YYYY-MM-DD" ></el-date-picker>
           </el-col>
 
         </el-form-item>
@@ -189,7 +190,7 @@ export default {
         this.form.origin_upload_id = this.upload_id
         this.form.authors = res.data.authors
         this.form.conference = res.data.conference
-        this.form.references = res.data.references
+        //this.form.references = res.data.references
         this.form.link = res.data.link
         //this.form.fileList = res.data.fileList
         this.form.type = res.data.type
@@ -258,20 +259,24 @@ export default {
       for(let i = 0;i<this.tableData.length;i++){
         this.form.field.push(this.tableData[i][this.tableData[i].length-1])
       }
-      request.post("/api/paper/modify",this.form).then(res=>{
-        if (res.code === 0){
-          this.$message({
-            type: "success",
-            message: res.msg,
-          })
-        }else {
-          this.$message({
-            type: "error",
-            message: res.msg,
-          })
-        }
-      })
-
+      if (this.form.title === null || this.form.date === null || this.form.conference === null ||
+          this.form.type === null ||this.form.authors.length === 0){
+        this.$message.error("请完善论文信息")
+      }else{
+        request.post("/api/paper/modify",this.form).then(res=>{
+          if (res.code === 0){
+            this.$message({
+              type: "success",
+              message: res.msg,
+            })
+          }else {
+            this.$message({
+              type: "error",
+              message: res.msg,
+            })
+          }
+        })
+      }
       console.log('submit!');
       console.log(this.form)
     },

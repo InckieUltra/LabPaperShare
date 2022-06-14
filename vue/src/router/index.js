@@ -72,7 +72,7 @@ function activeRouter() {
 }
 
 router.beforeEach((to, from, next) => {
-    if (to.path === '/login' || to.path === '/register' || to.path === '/changePaper') {
+    if (to.path === '/login' || to.path === '/register' || to.path === '/changePaper'||from.path ==='/detail') {
         next()
         return
     }

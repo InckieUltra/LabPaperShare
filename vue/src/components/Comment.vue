@@ -47,14 +47,16 @@
           <el-button
               style="size:13px"
               @click="deleteReply(i,item.name, item.comment_id)" round
-              v-if="role===1"
+              v-if="role===1 || item.name === this.userName"
               type="danger"
           >
             删除
           </el-button>
-          <el-popover placement="left" :width="400" trigger="click">
+          <el-popover placement="left" :width="400" trigger="click" v-if="role===1 || item.name === this.userName"
+          >
             <template #reference>
-              <el-button type="warning" style="size: 13px" v-if="role===1 || reply.name === this.userName" round>
+              <el-button type="warning" style="size: 13px"
+                         round>
                 修改</el-button>
             </template>
             <div>
@@ -86,26 +88,30 @@
               <el-button
                   style="size:13px"
                   @click="showReplyInput(i, reply.name, reply.comment_id)" round
+
               >
                 回复
               </el-button>
-              <el-popconfirm title="确定删除吗？" @confirm="deleteReply(i, reply.name, reply.comment_id)">
+
+              <el-popconfirm title="确定删除吗？" @confirm="deleteReply(i, reply.name, reply.comment_id)"
+               v-if="role===1 || item.name === this.userName">
                 <template #reference>
                   <el-button
                       style="size:13px"
-                      v-if="role===1 || reply.name === this.userName" round
-                      type="danger">
+                      round type="danger">
                     删除
                   </el-button>
                 </template>
               </el-popconfirm>
 
-              <el-popover placement="left" :width="400" trigger="click">
+              <el-popover placement="left" :width="400" trigger="click" v-if="role===1 || item.name === this.userName"
+              >
                 <template #reference>
-                  <el-button type="warning" style="size: 13px" v-if="role===1 || reply.name === this.userName" round>
+                  <el-button type="warning" style="size: 13px"
+                             round>
                     修改</el-button>
                 </template>
-                <div>
+                <div >
                   <el-input v-model="this.comments[i].reply[j].text" placeholder="请输入内容" style="width: 300px"></el-input>
                   <el-button style=" margin-left: 10px" type="primary" @click="changeReply(this.comments[i].reply[j])" round>
                     保存
@@ -158,7 +164,7 @@ import request from "@/utils/request";
 
 const clickoutside = {
   // 初始化指令
-  bind(el, binding, vnode) {
+  bind(el, binding) {
     function documentHandler(e) {
       // 这里判断点击的元素是否是本身，是本身，则返回
       if (el.contains(e.target)) {
@@ -191,7 +197,7 @@ export default {
       role:'',
       loading:true,
       paper_id:'',
-      comment_id:1,
+      comment_id:'',
       btnShow: false,
       index:'0',
       replyComment:'',
@@ -207,21 +213,27 @@ export default {
   },
   directives: {clickoutside},
   created() {
+
     let userStrr = sessionStorage.getItem("user")
     this.user_id = JSON.parse(userStrr).user_id
-    this.role = JSON.parse(userStrr).role
+    this.role = 2
     this.userName = JSON.parse(userStrr).userName
     this.paper_id = this.paperid
+    console.log("before load comment")
     request.post("/api/getcomment?paper_id="+this.paper_id).then(res => {
+
       if (res.code === 0) {
-        console.log(res.data)
         for (let i = 0;i<res.data.length;i++){
-          if (res.data[i].user_id!=-1){
+          if (res.data[i].user_id!==-1){
             this.comments.push(res.data[i])
           }
         }
+        console.log("after load comment")
+        console.log(res.data)
+
         //this.comments = res.data
         this.$message.success("成功加载评论")
+
       }else{
         this.$message.error("失败")
 

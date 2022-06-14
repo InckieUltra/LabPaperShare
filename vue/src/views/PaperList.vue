@@ -31,7 +31,6 @@
       <el-table-column label="操作" >
         <template #default="scope">
           <el-button size="mini" type="primary" @click="seeDetail(scope.row)">详情</el-button>
-          <el-button size="mini" @click="seeFile(scope.row)">附件</el-button>
           <el-button size="mini" @click="deletePaper(scope.row)" >删除</el-button>
         </template>
       </el-table-column>
@@ -131,9 +130,6 @@ export default {
 
       this.$router.push({path: '/detail',query:{paper_id:row.paper_id }})
 
-    },
-    seeFile(row) {
-      console.log(row)
     },
     deletePaper(row) {
       console.log(row)

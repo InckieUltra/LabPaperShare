@@ -17,7 +17,7 @@
         <div style="font-size: 15px;">所属领域：{{form.field}}</div>
         <el-divider></el-divider>
         <div style="font-size: 15px;">论文链接：
-          <el-link href='{{form.link}}'>{{form.link}}</el-link>
+          <el-button @click='routeClick("http://"+form.link)' type="text">{{form.link}}</el-button>
           </div>
         <el-divider></el-divider>
         <div style="font-size: 15px;">笔记内容：
@@ -27,7 +27,7 @@
         <el-divider content-position="center">
           <div style="margin:0px auto">
             <el-button v-if="role === 1 || user_id ===this.form.user_id" @click="jumpPaperChange(form)">修改论文信息</el-button>
-            <el-button>下载附件</el-button>
+            <el-button v-if="this.form.files.length!==0" @click="downFiles(form.files)">下载附件</el-button>
           </div>
         </el-divider>
 
@@ -59,13 +59,39 @@ export default {
       role:'',
       lastPath:'',
       form:{
-        field:String
+        field:String,
+        files:[]
+      },
+      Req:{
+        serverfile:'',
+        savefile:''
       }
     }
   },
   methods:{
+    routeClick(e){
+      window.location.href = e;
+    },
     jumpPaperChange(row){
       this.$router.push({path:'/changePaper', query:{origin_paper_id: row.paper_id,upload_id : row.upload_id}})
+    },
+    downFiles(files){
+      for (let i = 0;i<files.length;i++){
+        this.Req.serverfile = files[i]
+        this.Req.savefile = '/Users/liujiaming/Downloads//'+files[i]
+        console.log(this.Req)
+
+        request.post("/api/file/download",this.Req).then(res => {
+          if (res.code === 0){
+            this.$message.success("下载成功")
+            console.log(res.msg)
+          }else{
+            this.$message.error("下载失败")
+            console.log(res.msg)
+          }
+        })
+      }
+
     }
   },
   created() {
@@ -76,7 +102,6 @@ export default {
     console.log("jiazai详情")
     request.post("/api/paper?paper_id="+this.paper_id).then(res => {
       if (res.code === 0){
-
         this.form = res.data
         console.log(this.form)
         var temp

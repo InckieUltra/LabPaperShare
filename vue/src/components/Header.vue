@@ -38,6 +38,7 @@
 
 <script>
 import {Sunrise} from "@element-plus/icons";
+import request from "@/utils/request";
 
 export default {
   name: "Header",
@@ -61,6 +62,9 @@ export default {
     loginOut() {
       sessionStorage.removeItem("user")
       sessionStorage.removeItem("userPermission")
+      request.post("/api/paper/modify",this.form).then(res=>{
+        console.log(res)
+      })
       this.$router.push('/login')
     }
   }
