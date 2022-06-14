@@ -16,8 +16,10 @@
     ></el-input>
     <el-button v-on:click="loadData()" type="primary" icon="el-icon-search">搜索</el-button>
     <div>
+      <el-button @click="clearFilter()">清除所有过滤器</el-button>
     <el-table
-        :data="tabledata1"
+        ref="filterTable"
+        :data="this.tableData"
         style="width: 100%"
         v-show="show"
         v-loading="loading"
@@ -25,6 +27,7 @@
       <el-table-column
           prop="paper_id"
           label="编号"
+          sortable
       >
       </el-table-column>
       <el-table-column
@@ -35,7 +38,16 @@
       <el-table-column
           prop="conference"
           label="期刊"
+          width="100"
+          :filters="Showitem"
+          :filter-method="filterConferece"
+          filter-placement="bottom-end"
       >
+        <template v-slot="scope">
+          <el-tag
+              :type="scope.row.conference === '家' ? 'primary' : 'success'"
+              disable-transitions>{{scope.row.conference}}</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
           prop="summary"
@@ -62,7 +74,8 @@
       >
         <template v-slot="scope">
         <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-        <el-button type="text" size="small" @click="changpath()">编辑</el-button>
+        <el-button type="text" size="small" @click="changPath(scope.row)">编辑</el-button>
+          <el-button type="text" size="small" @click="Delete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -77,21 +90,22 @@
 <script>
 import VueSimpleSpinner from 'vue-simple-spinner'
 import request from "@/utils/request";
+import {values} from "core-js/stable/dom-collections";
 export default {
   components: {
     VueSimpleSpinner
   },
   name: "Search",
-  data(){
+  data() {
     return {
       page: 1, //第几页
-      size: 3, //一页多少条
+      size: 10, //一页多少条
       total: 0, //总条目数
-      pageSizes: [1,3, 5, 10, 20, 50, 100, 200, 300, 400, 500, 1000], //可选择的一页多少条
-      show:false,
-      show1:false,
-      loading:true,
-      tabledata1:[],
+      pageSizes: [1, 3, 5, 10, 20, 50, 100, 200, 300, 400, 500, 1000], //可选择的一页多少条
+      show: false,
+      show1: false,
+      loading: true,
+      Showitem: [],
       options: [{
         value: '版号',
         label: '版号'
@@ -109,24 +123,25 @@ export default {
         label: '领域'
       }],
       value: '版号',
-      tableData:[
+      tableData: [
         {
-          paper_id:123,
-          title:'',
-          conference:'',
-          summary:'',
-          role_name:'',
-          type:'',
-          field:'',
+          paper_id: 123,
+          title: '',
+          conference: '',
+          summary: '',
+          role_name: '',
+          type: '',
+          field: '',
         }
       ],
       restaurants: [],
       state: '',
       timeout: null,
-      param:{
-
-        value1:'',
-        paper_id1:'',
+      param: {
+        Page:0,
+        Time:10,
+        value1: '',
+        paper_id1: '',
       }
     }
   },
@@ -134,45 +149,72 @@ export default {
 
   },
   methods: {
-    loadData(){
-      this.show1=false
-      this.param.paper_id1 = this.state
-      this.param.value1 = this.value
-      this.loading=true
+    loadData() {
+      this.show1 = false
+      this.loading = true
       console.log("aaaaaa")
-      request.post("/api/search",this.param).then((res) => {
-        console.log(res)
-        this.$message({
-          duration:700,
-          type: "success",
-          message: "搜索成功"
-        })
-            this.tableData = res
-            this.getTabelData()
-            this.loading=false
-            this.show=true
-            this.show1=true
-          }
-      )
+      this.getTabelData()
     },
-    handleClick(row){
-      this.$router.push({path:'/detail',query:{paper_id:row.paper_id}})
+    handleClick(row) {
+      this.$router.push({path: '/detail', query: {paper_id: row.paper_id}})
     },
-    changpath(){
-      this.$router.push('/');
+    changPath(row) {
+      this.$router.push({path: '/changePaper', query: {origin_paper_id: row.paper_id, upload_id: row.paper_id}});
+    },
+    Delete(row) {
+      let user = JSON.parse(window.sessionStorage.getItem('user'));
+      let user_id = parseInt(user.user_id);
+      console.log(user_id)
+      request.post("/api/paper/delete?paper_id=" + row.paper_id + "&user_id=" + user_id).then(res => {
+        if (res.code === 0) {
+          this.$message({
+            duration: 700,
+            type: "success",
+            message: "删除成功"
+          })
+          location.reload();
+        } else {
+          this.$message({
+            duration: 1000,
+            type: "error",
+            message: "该论文无法删除"
+          })
+        }
+      })
     },
     getTabelData() {
-      //allData为全部数据
-      var data = JSON.parse(JSON.stringify(this.tableData))
-
-      if(data == null){
-        data=[]
-      }
-      this.tabledata1 = data.slice(
-          (this.page - 1) * this.size,
-          this.page * this.size
-      );
-      this.total=this.tableData.length
+      this.param.paper_id1 = this.state
+      this.param.value1 = this.value
+      this.param.Time=this.size
+      this.param.Page=this.page-1
+      request({
+        url:"/api/search",
+        method: 'post',
+        params:this.param
+      }).then((res) => {
+            console.log(this.param)
+            console.log(res)
+            this.$message({
+              duration: 700,
+              type: "success",
+              message: "搜索成功"
+            })
+            this.tableData = res
+            console.log(this.tableData)
+            this.tableData.filter(item => {
+              let text = item.conference
+              let value = item.conference
+              this.Showitem.push({text, value})
+            })
+            const map = new Map()
+            this.Showitem = this.Showitem.filter(key => !map.has(key.value) && map.set(key.value, 1))
+            console.log(this.Showitem)
+            this.loading = false
+            this.show = true
+            this.show1 = true
+          }
+      )
+      this.total = 10
     },
 
     //page改变时的回调函数，参数为当前页码
@@ -188,13 +230,14 @@ export default {
       this.page = 1;
       this.getTabelData();
     },
-  created() {
-    this.getTabelData();
-  },
+    created() {
+      this.getTabelData();
+    },
     handleEdit(row) {
       this.form = JSON.parse(JSON.stringify(row))
       this.dialogVisible = true
     },
+
     querySearchAsync(queryString, cb) {
       var restaurants = this.restaurants;
       var results = queryString ? restaurants.filter(this.createStateFilter(queryString)) : restaurants;
@@ -211,8 +254,21 @@ export default {
     },
     handleSelect(item) {
       console.log(item);
+    },
+    clearFilter() {
+      this.$refs.filterTable.clearFilter();
+    },
+    formatter(row, column) {
+      return row.address;
+    },
+    filterConferece(value, row) {
+      return row.conference === value;
+    },
+    filterHandler(value, row, column) {
+      const property = column['property'];
+      return row[property] === value;
     }
-  },
+  }
 }
 </script>
 
