@@ -117,7 +117,7 @@ public interface PaperMapper {
     @Select("select note_id,content from upload natural join note where paper_id = #{paper_id}")
     Note findNote(int paper_id);
 
-    @Select("select paper.paper_id as paper_id,title from reference join paper on reference.reference_id=paper.paper_id where paper.paper_id = #{paper_id}")
+    @Select("select paper.paper_id as paper_id,title from reference join paper on reference.reference_id=paper.paper_id where reference.paper_id = #{paper_id}")
     @Results(id="referenceMap",value={
             @Result(property = "paper_id",column = "paper_id",javaType = Integer.class),
             @Result(property = "title",column = "title",javaType = String.class)
