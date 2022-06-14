@@ -6,32 +6,31 @@ import java.util.List;
 
 public class PaperDetail implements Serializable {
     private static final long serialVersionUID = 1L;
+    int user_id;
     int paper_id;
-    int upload_id;
     String title;
     String conference;
-    String summary;
     String date;
+    String summary;
     String link;
     String content;
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     String type;
     int note_id;
+    int upload_id;
+    String upload_date;
+    String username;
     List<String> authors;
     List<Field> fields;
     List<String> files;
     List<Paper> references;
-    int user_id;
-    String username;
-    Object upload_date;
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
+    }
 
     public int getPaper_id() {
         return paper_id;
@@ -57,14 +56,6 @@ public class PaperDetail implements Serializable {
         this.conference = conference;
     }
 
-    public String getSummary() {
-        return summary;
-    }
-
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-
     public String getDate() {
         return date;
     }
@@ -73,12 +64,28 @@ public class PaperDetail implements Serializable {
         this.date = date;
     }
 
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
     public String getLink() {
         return link;
     }
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getType() {
@@ -97,44 +104,20 @@ public class PaperDetail implements Serializable {
         this.note_id = note_id;
     }
 
-    public List<String> getAuthors() {
-        return authors;
+    public int getUpload_id() {
+        return upload_id;
     }
 
-    public void setAuthors(List<String> authors) {
-        this.authors = authors;
+    public void setUpload_id(int upload_id) {
+        this.upload_id = upload_id;
     }
 
-    public List<String> getFiles() {
-        return files;
+    public String getUpload_date() {
+        return upload_date;
     }
 
-    public void setFiles(List<String> files) {
-        this.files = files;
-    }
-
-    public List<Field> getFields() {
-        return fields;
-    }
-
-    public void setFields(List<Field> fields) {
-        this.fields = fields;
-    }
-
-    public List<Paper> getReferences() {
-        return references;
-    }
-
-    public void setReferences(List<Paper> references) {
-        this.references = references;
-    }
-
-    public int getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public void setUpload_date(String upload_date) {
+        this.upload_date = upload_date;
     }
 
     public String getUsername() {
@@ -145,19 +128,35 @@ public class PaperDetail implements Serializable {
         this.username = username;
     }
 
-    public int getUpload_id() {
-        return upload_id;
+    public List<String> getAuthors() {
+        return authors;
     }
 
-    public void setUpload_id(int upload_id) {
-        this.upload_id = upload_id;
+    public void setAuthors(List<String> authors) {
+        this.authors = authors;
     }
 
-    public Object getUpload_date() {
-        return upload_date;
+    public List<Field> getFields() {
+        return fields;
     }
 
-    public void setUpload_date(Object upload_date) {
-        this.upload_date = upload_date;
+    public void setFields(List<Field> fields) {
+        this.fields = fields;
+    }
+
+    public List<String> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<String> files) {
+        this.files = files;
+    }
+
+    public List<Paper> getReferences() {
+        return references;
+    }
+
+    public void setReferences(List<Paper> references) {
+        this.references = references;
     }
 }

@@ -12,7 +12,7 @@ const routes = [
                 path: 'home',
                 name: 'Home',
                 component: () => import("@/views/Home"),
-            },
+            }
         ]
     },
     {
@@ -55,7 +55,16 @@ function activeRouter() {
                 component: () => import("@/views/" + p.name)
             };
             root.children.push(obj)
+
+
         })
+        let obj2 = {
+            path: '/changePaper',
+            name: 'ChangePaper',
+            component: () => import("@/views/" + 'ChangePaper')
+        };
+        root.children.push(obj2)
+
         if (router) {
             router.addRoute(root)
         }
@@ -63,7 +72,7 @@ function activeRouter() {
 }
 
 router.beforeEach((to, from, next) => {
-    if (to.path === '/login' || to.path === '/register') {
+    if (to.path === '/login' || to.path === '/register' || to.path === '/changePaper') {
         next()
         return
     }

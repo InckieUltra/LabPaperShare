@@ -88,7 +88,7 @@ public interface MyUserMapper {
             @Result(property = "icon",column = "path")
     })
     List<Permission> findallPermission();
-    @Update("update user set username='deleteduser',valid=0 where user_id=#{user_id}")
+    @Update("update user set valid=0 where user_id=#{user_id}")
     int deleteUser(int user_id);
 
     @Update("update user set role_id=#{role_id} where user_id=#{user_id}")

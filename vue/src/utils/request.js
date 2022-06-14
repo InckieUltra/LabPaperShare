@@ -5,7 +5,7 @@ import config from "../config"
 const baseUrl = process.env.NODE_ENV === 'development' ? config.baseUrl.dev : config.baseUrl.pro
 const request = axios.create({
     //baseURL: "/api",
-    timeout: 10000
+    timeout: 30000
 })
 
 // 请求白名单，如果请求在白名单里面，将不会被拦截校验权限
@@ -41,11 +41,6 @@ request.interceptors.response.use(
         // 兼容服务端返回的字符串数据
         if (typeof res === 'string') {
             res = res ? JSON.parse(res) : res
-        }
-        // 验证token
-        if (res.code === '401') {
-            console.error("token过期，重新登录")
-            router.push("/login")
         }
         return res;
     },

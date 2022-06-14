@@ -39,6 +39,7 @@
               <el-button size="mini" type="danger">删除</el-button>
             </template>
           </el-popconfirm>
+          <el-button size="mini"  @click="handleUploadList(scope.row)" v-if="thisRole === 1">ta的上传</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -70,6 +71,7 @@ export default {
   components: {},
   data() {
     return {
+      thisRole:'',
       loading: true,
       form: {},
       dialogVisible: false,
@@ -84,6 +86,8 @@ export default {
     }
   },
   created() {
+    let userStrr = sessionStorage.getItem("user")
+    this.thisRole = JSON.parse(userStrr).role
     this.load()
     //this.setCurrentPageData()
   },
@@ -98,7 +102,10 @@ export default {
         }
       })
     },
-
+    handleUploadList(row) {
+      console.log(row)
+      this.$router.push({path: '/paperList',query:{user_id:row.user_id,showtype: '1' }})
+    },
     load() {
       this.loading = true
       request.post("/api/admin/alluser").then(res => {

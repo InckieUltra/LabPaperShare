@@ -1,5 +1,6 @@
 package demo.spring.controller;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import com.sun.org.apache.xpath.internal.operations.Mult;
 import demo.spring.entity.Comment;
 import demo.spring.entity.Field;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,6 +36,17 @@ public class PaperController {
                 return Result.fail("添加论文失败", null);
             }
         return Result.success("成功",uploadRequest.paper_merge());
+    }
+
+    @CrossOrigin
+    @PostMapping("/api/paper/modify")
+    public Result modifypaper(@RequestBody ModifyPaperRequest request) {
+        try {
+            this.paperService.modifyPaper(request);
+        } catch (Exception e) {
+            return Result.fail("修改失败", null);
+        }
+        return Result.success("修改成功",null);
     }
 
     @CrossOrigin
@@ -96,6 +109,22 @@ public class PaperController {
         return Result.fail("失败",null);
     }
 
+    @CrossOrigin
+    @RequestMapping(value = "/api/file/download")
+    public Result downloadfile(@RequestBody DownloadRequest downloadRequest){
+        try {
+            SFTPConfigModel sftpConfigModel=new SFTPConfigModel();
+            SFTPUtil sftpUtil=new SFTPUtil(sftpConfigModel.getDefaultConfig());
+            sftpUtil.login();
+            sftpUtil.download(sftpConfigModel.getUploadUrl(),downloadRequest.getServerfile(),downloadRequest.getSavefile());
+            sftpUtil.logout();
+            return Result.success("成功",null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.fail("失败",null);
+    }
+
     @PostMapping("batchUpload")
     public String batchUpload(MultipartHttpServletRequest request){
         List<MultipartFile> files = request.getFiles("file");
@@ -143,5 +172,67 @@ public class PaperController {
             e.printStackTrace();
         }
         return Result.fail("查询失败",null);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/api/comment/delete")
+    public Result deletecomment(@RequestParam("comment_id") Integer comment_id) {
+        try {
+            return Result.success("删除评论成功",this.paperService.deleteComment(comment_id));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.fail("删除评论失败",null);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/api/paper/delete")
+    public Result deletepaper(@RequestParam("paper_id") Integer paper_id) {
+        try {
+            return Result.success("删除论文成功",this.paperService.deletePaper(paper_id));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.fail("删除论文失败",null);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/api/comment/modify")
+    public Result modifycomment(@RequestBody Comment comment) {
+        try {
+            return Result.success("修改评论成功",this.paperService.modifyComment(comment));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.fail("修改评论失败",null);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/api/findpaperbyuser")
+    public Result findpaperbyuser(@RequestParam("user_id") Integer user_id,
+                                  @RequestParam("page_no") Integer page_no,
+                                  @RequestParam("page_size") Integer page_size) {
+        try {
+            return Result.success("查询成功",this.paperService.findPaperbyUser(user_id,page_no,page_size));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.fail("查询失败",null);
+    }
+    @CrossOrigin
+    @RequestMapping(value = "/api/findRef")
+    public Result findRef() {
+        try {
+            return Result.success("查询成功",this.paperService.findAllRef());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.fail("查询失败",null);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "/api/getsession")
+    public Object getsession(HttpSession session) {
+        return session.getAttribute("role");
     }
 }

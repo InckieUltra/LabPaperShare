@@ -201,7 +201,8 @@ public class SFTPUtil {
             sftp.cd(directory);
         }
         File file = new File(saveFile);
-        sftp.get(downloadFile, new FileOutputStream(file));
+        OutputStream output=new FileOutputStream(file);
+        sftp.get(downloadFile, output);
         log.info("file:{} is download successful" , downloadFile);
     }
 

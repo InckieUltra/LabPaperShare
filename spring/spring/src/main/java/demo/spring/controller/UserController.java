@@ -23,9 +23,11 @@ import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -43,7 +45,7 @@ public class UserController {
 
     @CrossOrigin
     @PostMapping("/api/login")
-    public Result login(@RequestBody LoginRequest loginRequest) {
+    public Result login(@RequestBody LoginRequest loginRequest, HttpSession session) {
        System.out.println(new BCryptPasswordEncoder().encode("123456"));
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
@@ -55,6 +57,8 @@ public class UserController {
         }
 
         myUser= myUserService.findUserbyUsername(loginRequest.getUsername());
+
+        session.setAttribute("role",myUser.getRole());
 
         return Result.success("success",myUser);
     }
@@ -165,5 +169,13 @@ public class UserController {
     @PostMapping("/api/permission")
     public List<Permission> permission(@RequestParam("user_id") Integer user_id) {
         return this.myUserService.findPermission(user_id);
+    }
+
+    @CrossOrigin
+    @PostMapping("/api/logout")
+    public Result logout(HttpSession session, SessionStatus sessionStatus) {
+        session.invalidate();
+        sessionStatus.setComplete();
+        return Result.success("成功",null);
     }
 }

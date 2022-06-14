@@ -28,7 +28,7 @@
         </div>
       </div>
       <div
-          v-for="(item, i) in comments"
+          v-for="(item, i,user_id) in comments"
           :key="i"
           class="author-title reply-father"
       >
@@ -38,22 +38,37 @@
           <span class="author-time">{{ item.time }}</span>
         </div>
         <div class="icon-btn">
-        <span @click="showReplyInput(i, item.name, item.comment_id)" style="font-size: 14px">
-          <i class="el-icon-s-comment"></i>
-          回复
-        </span>
-          <span @click="deleteReply(i,reply.name, reply.comment_id)" style="font-size: 14px" v-if="user_id==1">
-                <i class="el-icon-s-delete"></i>
-                删除
-          </span>
-          <span @click="updateReply(i, reply.name, reply.comment_id)" style="font-size: 14px" v-if="user_id==1">
-                <i class="el-icon-s-delete"></i>
-                修改1
-          </span>
+          <el-button
+              style="size:13px"
+              @click="showReplyInput(i, item.name, item.comment_id)" round
+          >
+            回复
+          </el-button>
+          <el-button
+              style="size:13px"
+              @click="deleteReply(i,item.name, item.comment_id)" round
+              v-if="role===1"
+              type="danger"
+          >
+            删除
+          </el-button>
+          <el-popover placement="left" :width="400" trigger="click">
+            <template #reference>
+              <el-button type="warning" style="size: 13px" v-if="role===1 || reply.name === this.userName" round>
+                修改</el-button>
+            </template>
+            <div>
+              <el-input v-model="this.comments[i].text" placeholder="请输入内容" style="width: 300px"></el-input>
+              <el-button style=" margin-left: 10px" type="primary" @click="changeReply(this.comments[i])" round>
+                保存
+              </el-button>
+            </div>
+
+          </el-popover>
         </div>
         <div class="talk-box">
           <p>
-            <span class="reply">{{ item.text }}</span>
+            <span class="reply" >{{ item.text }}</span>
           </p>
         </div>
         <div class="reply-box">
@@ -68,18 +83,36 @@
               <span class="author-time">{{ reply.time }}</span>
             </div>
             <div class="icon-btn">
-            <span @click="showReplyInput(i, reply.name, reply.comment_id)" style="font-size: 14px">
-              <i class="el-icon-s-comment"></i>
-              回复1
-            </span>
-              <span @click="deleteReply(i, reply.name, reply.comment_id)" style="font-size: 14px" v-if="role==1 || reply.name == this.userName">
-                <i class="el-icon-s-delete"></i>
-                删除1
-              </span>
-              <span @click="updateReply(i, reply.name, reply.comment_id)" style="font-size: 14px" v-if="reply.name == this.userName">
-                <i class="el-icon-s-delete"></i>
-                修改1
-              </span>
+              <el-button
+                  style="size:13px"
+                  @click="showReplyInput(i, reply.name, reply.comment_id)" round
+              >
+                回复
+              </el-button>
+              <el-popconfirm title="确定删除吗？" @confirm="deleteReply(i, reply.name, reply.comment_id)">
+                <template #reference>
+                  <el-button
+                      style="size:13px"
+                      v-if="role===1 || reply.name === this.userName" round
+                      type="danger">
+                    删除
+                  </el-button>
+                </template>
+              </el-popconfirm>
+
+              <el-popover placement="left" :width="400" trigger="click">
+                <template #reference>
+                  <el-button type="warning" style="size: 13px" v-if="role===1 || reply.name === this.userName" round>
+                    修改</el-button>
+                </template>
+                <div>
+                  <el-input v-model="this.comments[i].reply[j].text" placeholder="请输入内容" style="width: 300px"></el-input>
+                  <el-button style=" margin-left: 10px" type="primary" @click="changeReply(this.comments[i].reply[j])" round>
+                    保存
+                  </el-button>
+                </div>
+              </el-popover>
+
             </div>
             <div class="talk-box"  style="font-size: 14px">
               <p>
@@ -108,7 +141,7 @@
                 size="medium"
                 @click="sendCommentReply(i,this.super_id)"
             >
-              发表回复1
+              发表回复
             </el-button>
           </div>
         </div>
@@ -148,8 +181,10 @@ export default {
   props:{
     paperid: Number
   },
+  inject:['reload'],
   data(){
     return{
+
       circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
       user_id:'',
       userName:'',
@@ -164,21 +199,28 @@ export default {
       to:'',
       super_id :0,
       comments:[
-      ]
+      ],
+      form:{
+
+      }
     }
   },
   directives: {clickoutside},
   created() {
-
     let userStrr = sessionStorage.getItem("user")
     this.user_id = JSON.parse(userStrr).user_id
-    this.role = JSON.parse(userStrr).user_id
+    this.role = JSON.parse(userStrr).role
     this.userName = JSON.parse(userStrr).userName
     this.paper_id = this.paperid
     request.post("/api/getcomment?paper_id="+this.paper_id).then(res => {
       if (res.code === 0) {
         console.log(res.data)
-        this.comments = res.data
+        for (let i = 0;i<res.data.length;i++){
+          if (res.data[i].user_id!=-1){
+            this.comments.push(res.data[i])
+          }
+        }
+        //this.comments = res.data
         this.$message.success("成功加载评论")
       }else{
         this.$message.error("失败")
@@ -188,16 +230,24 @@ export default {
   },
 
   methods: {
+    changeReply(row){
+      console.log(row)
+      request.post("/api/comment/modify",row).then(res => {
+        if (res.code === 0) {
+          console.log(res.data)
+          this.comments = res.data
+          this.$message.success("成功修改评论")
+        }else{
+          this.$message.error("修改评论失败")
+        }
+        this.reload()
+      })
+    },
     inputFocus(){
       var replyInput = document.getElementById('replyInput');
       replyInput.style.padding= "8px 8px"
       replyInput.style.border ="2px solid blue"
       replyInput.focus()
-    },
-    loadMsg(){
-      request.post("/api/getcomment?paper_id="+this.paper_id).then(res => {
-        this.comments = res.data
-      })
     },
     showReplyBtn(){
       this.btnShow = true
@@ -217,22 +267,47 @@ export default {
       this.super_id = this.comments[i].comment_id
     },
     updateReply(i,name,id){
-      this.comments[this.index].inputShow = false
-      this.index =i
-      this.comments[i].inputShow = true
-      this.to = name
-      console.log(i)
-      console.log(this.comments[i].comment_id)
-      this.super_id = this.comments[i].comment_id
+      request.post("/api/comment/modify").then(res=>{
+        if (res.code === 0){
+          this.$message({
+            type: "success",
+            message: "删除成功"
+          })
+          this.reload()
+        }else{
+          this.$message({
+            type: "error",
+            message: "删除失败"
+          })
+          this.reload()
+        }
+      })
     },
     deleteReply(i,name,id){
-      this.comments[this.index].inputShow = false
-      this.index =i
-      this.comments[i].inputShow = true
-      this.to = name
-      console.log(i)
-      console.log(this.comments[i].comment_id)
-      this.super_id = this.comments[i].comment_id
+      console.log(id)
+      request.post("/api/comment/delete?comment_id="+id).then(res=>{
+        if (res.code === 0){
+          this.$message({
+            type: "success",
+            message: "删除成功"
+          })
+          this.reload()
+        }else{
+          this.$message({
+            type: "error",
+            message: "删除失败"
+          })
+          this.reload()
+        }
+      })
+
+      // this.comments[this.index].inputShow = false
+      // this.index =i
+      // this.comments[i].inputShow = true
+      // this.to = name
+      // console.log(i)
+      // console.log(this.comments[i].comment_id)
+      // this.super_id = this.comments[i].comment_id
     },
     _inputShow(i){
       return this.comments[i].inputShow
@@ -257,7 +332,6 @@ export default {
         a.time = time
         a.super_id = 0
         console.log(a)
-        this.comments.push(a)
         this.replyComment = ''
         input.innerHTML = '';
         request.post("/api/comment",a).then(res=>{
@@ -273,7 +347,7 @@ export default {
             })
           }
         })
-        this.loadMsg()
+        this.reload()
       }
     },
     sendCommentReply(i,toid){
@@ -298,7 +372,6 @@ export default {
         console.log(a)
         console.log(this.to)
         a.paper_id = this.paper_id
-        this.comments[i].reply.push(a)
         request.post("/api/comment",a).then(res=>{
           if (res.code === 0){
             this.$message({
@@ -314,7 +387,7 @@ export default {
         })
         this.replyComment = ''
         document.getElementsByClassName("reply-comment-input")[i].innerHTML = ""
-        this.loadMsg()
+        this.reload()
       }
     },
     onDivInput: function(e) {
