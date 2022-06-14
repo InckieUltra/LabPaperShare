@@ -5,6 +5,8 @@ import com.sun.org.apache.xpath.internal.operations.Mult;
 import demo.spring.entity.Comment;
 import demo.spring.entity.Field;
 import demo.spring.entity.Result;
+import demo.spring.entity.relationship;
+import demo.spring.service.FindRelationshipService;
 import demo.spring.service.PaperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ResourceUtils;
@@ -26,7 +28,8 @@ import java.util.UUID;
 public class PaperController {
     @Autowired
     private PaperService paperService;
-
+    @Autowired
+    private FindRelationshipService findRelationshipService;
     @CrossOrigin
     @PostMapping("/api/paper/upload")
     public Result upload(@RequestBody UploadRequest uploadRequest) {
@@ -186,14 +189,16 @@ public class PaperController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/api/paper/delete")
-    public Result deletepaper(@RequestParam("paper_id") Integer paper_id) {
+    @PostMapping(value="/api/paper/delete")
+    public Result deletepaper(@RequestParam(value = "paper_id") Integer paper_id,@RequestParam(value="user_id") Integer user_id) {
         try {
+            if(findRelationshipService.Findrelationship(paper_id).getUser_id() == user_id||findRelationshipService.Findrelationship(paper_id).getUser_id()==1)
             return Result.success("删除论文成功",this.paperService.deletePaper(paper_id));
         } catch (Exception e) {
             e.printStackTrace();
+            return  Result.fail("改论文已被引用",null);
         }
-        return Result.fail("删除论文失败",null);
+        return Result.fail("您不是该论文的上传者",null);
     }
 
     @CrossOrigin

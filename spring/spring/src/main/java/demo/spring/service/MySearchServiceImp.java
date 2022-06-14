@@ -2,6 +2,7 @@ package demo.spring.service;
 
 import demo.spring.entity.parper;
 import demo.spring.mapper.MySearpaper;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,23 +13,25 @@ public class MySearchServiceImp implements MySearchService{
     @Autowired
     private MySearpaper mySearpaper;
     @Override
-    public List<parper> Findpaper1(int paper_id) { return this.mySearpaper.Findpaper1(paper_id); }
-
-    @Override
-    public List<parper> Findpaper2(String title) {
-        return this.mySearpaper.Findpaper2(title);
+    public List<parper> Findpaper1(int paper_id,int Page,int Time) {
+        return this.mySearpaper.Findpaper1(paper_id,Page,Time);
     }
 
     @Override
-    public List<parper> Findpaper3(String name) {
-        return this.mySearpaper.Findpaper3(name);
+    public List<parper> Findpaper2(String title,int Page,int Time) {
+        return this.mySearpaper.Findpaper2(title,Page,Time);
     }
 
     @Override
-    public List<parper> Findpaper4(String summary) {
-        return this.mySearpaper.Findpaper4(summary);
+    public List<parper> Findpaper3(String name,int Page,int Time) {
+        return this.mySearpaper.Findpaper3(name,Page,Time);
     }
 
     @Override
-    public List<parper> Findpaper5(String type) { return this.mySearpaper.Findpaper5(type); }
+    public List<parper> Findpaper4(String summary,int Page,int Time) {
+        return this.mySearpaper.Findpaper4(summary,Page,Time);
+    }
+
+    @Override
+    public List<parper> Findpaper5(String type,int Page,int Time) { return this.mySearpaper.Findpaper5(type,Page,Time); }
 }

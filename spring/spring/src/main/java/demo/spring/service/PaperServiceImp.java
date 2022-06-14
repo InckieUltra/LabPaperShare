@@ -120,8 +120,7 @@ public class PaperServiceImp implements PaperService{
         this.paperMapper.deleteCommentbyPaper(paper_id);
         this.paperMapper.deleteFiles(paper_id);
         this.paperMapper.deleteReferences(paper_id);
-        this.paperMapper.deleteNote(paper_id);
-        this.paperMapper.deleteUpload(paper_id);
+        this.paperMapper.deleteNoteandUpload(paper_id);
         this.paperMapper.deletePaper(paper_id);
         return 0;
     }
