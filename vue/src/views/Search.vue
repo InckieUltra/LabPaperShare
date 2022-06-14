@@ -60,8 +60,10 @@
       <el-table-column
           label="操作"
       >
+        <template v-slot="scope">
         <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-        <el-button type="text" size="small">编辑</el-button>
+        <el-button type="text" size="small" @click="changpath()">编辑</el-button>
+        </template>
       </el-table-column>
     </el-table>
       <el-pagination @size-change="sizeChange" @current-change="currentChange"
@@ -152,6 +154,12 @@ export default {
             this.show1=true
           }
       )
+    },
+    handleClick(row){
+      this.$router.push({path:'/detail',query:{paper_id:row.paper_id}})
+    },
+    changpath(){
+      this.$router.push('/');
     },
     getTabelData() {
       //allData为全部数据
