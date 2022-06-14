@@ -19,22 +19,22 @@ public class SearchContrller {
         System.out.println(Page+Time);
         if(value1.equals("版号"))
         {
-           return mySearchServiceImp.Findpaper1(Integer.parseInt(paper_id1), Page,Time);
+            return mySearchServiceImp.Findpaper1(Integer.parseInt(paper_id1), Page*Time,Time);
         }
         else if(value1.equals("2")){
-            return mySearchServiceImp.Findpaper2(paper_id1, Page,Time);
+            return mySearchServiceImp.Findpaper2(paper_id1, Page*Time,Time);
         }
         else if(value1.equals("3"))
         {
-            return mySearchServiceImp.Findpaper3(paper_id1, Page,Time);
+            return mySearchServiceImp.Findpaper3(paper_id1, Page*Time,Time);
         }
         else if(value1.equals("4"))
         {
-            return mySearchServiceImp.Findpaper4(paper_id1, Page,Time);
+            return mySearchServiceImp.Findpaper4(paper_id1, Page*Time,Time);
         }
         else if(value1.equals("5"))
         {
-            return mySearchServiceImp.Findpaper5(paper_id1, Page,Time);
+            return mySearchServiceImp.Findpaper5(paper_id1, Page*Time,Time);
         }
         return null;
     }

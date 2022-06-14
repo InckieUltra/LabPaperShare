@@ -16,74 +16,83 @@
     ></el-input>
     <el-button v-on:click="loadData()" type="primary" icon="el-icon-search">搜索</el-button>
     <div>
-      <el-button @click="clearFilter()">清除所有过滤器</el-button>
-    <el-table
-        ref="filterTable"
-        :data="this.tableData"
-        style="width: 100%"
-        v-show="show"
-        v-loading="loading"
-        border>
-      <el-table-column
-          prop="paper_id"
-          label="编号"
-          sortable
-      >
-      </el-table-column>
-      <el-table-column
-          prop="title"
-          label="篇名"
-      >
-      </el-table-column>
-      <el-table-column
-          prop="conference"
-          label="期刊"
-          width="100"
-          :filters="Showitem"
-          :filter-method="filterConferece"
-          filter-placement="bottom-end"
-      >
-        <template v-slot="scope">
-          <el-tag
-              :type="scope.row.conference === '家' ? 'primary' : 'success'"
-              disable-transitions>{{scope.row.conference}}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
-          prop="summary"
-          label="简介"
-      >
-      </el-table-column>
-      <el-table-column
-          prop="role_name"
-          label="作者"
-      >
-      </el-table-column>
-      <el-table-column
-          prop="type"
-          label="领域"
-      >
-      </el-table-column>
-      <el-table-column
-          prop="field"
-          label="方向"
-      >
-      </el-table-column>
-      <el-table-column
-          label="操作"
-      >
-        <template v-slot="scope">
-        <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-        <el-button type="text" size="small" @click="changPath(scope.row)">编辑</el-button>
-          <el-button type="text" size="small" @click="Delete(scope.row)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+      <el-button v-show="show" @click="clearFilter()">清除所有过滤器</el-button>
+      <el-table
+          ref="filterTable"
+          :data="this.tableData"
+          style="width: 100%"
+          v-show="show"
+          v-loading="loading"
+          border>
+        <el-table-column
+            prop="paper_id"
+            label="编号"
+            sortable
+        >
+        </el-table-column>
+        <el-table-column
+            prop="title"
+            label="篇名"
+        >
+        </el-table-column>
+        <el-table-column
+            prop="conference"
+            label="期刊"
+            width="100"
+            :filters="Showitem"
+            :filter-method="filterConferece"
+            filter-placement="bottom-end"
+        >
+          <template v-slot="scope">
+            <el-tag
+                :type="scope.row.conference === '家' ? 'primary' : 'success'"
+                disable-transitions>{{scope.row.conference}}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
+            prop="summary"
+            label="简介"
+        >
+        </el-table-column>
+        <el-table-column
+            prop="role_name"
+            label="作者"
+            :filters="Showauthor"
+            :filter-method="filterauthor"
+            filter-placement="bottom-end"
+        >
+        </el-table-column>
+        <el-table-column
+            prop="type"
+            label="领域"
+            :filters="Showtype"
+            :filter-method="filtertype"
+            filter-placement="bottom-end"
+        >
+        </el-table-column>
+        <el-table-column
+            prop="field"
+            label="方向"
+            :filters="ShowField"
+            :filter-method="filterField"
+            filter-placement="bottom-end"
+        >
+        </el-table-column>
+        <el-table-column
+            label="操作"
+        >
+          <template v-slot="scope">
+            <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+            <el-button type="text" size="small" @click="changPath(scope.row)">编辑</el-button>
+            <el-button type="text" size="small" @click="Delete(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
       <el-pagination @size-change="sizeChange" @current-change="currentChange"
                      :current-page="page" :page-size="size" :page-sizes="pageSizes" v-show="show1"
                      layout="total, sizes, prev, pager, next, jumper" :total="total" style="margin-left:37%">
       </el-pagination>
-      </div>
+    </div>
   </div>
 </template>
 
@@ -106,6 +115,9 @@ export default {
       show1: false,
       loading: true,
       Showitem: [],
+      ShowField:[],
+      Showauthor:[],
+      Showtype:[],
       options: [{
         value: '版号',
         label: '版号'
@@ -125,6 +137,7 @@ export default {
       value: '版号',
       tableData: [
         {
+          count:1,
           paper_id: 123,
           title: '',
           conference: '',
@@ -132,6 +145,8 @@ export default {
           role_name: '',
           type: '',
           field: '',
+          fields:[],
+          author:[]
         }
       ],
       restaurants: [],
@@ -201,20 +216,48 @@ export default {
             })
             this.tableData = res
             console.log(this.tableData)
+            console.log(this.tableData[0].count)
+            this.Showitem = []
+            this.ShowField = []
+            this.Showauthor = []
+            this.Showtype = []
             this.tableData.filter(item => {
               let text = item.conference
               let value = item.conference
               this.Showitem.push({text, value})
             })
+            this.tableData.filter(item => {
+              let text = item.type
+              let value = item.type
+              this.Showtype.push({text, value})
+            })
+            this.tableData.filter(item=>{
+              item.fields.filter(res=>{
+                let text = res;
+                let value = res;
+                this.ShowField.push({text,value})
+              })
+            })
+            this.tableData.filter(item=>{
+              item.author.filter(res=>{
+                let text = res;
+                let value = res;
+                this.Showauthor.push({text,value})
+              })
+            })
+            console.log(this.ShowField)
             const map = new Map()
             this.Showitem = this.Showitem.filter(key => !map.has(key.value) && map.set(key.value, 1))
+            this.ShowField = this.ShowField.filter(key => !map.has(key.value) && map.set(key.value, 1))
+            this.Showauthor = this.Showauthor.filter(key => !map.has(key.value) && map.set(key.value, 1))
+            this.Showtype = this.Showtype.filter(key => !map.has(key.value) && map.set(key.value, 1))
             console.log(this.Showitem)
             this.loading = false
             this.show = true
             this.show1 = true
+            this.total = this.tableData[0].count
           }
       )
-      this.total = 10
     },
 
     //page改变时的回调函数，参数为当前页码
@@ -222,6 +265,7 @@ export default {
       console.log("翻页，当前为第几页", val);
       this.page = val;
       this.getTabelData();
+      local.reload()
     },
     //size改变时回调的函数，参数为当前的size
     sizeChange(val) {
@@ -229,6 +273,7 @@ export default {
       this.size = val;
       this.page = 1;
       this.getTabelData();
+      local.reload()
     },
     created() {
       this.getTabelData();
@@ -238,35 +283,37 @@ export default {
       this.dialogVisible = true
     },
 
-    querySearchAsync(queryString, cb) {
-      var restaurants = this.restaurants;
-      var results = queryString ? restaurants.filter(this.createStateFilter(queryString)) : restaurants;
-
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        cb(results);
-      }, 3000 * Math.random());
-    },
     createStateFilter(queryString) {
       return (state) => {
         return (state.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
       };
     },
-    handleSelect(item) {
-      console.log(item);
-    },
     clearFilter() {
       this.$refs.filterTable.clearFilter();
-    },
-    formatter(row, column) {
-      return row.address;
     },
     filterConferece(value, row) {
       return row.conference === value;
     },
-    filterHandler(value, row, column) {
-      const property = column['property'];
-      return row[property] === value;
+    filtertype(value, row) {
+      return row.type === value;
+    },
+    filterField(value, row) {
+      let a = false;
+      row.fields.filter(item=>{
+        if(item==value)
+          a=true
+        return
+      })
+      return a
+    },
+    filterauthor(value, row) {
+      let a = false;
+      row.author.filter(item=>{
+        if(item==value)
+          a=true
+        return
+      })
+      return a
     }
   }
 }
