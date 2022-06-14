@@ -102,6 +102,9 @@ public interface PaperMapper {
     })
     List<Field> findFields(int paper_id);
 
+    @Select("select field_name from cover natural join field where paper_id = #{paper_id}")
+    List<String> findFieldNames(int paper_id);
+
     @Select("select file_path from upload natural join attach_file where paper_id = #{paper_id}")
     List<String> findFiles(int paper_id);
 

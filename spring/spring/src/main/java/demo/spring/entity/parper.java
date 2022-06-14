@@ -10,7 +10,24 @@ public class parper {
     private String role_name;
     private String type;
     private String field;
+    private List<String> author;
+    private List<String> fields;
 
+    public List<String> getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(List<String> author) {
+        this.author = author;
+    }
+
+    public List<String> getFields() {
+        return fields;
+    }
+
+    public void setFields(List<String> fields) {
+        this.fields = fields;
+    }
 
     public String getField() {
         return field;
