@@ -138,7 +138,7 @@ public class SFTPConfigModel {
      */
     public SFTPConfigModel getDefaultConfig(){
         this.userName = "root";
-        this.passWord = "20020319";
+        this.passWord = "scentvh7Inckie";
         this.host = "124.220.207.224";
         this.port = 22;
         this.uploadUrl = "/home/file/upload";
