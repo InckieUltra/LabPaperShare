@@ -126,14 +126,23 @@ export default {
 
     },
     deletePaper(row) {
-      //this.paper_id = row.paper_id
-      request.post("/api/paper/delete?paper_id="+row.paper_id).then(res =>{
-        if (res.code ===0){
-          this.$message.success("删除论文成功")
-          this.reload()
-        }else{
-          this.$message.error("删除论文失败")
-          this.reload()
+      let user = JSON.parse(window.sessionStorage.getItem('user'));
+      let user_id = parseInt(user.user_id);
+      console.log(user_id)
+      request.post("/api/paper/delete?paper_id=" + row.paper_id + "&user_id=" + user_id).then(res => {
+        if (res.code === 0) {
+          this.$message({
+            duration: 700,
+            type: "success",
+            message: "删除成功"
+          })
+          location.reload();
+        } else {
+          this.$message({
+            duration: 1000,
+            type: "error",
+            message: "该论文无法删除"
+          })
         }
       })
 
