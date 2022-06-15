@@ -248,6 +248,7 @@ export default {
               type: "success",
               message: res.msg,
             })
+            this.form = null
           }else {
             this.$message({
               type: "error",

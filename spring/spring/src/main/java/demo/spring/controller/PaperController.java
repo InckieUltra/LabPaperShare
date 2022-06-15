@@ -114,18 +114,19 @@ public class PaperController {
 
     @CrossOrigin
     @RequestMapping(value = "/api/file/download")
-    public Result downloadfile(@RequestBody DownloadRequest downloadRequest){
+    public byte[] downloadfile(@RequestBody DownloadRequest downloadRequest){
         try {
             SFTPConfigModel sftpConfigModel=new SFTPConfigModel();
             SFTPUtil sftpUtil=new SFTPUtil(sftpConfigModel.getDefaultConfig());
             sftpUtil.login();
             byte[] res=sftpUtil.download(sftpConfigModel.getUploadUrl(),downloadRequest.getServerfile());
-            sftpUtil.logout();
-            return Result.success("成功",res);
+            //sftpUtil.logout();
+
+            return res;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return Result.fail("失败",null);
+        return null;
     }
 
     @PostMapping("batchUpload")

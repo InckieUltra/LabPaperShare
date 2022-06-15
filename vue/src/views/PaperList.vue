@@ -145,7 +145,6 @@ export default {
           })
         }
       })
-
     },
     handleSizeChange(pageSize) {   // 改变当前每页的个数触发
       this.pageSize = pageSize
