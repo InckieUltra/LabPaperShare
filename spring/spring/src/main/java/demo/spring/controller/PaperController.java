@@ -119,9 +119,9 @@ public class PaperController {
             SFTPConfigModel sftpConfigModel=new SFTPConfigModel();
             SFTPUtil sftpUtil=new SFTPUtil(sftpConfigModel.getDefaultConfig());
             sftpUtil.login();
-            sftpUtil.download(sftpConfigModel.getUploadUrl(),downloadRequest.getServerfile(),downloadRequest.getSavefile());
+            byte[] res=sftpUtil.download(sftpConfigModel.getUploadUrl(),downloadRequest.getServerfile());
             sftpUtil.logout();
-            return Result.success("成功",null);
+            return Result.success("成功",res);
         } catch (Exception e) {
             e.printStackTrace();
         }

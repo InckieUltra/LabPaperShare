@@ -94,6 +94,20 @@ export default {
         //console.log(this.Req)
         request.post("/api/file/download",this.Req).then(res => {
           if (res.code === 0){
+            console.log(res)
+            let url = window.URL.createObjectURL(new Blob([res.data])) // 将获取的文件转化为blob格式
+            let a = document.createElement('a'); // 此处向下是打开一个储存位置
+            a.style.display = 'none';
+            a.href = url;
+            // 下面两行是自己项目需要的处理，总之就是得到下载的文件名（加后缀）即可
+            //var fileNameArray = path.split('#')[1].split('/')
+            //var fileName = fileNameArray[fileNameArray.length-1]
+
+            a.setAttribute('download',files[i]);
+            document.body.appendChild(a);
+            a.click();//点击下载
+            document.body.removeChild(a);// 下载完成移除元素
+            window.URL.revokeObjectURL(url);// 释放掉blob对象
             this.$message.success("下载成功")
             //console.log(res.msg)
           }else{
