@@ -25,7 +25,7 @@ public interface PaperMapper {
     @Options(useGeneratedKeys = true, keyProperty = "note_id", keyColumn = "note_id")
     int addNote(Note note);
 
-    @Insert("insert into cover values(#{paper_id},#{field_id})")
+    @Insert("insert ignore into cover values(#{paper_id},#{field_id})")
     int addCover(int paper_id,int field_id);
 
     @Insert("insert into attach_file values(#{upload_id},#{file_path})")
