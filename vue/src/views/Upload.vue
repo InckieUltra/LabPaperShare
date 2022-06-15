@@ -238,17 +238,17 @@ export default {
 
       this.form.field =Array.from(letters);
       console.log(this.form)
-      if (this.form.title === null || this.form.date === null || this.form.conference === null || this.form.field.length === 0 ||
-          this.form.type === null ||this.form.authors.length === 0 ||this.form.content === null){
+      if (this.form.date === '' || this.form.conference === '' || this.form.field.length === 0 ||
+          this.form.type === '' ||this.form.authors.length === 0){
         this.$message.error("请完善论文信息")
       }else {
         request.post("/api/paper/upload",this.form).then(res=>{
+          console.log(res)
           if (res.code === 0){
             this.$message({
               type: "success",
               message: res.msg,
             })
-            this.form = null
           }else {
             this.$message({
               type: "error",
@@ -262,7 +262,7 @@ export default {
       editor = new E('#div1')
       // 或者 const editor = new E( document.getElementById('div1') )
       editor.create()
-      editor.txt.html("")
+      editor.txt.html()
 
     },
     handleClose(author) {

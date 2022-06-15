@@ -33,8 +33,12 @@ request.interceptors.request.use(config => {
 // 可以在接口响应后统一处理结果
 request.interceptors.response.use(
     response => {
+        //console.log("拦截器打印")
+
+        //console.log(response)
         let res = response.data;
         // 如果是返回的文件
+        //console.log(res)
         if (response.config.responseType === 'blob') {
             console.error("blob")
             return res
@@ -45,8 +49,9 @@ request.interceptors.response.use(
 
             res = res ? JSON.parse(res) : res
         }
+        console.log(res.code)
         if (res.code === 3) {
-            this.$message.error("token过期，重新登录")
+            console.log("print"+ res.code)
             sessionStorage.removeItem("user")
             sessionStorage.removeItem("userPermission")
             console.error("token过期，重新登录")

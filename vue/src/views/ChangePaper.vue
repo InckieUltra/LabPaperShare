@@ -213,7 +213,7 @@ export default {
     //this.getTreeData(this.tableData)
   },
   mounted() {
-    this.init()
+    this.init(this.form.content)
     let userId = sessionStorage.getItem("user")
     this.form.user_id = JSON.parse(userId).user_id
     //console.log(this.form.user_id)
@@ -280,11 +280,12 @@ export default {
       //console.log('submit!');
       //console.log(this.form)
     },
-    init(){
+    init(e){
       editor = new E('#div1')
       // 或者 const editor = new E( document.getElementById('div1') )
       editor.create()
-      editor.txt.html(this.form.content)
+      editor.txt.html()
+
     },
     handleChange(value) {
       //console.log(value);
