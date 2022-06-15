@@ -260,7 +260,7 @@ export default {
         this.form.field.push(this.tableData[i][this.tableData[i].length-1])
       }
       if (this.form.title === null || this.form.date === null || this.form.conference === null || this.form.field.length === 0 ||
-          this.form.type === null ||this.form.authors.length === 0){
+          this.form.type === null ||this.form.authors.length === 0 ||this.form.content === null){
         this.$message.error("请完善论文信息")
       }else{
         request.post("/api/paper/modify",this.form).then(res=>{

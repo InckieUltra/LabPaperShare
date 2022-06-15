@@ -24,8 +24,8 @@
         <div v-html="this.form.content"></div>
         </div>
 
-        <el-divider></el-divider>
-        <div style="font-size: 10px;">引用文献：
+        <el-divider v-if="this.form.references.length!==0"></el-divider>
+        <div style="font-size: 10px;" v-if="this.form.references.length!==0">引用文献：
           <el-button v-for="a in form.references" type="text" @click="jumpRef(a.paper_id)">
 
               {{a.title}}</el-button>
@@ -66,7 +66,8 @@ export default {
       lastPath:'',
       form:{
         field:String,
-        files:[]
+        files:[],
+        references:[]
       },
       Req:{
         serverfile:'',

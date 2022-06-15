@@ -237,8 +237,8 @@ export default {
       console.log(letters)
       this.form.field =letters;
       console.log(this.form.field)
-      if (this.form.title === null || this.form.date === null || this.form.conference === null ||
-          this.form.type === null ||this.form.authors.length === 0){
+      if (this.form.title === null || this.form.date === null || this.form.conference === null || this.form.field.length === 0 ||
+          this.form.type === null ||this.form.authors.length === 0 ||this.form.content === null){
         this.$message.error("请完善论文信息")
       }else {
         request.post("/api/paper/upload",this.form).then(res=>{

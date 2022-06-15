@@ -94,7 +94,7 @@
               </el-button>
 
               <el-popconfirm title="确定删除吗？" @confirm="deleteReply(i, reply.name, reply.comment_id)"
-               v-if="role===1 || item.name === this.userName">
+               v-if="this.role===1 ||reply.name === this.userName">
                 <template #reference>
                   <el-button
                       style="size:13px"
@@ -104,7 +104,7 @@
                 </template>
               </el-popconfirm>
 
-              <el-popover placement="left" :width="400" trigger="click" v-if="role===1 || item.name === this.userName"
+              <el-popover placement="left" :width="400" trigger="click" v-if="this.role===1 || reply.name === this.userName"
               >
                 <template #reference>
                   <el-button type="warning" style="size: 13px"
@@ -216,7 +216,7 @@ export default {
 
     let userStrr = sessionStorage.getItem("user")
     this.user_id = JSON.parse(userStrr).user_id
-    this.role = 2
+    this.role = JSON.parse(userStrr).role
     this.userName = JSON.parse(userStrr).userName
     this.paper_id = this.paperid
     console.log("before load comment")
@@ -278,23 +278,6 @@ export default {
       console.log(this.comments[i].comment_id)
       this.super_id = this.comments[i].comment_id
     },
-    updateReply(i,name,id){
-      request.post("/api/comment/modify").then(res=>{
-        if (res.code === 0){
-          this.$message({
-            type: "success",
-            message: "删除成功"
-          })
-          this.reload()
-        }else{
-          this.$message({
-            type: "error",
-            message: "删除失败"
-          })
-          this.reload()
-        }
-      })
-    },
     deleteReply(i,name,id){
       console.log(id)
       request.post("/api/comment/delete?comment_id="+id).then(res=>{
@@ -352,6 +335,8 @@ export default {
               type: "success",
               message: "评论成功"
             })
+            this.reload()
+
           }else{
             this.$message({
               type: "error",
@@ -359,7 +344,6 @@ export default {
             })
           }
         })
-        this.reload()
       }
     },
     sendCommentReply(i,toid){
