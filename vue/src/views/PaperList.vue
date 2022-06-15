@@ -91,7 +91,6 @@ export default {
 
       this.user_id = this.$route.query.user_id
     }
-    console.log("showtype = 1")
 
     this.load()
 
@@ -107,7 +106,6 @@ export default {
           if (res.code === 0){
             this.tableData = res.data[1]
             this.total = res.data[0]
-            console.log(res)
           }
         })
       }else if(this.showtype === '1'){
@@ -115,7 +113,6 @@ export default {
           if (res.code === 0) {
             this.tableData = res.data[1]
             this.total = res.data[0]
-            console.log(res)
           }
         })
       }
@@ -125,14 +122,10 @@ export default {
     },
 
     seeDetail(row) {
-      console.log("seeDetail: ")
-      console.log(row)
-
       this.$router.push({path: '/detail',query:{paper_id:row.paper_id }})
 
     },
     deletePaper(row) {
-      console.log(row)
       //this.paper_id = row.paper_id
       request.post("/api/paper/delete?paper_id="+row.paper_id).then(res =>{
         if (res.code ===0){

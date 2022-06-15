@@ -79,18 +79,7 @@ export default {
   mounted() {
 
   },
-  // beforeCreate() {
-  //   console.log("before Login Create")
-  //   let userJson = sessionStorage.getItem("user")
-  //   if (userJson) {
-  //     this.$message({
-  //       type: "success",
-  //       message: "您已登录,自动跳转",
-  //
-  //     })
-  //     this.$router.push("/")
-  //   }
-  // },
+
   methods: {
     // 接收验证码组件提交的 4位验证码
     createValidCode(data) {
@@ -98,8 +87,6 @@ export default {
     },
 
     login () {
-      //console.log(this.form)
-      console.log("denglule")
       this.$refs['form'].validate((valid) => {
         if (valid) {
           if (!this.form.validCode) {
@@ -110,22 +97,15 @@ export default {
             this.$message.error("验证码错误")
             return
           }
-          // request.post("/api/login", this.form).then(res=>{
-          //   console.log("khkhkasgdiuqwgadjagdvjasdfjqa")
-          // })
-          //request.post("/api/login","hhh")
+
           request.post("/api/login", this.form).then(res => {
-            console.log(res)
             if (res.code === 0) {
-              console.log(3333)
               this.$message({
                 type: "success",
                 message: "登录成功"
               })
               sessionStorage.setItem("user", JSON.stringify(res.data))  // 缓存用户信息
               request.post("/api/permission?user_id=" + res.data.user_id).then(res1 => {
-                console.log(res1)
-                console.log("permission Get")
                 sessionStorage.setItem("userPermission", JSON.stringify(res1))  // 缓存用户信息
                 let userStrr = sessionStorage.getItem("userPermission") || "{}"
                 this.permissionList = JSON.parse(userStrr)

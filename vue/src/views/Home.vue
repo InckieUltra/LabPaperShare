@@ -1,16 +1,16 @@
 <template>
 
-  <div style="margin-top: 10px">
+  <div style="padding: 10px">
     <div>
       <el-card shadow="hover">
-        <div id="main" :style="{width: '800px', height: '650px'}"></div>
+        <div id="main" :style="{width: '725px', height: '600px'}"></div>
       </el-card>
     </div>
 
   </div>
   <div style="margin-top: 10px">
     <el-card shadow="hover">
-      <div id="myChart" :style="{width: '800px', height: '650px'}"></div>
+      <div id="myChart" :style="{width: '725px', height: '600px'}"></div>
     </el-card>
   </div>
 
@@ -90,8 +90,7 @@ export default {
       let option = {
         title: {
           text: '我的上传 vs 全组上传',
-          left: 'left',
-          bottom:'bottom'
+
         },
         tooltip: {
           trigger: 'axis'

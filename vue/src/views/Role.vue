@@ -114,8 +114,6 @@ export default {
   },
   methods: {
     save() {
-      console.log(this.form)
-
       request.post("/api/admin/addrole?name="+this.form.name+"&comment="+this.form.comment, this.form).then(res => {
           if (res.code === 0) {
             this.$message({
@@ -138,8 +136,6 @@ export default {
     handleChange(row) {
       this.changePermissions.role_id = row.role_id
       this.changePermissions.permission_id = row.permissions
-      console.log(this.changePermissions)
-
       request.post("/api/admin/modifypermission",this.changePermissions).then(res => {
         if (res.code === 0) {
           this.$message.success("更新成功")
@@ -157,9 +153,6 @@ export default {
       this.loading = true
       request.post("/api/admin/allroleinfo").then(res => {
         if (res.code === 0){
-          console.log(res.data.length)
-          console.log("打印tableData: ")
-
           this.loading = false
           this.tableData = res.data
           for(let i=0;i<this.tableData.length;i++){
@@ -169,7 +162,6 @@ export default {
             }
             this.tableData[i].permissions = arr;
           }
-          console.log(this.tableData)
           this.total = res.data.length
         }else if (res.code === 1){
           this.$message({
@@ -190,9 +182,7 @@ export default {
 
       request.post("/api/admin/allpermission").then(res => {
         this.permissions = res.data
-        console.log("打印permissions: ")
-
-        console.log(res.data)
+        //console.log(res.data)
       })
     },
 
@@ -201,7 +191,6 @@ export default {
       this.dialogVisible = true
     },
     handleDelete(id) {
-      console.log(id)
       request.post("/api/admin/user/delete?user_id=" + id).then(res => {
         if (res.code === 0) {
           this.$message({

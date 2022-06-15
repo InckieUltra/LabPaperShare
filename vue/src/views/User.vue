@@ -103,24 +103,18 @@ export default {
       })
     },
     handleUploadList(row) {
-      console.log(row)
       this.$router.push({path: '/paperList',query:{user_id:row.user_id,showtype: '1' }})
     },
     test(){
       request.post("/api/getsession").then(res => {
-        console.log(res)
       })
     },
     load() {
       this.loading = true
       request.post("/api/admin/alluser").then(res => {
         if (res.code === 0){
-          console.log(res.data.length)
-          console.log("res.data.total")
-
           this.loading = false
           this.tableData = res.data
-          console.log(this.tableData)
           this.total = res.data.length
         }else{
           this.$message({
@@ -141,7 +135,6 @@ export default {
       this.dialogVisible = true
     },
     handleDelete(id) {
-      console.log(id)
       request.post("/api/admin/user/delete?user_id=" + id).then(res => {
         if (res.code === 0) {
           this.$message({

@@ -323,7 +323,7 @@ export default {
       })
       return a
     }
-  }
+  },
 }
 </script>
 

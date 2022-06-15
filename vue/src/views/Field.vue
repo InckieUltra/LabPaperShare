@@ -115,8 +115,8 @@ export default {
     },
     updateName() {
       // 新增
-      console.log("传过去的： ")
-      console.log(this.form)
+      //console.log("传过去的： ")
+      //console.log(this.form)
       request.post("/api/admin/modifyfieldname", this.form).then(res => {
         if (res.code === 0) {
           this.$message({
@@ -135,8 +135,8 @@ export default {
     },
     saveAdd() {
       // 新增
-      console.log("传过去的： ")
-      console.log(this.form)
+      //console.log("传过去的： ")
+      //console.log(this.form)
 
       request.post("/api/admin/addfield", this.form).then(res => {
         if (res.code === 0) {
@@ -164,7 +164,7 @@ export default {
     },
 
     handleDelete(id) {
-      console.log(id)
+      //console.log(id)
       request.post("/api/admin/deletefield?field_id=" + id).then(res => {
         if (res.code === 0) {
           this.$message({

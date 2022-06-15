@@ -227,12 +227,16 @@ export default {
     },
     onSubmit() {
       this.form.content = editor.txt.html()  // 获取 编辑器里面的值，然后赋予到实体当中
+      console.log(this.tableData)
+      const letters = new Set()
       for(let i = 0;i<this.tableData.length;i++){
-        this.form.field.push(this.tableData[i][this.tableData[i].length-1])
+        for (let j = 0;j<this.tableData[i].length;j++){
+          letters.add(this.tableData[i][j])
+        }
       }
-      console.log(this.form)
-
-      // this.form.content = JSON.parse(JSON.stringify(this.BasicEditor.getHtml()))
+      console.log(letters)
+      this.form.field =letters;
+      console.log(this.form.field)
       if (this.form.title === null || this.form.date === null || this.form.conference === null ||
           this.form.type === null ||this.form.authors.length === 0){
         this.$message.error("请完善论文信息")
@@ -251,11 +255,6 @@ export default {
           }
         })
       }
-
-
-
-      console.log('submit!');
-
     },
     init(){
       editor = new E('#div1')
@@ -263,9 +262,6 @@ export default {
       editor.create()
       editor.txt.html("")
 
-    },
-  handleChange(value) {
-      console.log(value);
     },
     handleClose(author) {
       this.form.authors.splice(this.form.authors.indexOf(author), 1);

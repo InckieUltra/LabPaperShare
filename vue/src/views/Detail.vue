@@ -17,11 +17,18 @@
         <div style="font-size: 15px;">所属领域：{{form.field}}</div>
         <el-divider></el-divider>
         <div style="font-size: 15px;">论文链接：
-          <el-button @click='routeClick("http://"+form.link)' type="text">{{form.link}}</el-button>
+          <el-button @click='routeClick(form.link)' type="text">{{form.link}}</el-button>
           </div>
         <el-divider></el-divider>
         <div style="font-size: 15px;">笔记内容：
         <div v-html="this.form.content"></div>
+        </div>
+
+        <el-divider></el-divider>
+        <div style="font-size: 10px;">引用文献：
+          <el-button v-for="a in form.references" type="text" @click="jumpRef(a.paper_id)">
+
+              {{a.title}}</el-button>
         </div>
 
         <el-divider content-position="center">
@@ -30,7 +37,6 @@
             <el-button v-if="this.form.files.length!==0" @click="downFiles(form.files)">下载附件</el-button>
           </div>
         </el-divider>
-
 
         <comment style="width: 100%" :paperid =this.paper_id>
         </comment>
@@ -68,7 +74,12 @@ export default {
       }
     }
   },
+
   methods:{
+    jumpRef(paperid){
+      window.location.href='detail?paper_id='+paperid
+      //this.$router.push({path: '/detail',query:{paper_id: paperid }})
+    },
     routeClick(e){
       window.location.href = e;
     },
@@ -79,15 +90,14 @@ export default {
       for (let i = 0;i<files.length;i++){
         this.Req.serverfile = files[i]
         this.Req.savefile = '/Users/liujiaming/Downloads//'+files[i]
-        console.log(this.Req)
-
+        //console.log(this.Req)
         request.post("/api/file/download",this.Req).then(res => {
           if (res.code === 0){
             this.$message.success("下载成功")
-            console.log(res.msg)
+            //console.log(res.msg)
           }else{
             this.$message.error("下载失败")
-            console.log(res.msg)
+            //console.log(res.msg)
           }
         })
       }
@@ -103,10 +113,10 @@ export default {
     request.post("/api/paper?paper_id="+this.paper_id).then(res => {
       if (res.code === 0){
         this.form = res.data
-        console.log(this.form)
+        //console.log(this.form)
         var temp
         for (var i = 0;i<res.data.fields.length;i++){
-          console.log(res.data.fields[i].field_name)
+          //console.log(res.data.fields[i].field_name)
           if (i===0){
             temp = res.data.fields[i].field_name
           }else{
@@ -116,7 +126,7 @@ export default {
         this.form.field=temp
       }else{
         this.$message.error("加载失败")
-        console.log(res.msg)
+        //console.log(res.msg)
       }
     })
   },

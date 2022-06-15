@@ -197,7 +197,7 @@ export default {
         this.form.summary = res.data.summary
         this.form.user_id = res.data.user_id
         this.form.content = res.data.content
-        console.log(this.form)
+        //console.log(this.form)
       }else{
         this.$message.error("加载失败")
         console.log(res.msg)
@@ -207,7 +207,7 @@ export default {
       this.options = res.data
     })
     request.post("/api/findRef").then(res => {
-      console.log(res.data)
+      //console.log(res.data)
       this.refOptions = res.data[0]
     })
     //this.getTreeData(this.tableData)
@@ -216,19 +216,19 @@ export default {
     this.init()
     let userId = sessionStorage.getItem("user")
     this.form.user_id = JSON.parse(userId).user_id
-    console.log(this.form.user_id)
+    //console.log(this.form.user_id)
   },
   methods: {
     handleRemove(file, fileList) {
-      console.log(file, fileList);
+      //console.log(file, fileList);
     },
     handleError(err,file,fileList){
-      console.log(err)
+      //console.log(err)
     },
     handleSuccess(res,file,fileList){
-      console.log(res)
+      //console.log(res)
       this.form.fileList.push(res.data[0])
-      console.log(this.form.fileList)
+      //console.log(this.form.fileList)
     },
     beforeUpload(file) {
       let fileSize = file.size
@@ -243,7 +243,7 @@ export default {
       return true
     },
     handlePreview(file) {
-      console.log(file);
+      //console.log(file);
     },
     handleExceed(files, fileList) {
       this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
@@ -253,7 +253,7 @@ export default {
     },
     onSubmit() {
       // this.form.content = JSON.parse(JSON.stringify(this.BasicEditor.getHtml()))
-      console.log(this.form)
+      //console.log(this.form)
       this.form.content = editor.txt.html()  // 获取 编辑器里面的值，然后赋予到实体当中
 
       for(let i = 0;i<this.tableData.length;i++){
@@ -277,8 +277,8 @@ export default {
           }
         })
       }
-      console.log('submit!');
-      console.log(this.form)
+      //console.log('submit!');
+      //console.log(this.form)
     },
     init(){
       editor = new E('#div1')
@@ -287,7 +287,7 @@ export default {
       editor.txt.html(this.form.content)
     },
     handleChange(value) {
-      console.log(value);
+      //console.log(value);
     },
     handleClose(author) {
       this.form.authors.splice(this.form.authors.indexOf(author), 1);

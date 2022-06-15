@@ -73,7 +73,7 @@ export default {
        userName: "",
        user_id: "",
        identify: '',
-       newPass: '',
+       password: '',
        confirmPass: ''
      },
       userInfo:{
@@ -119,14 +119,14 @@ export default {
     },
     send() {
       request.post("/api/register/sendemail", this.form).then(res => {
-        console.log("发送验证码")
+        //console.log("发送验证码")
       })
 
     },
     update() {
-            console.log(this.form)
-            request.put("api/profile", this.form).then(res => {
-              console.log(res)
+            //console.log(this.form)
+            request.post("api/modifypwd", this.form).then(res => {
+              //console.log(res)
               if (res.code === 0) {
                 this.$message({
                   type: "success",
@@ -134,8 +134,8 @@ export default {
                 })
                 sessionStorage.removeItem("user")
                 sessionStorage.removeItem("userPermission")
-                request.post("/api/paper/modify",this.form).then(res=>{
-                  console.log(res)
+                request.post("/api/logout",this.form).then(res=>{
+                  //console.log(res)
                 })
                 this.$router.push('/login')
               } else {
