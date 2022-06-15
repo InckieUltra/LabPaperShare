@@ -90,7 +90,8 @@ export default {
       let option = {
         title: {
           text: '我的上传 vs 全组上传',
-
+          left: 'left',
+          bottom:'bottom'
         },
         tooltip: {
           trigger: 'axis'
