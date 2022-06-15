@@ -52,17 +52,17 @@ export default {
     let that = this;
     this.id = parseInt(this.user1.user_id);
     this.param = {user_id: this.id,type: 0};
-    console.log(this.param);
+    //console.log(this.param);
     const result =await request.post("/api/Field",this.param1)
     this.tableData2 = result
     console.log(this.tableData2)
     request.post("/api/home",this.param).then((res) => {
       this.tableData = res
-      console.log(this.tableData)
+      //console.log(this.tableData)
       this.param={user_id: 0,type: 1};
       request.post("/api/home",this.param).then((res) => {
         this.tableData1 = res
-        console.log(this.tableData1)
+        //console.log(this.tableData1)
         this.drawLine();
         this.drawLine1();
       });
@@ -200,8 +200,12 @@ export default {
 
         ]
       }
+
       this.tableData2.filter(item=>{
-        option.series[0].data.push(item)
+        if (item.name !=="全部方向"){
+          option.series[0].data.push(item)
+
+        }
       })
       myChart.setOption(option);
       // request.get("/user/count").then(res => {

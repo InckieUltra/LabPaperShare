@@ -3,7 +3,7 @@
     <el-container>
       <el-header>
         <h1 style="text-align: center">{{form.title}}</h1>
-        <div v-for="a in form.authors" style="text-align: center;white-space: nowrap;color: #545c64">{{a}}</div>
+        <div style="text-align: center">{{form.authors}}</div>
       </el-header>
       <el-main style="margin-top: 10px">
 
@@ -128,7 +128,7 @@ export default {
     request.post("/api/paper?paper_id="+this.paper_id).then(res => {
       if (res.code === 0){
         this.form = res.data
-        //console.log(this.form)
+        console.log(this.form)
         var temp
         for (var i = 0;i<res.data.fields.length;i++){
           //console.log(res.data.fields[i].field_name)
@@ -139,6 +139,15 @@ export default {
           }
         }
         this.form.field=temp
+        for (var i = 0;i<res.data.authors.length;i++){
+          //console.log(res.data.fields[i].field_name)
+          if (i===0){
+            temp = res.data.authors[i]
+          }else{
+            temp= temp + ','+ res.data.authors[i]
+          }
+        }
+        this.form.authors=temp
       }else{
         this.$message.error("加载失败")
         //console.log(res.msg)
