@@ -165,6 +165,7 @@ export default {
   },
   methods: {
     loadData() {
+      this.show = false
       this.show1 = false
       this.loading = true
       console.log("aaaaaa")
@@ -209,14 +210,21 @@ export default {
       }).then((res) => {
             console.log(this.param)
             console.log(res)
+            if(res!=null)
             this.$message({
               duration: 700,
               type: "success",
               message: "搜索成功"
             })
+        else{
+              this.$message({
+                duration: 700,
+                type: "error",
+                message: "搜索无结果"
+              })
+            }
             this.tableData = res
             console.log(this.tableData)
-            console.log(this.tableData[0].count)
             this.Showitem = []
             this.ShowField = []
             this.Showauthor = []
