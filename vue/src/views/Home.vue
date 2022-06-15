@@ -1,16 +1,16 @@
 <template>
 
-  <div style="padding: 10px">
+  <div style="margin-top: 10px">
     <div>
       <el-card shadow="hover">
-        <div id="main" :style="{width: '725px', height: '600px'}"></div>
+        <div id="main" :style="{width: '800px', height: '650px'}"></div>
       </el-card>
     </div>
 
   </div>
   <div style="margin-top: 10px">
     <el-card shadow="hover">
-      <div id="myChart" :style="{width: '725px', height: '600px'}"></div>
+      <div id="myChart" :style="{width: '800px', height: '650px'}"></div>
     </el-card>
   </div>
 
