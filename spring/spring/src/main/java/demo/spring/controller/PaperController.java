@@ -191,10 +191,12 @@ public class PaperController {
 
     @CrossOrigin
     @PostMapping(value="/api/paper/delete")
-    public Result deletepaper(@RequestParam(value = "paper_id") Integer paper_id,@RequestParam(value="user_id") Integer user_id) {
+    public Result deletepaper(@RequestParam(value = "paper_id") Integer paper_id,@RequestParam(value="user_id") Integer user_id,HttpServletRequest servletRequest) {
+        HttpSession session=servletRequest.getSession();
+        int role_id=(Integer) session.getAttribute("admin");
         try {
-            if(findRelationshipService.Findrelationship(paper_id).getUser_id() == user_id||findRelationshipService.Findrelationship(paper_id).getUser_id()==1)
-            return Result.success("删除论文成功",this.paperService.deletePaper(paper_id));
+            if(findRelationshipService.Findrelationship(paper_id).getUser_id() == user_id||role_id==1)
+                return Result.success("删除论文成功",this.paperService.deletePaper(paper_id));
         } catch (Exception e) {
             e.printStackTrace();
             return  Result.fail("改论文已被引用",null);

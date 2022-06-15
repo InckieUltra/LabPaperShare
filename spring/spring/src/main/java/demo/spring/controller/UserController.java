@@ -62,6 +62,7 @@ public class UserController {
         session.setAttribute("user",permissionList.contains(7));
         session.setAttribute("field",permissionList.contains(8));
         session.setAttribute("role",permissionList.contains(9));
+        session.setAttribute("admin",myUser.getRole());
 
         return Result.success("success",myUser);
     }
