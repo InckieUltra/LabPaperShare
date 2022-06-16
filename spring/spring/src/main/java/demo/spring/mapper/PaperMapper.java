@@ -160,6 +160,9 @@ public interface PaperMapper {
     @Delete("delete from field where field_id=#{field_id}")
     int deleteField(int field_id);
 
+    @Delete("delete from cover where field_id=#{field_id}")
+    int deleteCoverField(int field_id);
+
     @Delete("delete from publish where paper_id=#{paper_id}")
     int deletePublish(int paper_id);
 

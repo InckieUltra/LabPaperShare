@@ -65,7 +65,8 @@ public class PaperServiceImp implements PaperService{
     }
     @Transactional
     public int doDeleteField(int field_id,int pid){
-        this.paperMapper.changeFieldPid(field_id,pid);
+        //this.paperMapper.changeFieldPid(field_id,pid);
+        this.paperMapper.deleteCoverField(field_id);
         this.paperMapper.deleteField(field_id);
         return 0;
     }
